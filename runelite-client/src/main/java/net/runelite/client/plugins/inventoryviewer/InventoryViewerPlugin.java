@@ -29,9 +29,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -56,6 +56,9 @@ public class InventoryViewerPlugin extends Plugin
 	@Inject
 	private InventoryViewerConfig config;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Getter(AccessLevel.PACKAGE)
 	private InventoryViewerMode viewerMode;
 	@Getter(AccessLevel.PACKAGE)
@@ -73,10 +76,11 @@ public class InventoryViewerPlugin extends Plugin
 	public void startUp()
 	{
 		updateConfig();
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+
 		overlayManager.add(overlay);
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals(CONFIG_GROUP_KEY))
@@ -88,6 +92,8 @@ public class InventoryViewerPlugin extends Plugin
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 	}
 

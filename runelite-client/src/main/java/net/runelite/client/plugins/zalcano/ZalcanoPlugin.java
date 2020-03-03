@@ -23,6 +23,7 @@
  *  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 package net.runelite.client.plugins.zalcano;
 
 import com.google.inject.Binder;
@@ -43,7 +44,6 @@ import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
@@ -58,6 +58,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 @Slf4j
 public class ZalcanoPlugin extends Plugin
 {
+
 	@Inject
 	private Client client;
 
@@ -107,6 +108,7 @@ public class ZalcanoPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
 		eventBus.unregister("regionchecker");
 		overlayManager.remove(overlay);
 		overlayManager.remove(stepsOverlay);
@@ -122,6 +124,10 @@ public class ZalcanoPlugin extends Plugin
 		if (util.isInZalcanoRegion())
 		{
 			log.debug("region check complete loading other events");
+			eventBus.subscribe(NpcSpawned.class, this, this::onNpcSpawned);
+			eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+			eventBus.subscribe(GameTick.class, this, this::gameTickStepMachine);
+			eventBus.subscribe(GameTick.class, this, this::gameTickOreListener);
 
 			util.manuallyFindZalcano(); //this is here because the new subscribed npcspawn doesn't catch a pre existing zalcano
 
@@ -132,7 +138,6 @@ public class ZalcanoPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcSpawned(NpcSpawned npcSpawned)
 	{
 		switch (npcSpawned.getNpc().getId())
@@ -148,7 +153,6 @@ public class ZalcanoPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcDespawned(NpcDespawned npcDespawned)
 	{
 		switch (npcDespawned.getNpc().getId())
@@ -172,7 +176,6 @@ public class ZalcanoPlugin extends Plugin
 	 *
 	 * @param gameTick
 	 */
-	@Subscribe
 	private void gameTickStepMachine(GameTick gameTick)
 	{
 		if (!config.showSteps())
@@ -219,7 +222,6 @@ public class ZalcanoPlugin extends Plugin
 		setStep(Step.IDLE);
 	}
 
-	@Subscribe
 	private void gameTickOreListener(GameTick gameTick)
 	{
 		if (!config.showSteps())

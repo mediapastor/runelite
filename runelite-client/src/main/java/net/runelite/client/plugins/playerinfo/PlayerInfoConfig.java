@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, https://openosrs.com
+ * Copyright (c) 2018, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,15 @@ import java.awt.Color;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
-import net.runelite.client.config.ConfigTitleSection;
-import net.runelite.client.config.Title;
 
 @ConfigGroup("playerinfo")
 public interface PlayerInfoConfig extends Config
 {
-	@ConfigTitleSection(
-		keyName = "overlaysTitle",
-		name = "Overlays",
-		description = "",
-		position = 0
-	)
-	default Title overlaysTitle()
-	{
-		return new Title();
-	}
-
 	@ConfigItem(
 		keyName = "enableHealth",
 		name = "Enable Health Display",
 		description = "Configures whether or not to display health information",
-		position = 1,
-		titleSection = "overlaysTitle"
+		position = 1
 	)
 	default boolean enableHealth()
 	{
@@ -61,8 +47,7 @@ public interface PlayerInfoConfig extends Config
 		keyName = "enablePrayer",
 		name = "Enable Prayer Display",
 		description = "Configures whether or not to display prayer information",
-		position = 2,
-		titleSection = "overlaysTitle"
+		position = 2
 	)
 	default boolean enablePrayer()
 	{
@@ -73,8 +58,7 @@ public interface PlayerInfoConfig extends Config
 		keyName = "enableEnergy",
 		name = "Enable Run Energy Display",
 		description = "Configures whether or not to display run energy information",
-		position = 3,
-		titleSection = "overlaysTitle"
+		position = 3
 	)
 	default boolean enableEnergy()
 	{
@@ -85,8 +69,7 @@ public interface PlayerInfoConfig extends Config
 		keyName = "enableSpec",
 		name = "Enable Special Attack Display",
 		description = "Configures whether or not to display special attack information",
-		position = 4,
-		titleSection = "overlaysTitle"
+		position = 4
 	)
 	default boolean enableSpec()
 	{
@@ -97,31 +80,18 @@ public interface PlayerInfoConfig extends Config
 		keyName = "enableWorld",
 		name = "Enable World Display",
 		description = "Configures whether or not to display world information",
-		position = 5,
-		titleSection = "overlaysTitle"
+		position = 4
 	)
 	default boolean enableWorld()
 	{
 		return true;
 	}
 
-	@ConfigTitleSection(
-		keyName = "colorsTitle",
-		name = "Colors",
-		description = "",
-		position = 6
-	)
-	default Title colorsTitle()
-	{
-		return new Title();
-	}
-
 	@ConfigItem(
 		keyName = "colorHigh",
 		name = "Color High",
 		description = "The color displayed for high values.",
-		position = 7,
-		titleSection = "colorsTitle"
+		position = 5
 	)
 	default Color colorHigh()
 	{
@@ -132,8 +102,7 @@ public interface PlayerInfoConfig extends Config
 		keyName = "colorMed",
 		name = "Color Medium",
 		description = "The color displayed for medium values.",
-		position = 8,
-		titleSection = "colorsTitle"
+		position = 6
 	)
 	default Color colorMed()
 	{
@@ -144,8 +113,7 @@ public interface PlayerInfoConfig extends Config
 		keyName = "colorLow",
 		name = "Color Low",
 		description = "The color displayed for low values.",
-		position = 7,
-		titleSection = "colorsTitle"
+		position = 7
 	)
 	default Color colorLow()
 	{

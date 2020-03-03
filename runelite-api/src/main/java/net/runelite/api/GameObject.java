@@ -24,7 +24,7 @@
  */
 package net.runelite.api;
 
-import java.awt.Shape;
+import java.awt.Polygon;
 import net.runelite.api.coords.Angle;
 
 /**
@@ -54,12 +54,19 @@ public interface GameObject extends TileObject
 	Point getSceneMaxLocation();
 
 	/**
-	 * Gets the convex hull of the object's model.
+	 * Gets the convex hull of the actors model.
 	 *
 	 * @return the convex hull
 	 * @see //net.runelite.api.model.Jarvis
 	 */
-	Shape getConvexHull();
+	Polygon getConvexHull();
+
+	/**
+	 * Gets the polygons that make up the game object model.
+	 *
+	 * @return the model polygons
+	 */
+	Polygon[] getPolygons();
 
 	/**
 	 * Gets the orientation of the object.

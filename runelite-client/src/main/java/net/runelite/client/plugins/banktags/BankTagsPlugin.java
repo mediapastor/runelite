@@ -36,22 +36,22 @@ import java.awt.event.MouseWheelEvent;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import net.runelite.api.Client;
 import static net.runelite.api.Constants.HIGH_ALCHEMY_MULTIPLIER;
+import net.runelite.api.Client;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
-import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemDefinition;
+import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 import net.runelite.api.MenuOpcode;
 import net.runelite.api.VarClientInt;
 import net.runelite.api.VarClientStr;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.DraggingWidgetChanged;
 import net.runelite.api.events.FocusChanged;
 import net.runelite.api.events.GameTick;
@@ -60,15 +60,13 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.events.WidgetLoaded;
-import net.runelite.api.util.Text;
 import net.runelite.api.vars.InputType;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
@@ -81,10 +79,10 @@ import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.banktags.tabs.BankSearch;
 import net.runelite.client.plugins.banktags.tabs.TabInterface;
-import static net.runelite.client.plugins.banktags.tabs.TabInterface.FILTERED_CHARS;
 import net.runelite.client.plugins.banktags.tabs.TabSprites;
 import net.runelite.client.plugins.cluescrolls.ClueScrollPlugin;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
+import net.runelite.api.util.Text;
 
 @PluginDescriptor(
 	name = "Bank Tags",
@@ -147,7 +145,7 @@ public class BankTagsPlugin extends Plugin implements MouseWheelListener, KeyLis
 	private SpriteManager spriteManager;
 
 	@Inject
-	private ConfigManager configManager;
+	private EventBus eventBus;
 
 	private boolean shiftPressed = false;
 	private int nextRowIndex = 0;
@@ -163,70 +161,19 @@ public class BankTagsPlugin extends Plugin implements MouseWheelListener, KeyLis
 	@Override
 	public void startUp()
 	{
+		addSubscriptions();
 
-		cleanConfig();
 		keyManager.registerKeyListener(this);
 		mouseManager.registerMouseWheelListener(this);
 		clientThread.invokeLater(tabInterface::init);
 		spriteManager.addSpriteOverrides(TabSprites.values());
 	}
 
-	@Deprecated
-	private void cleanConfig()
-	{
-		removeInvalidTags("tagtabs");
-
-		List<String> tags = configManager.getConfigurationKeys(CONFIG_GROUP + ".item_");
-		tags.forEach(s ->
-		{
-			String[] split = s.split("\\.", 2);
-			removeInvalidTags(split[1]);
-		});
-
-		List<String> icons = configManager.getConfigurationKeys(CONFIG_GROUP + ".icon_");
-		icons.forEach(s ->
-		{
-			String[] split = s.split("\\.", 2);
-			String replaced = split[1].replaceAll("[<>/]", "");
-			if (!split[1].equals(replaced))
-			{
-				String value = configManager.getConfiguration(CONFIG_GROUP, split[1]);
-				configManager.unsetConfiguration(CONFIG_GROUP, split[1]);
-				if (replaced.length() > "icon_".length())
-				{
-					configManager.setConfiguration(CONFIG_GROUP, replaced, value);
-				}
-			}
-		});
-	}
-
-	@Deprecated
-	private void removeInvalidTags(final String key)
-	{
-		final String value = configManager.getConfiguration(CONFIG_GROUP, key);
-		if (value == null)
-		{
-			return;
-		}
-
-		String replaced = value.replaceAll("[<>/]", "");
-		if (!value.equals(replaced))
-		{
-			replaced = Text.toCSV(Text.fromCSV(replaced));
-			if (replaced.isEmpty())
-			{
-				configManager.unsetConfiguration(CONFIG_GROUP, key);
-			}
-			else
-			{
-				configManager.setConfiguration(CONFIG_GROUP, key, replaced);
-			}
-		}
-	}
-
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
+
 		keyManager.unregisterKeyListener(this);
 		mouseManager.unregisterMouseWheelListener(this);
 		clientThread.invokeLater(tabInterface::destroy);
@@ -236,14 +183,26 @@ public class BankTagsPlugin extends Plugin implements MouseWheelListener, KeyLis
 		itemQuantities.clear();
 	}
 
-private boolean isSearching()
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ScriptCallbackEvent.class, this, this::onScriptCallbackEvent);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(DraggingWidgetChanged.class, this, this::onDraggingWidgetChanged);
+		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
+		eventBus.subscribe(FocusChanged.class, this, this::onFocusChanged);
+		eventBus.subscribe(ItemContainerChanged.class, this, this::onItemContainerChanged);
+	}
+
+	private boolean isSearching()
 	{
 		return client.getVar(VarClientInt.INPUT_TYPE) == InputType.SEARCH.getType()
 			|| (client.getVar(VarClientInt.INPUT_TYPE) <= 0
 			&& client.getVar(VarClientStr.INPUT_TEXT) != null && client.getVar(VarClientStr.INPUT_TEXT).length() > 0);
 	}
 
-	@Subscribe
 	private void onScriptCallbackEvent(ScriptCallbackEvent event)
 	{
 		String eventName = event.getEventName();
@@ -255,6 +214,10 @@ private boolean isSearching()
 
 		switch (eventName)
 		{
+			case "bankTagsActive":
+				// tell the script the bank tag plugin is active
+				intStack[intStackSize - 1] = 1;
+				break;
 			case "setSearchBankInputText":
 				stringStack[stringStackSize - 1] = SEARCH_BANK_INPUT_TEXT;
 				break;
@@ -266,6 +229,7 @@ private boolean isSearching()
 			}
 			case "bankSearchFilter":
 				int itemId = intStack[intStackSize - 1];
+				String itemName = stringStack[stringStackSize - 2];
 				String search = stringStack[stringStackSize - 1];
 
 				boolean tagSearch = search.startsWith(TAG_SEARCH);
@@ -290,9 +254,9 @@ private boolean isSearching()
 					}
 					break;
 				}
-				else if (tagSearch)
+				else if (!tagSearch)
 				{
-					intStack[intStackSize - 2] = 0;
+					intStack[intStackSize - 2] = itemName.contains(search) ? 1 : 0;
 				}
 				break;
 			case "getSearchingTagTab":
@@ -353,14 +317,13 @@ private boolean isSearching()
 		}
 	}
 
-	@Subscribe
 	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		if (event.getParam1() == WidgetInfo.BANK_ITEM_CONTAINER.getId()
+		if (event.getActionParam1() == WidgetInfo.BANK_ITEM_CONTAINER.getId()
 			&& event.getOption().equals("Examine"))
 		{
 			Widget container = client.getWidget(WidgetInfo.BANK_ITEM_CONTAINER);
-			Widget item = container.getChild(event.getParam0());
+			Widget item = container.getChild(event.getActionParam0());
 			int itemID = item.getItemId();
 			String text = EDIT_TAGS_MENU_OPTION;
 			int tagCount = tagManager.getTags(itemID, false).size() + tagManager.getTags(itemID, true).size();
@@ -375,8 +338,8 @@ private boolean isSearching()
 				event.getTarget(),
 				MenuOpcode.RUNELITE.getId(),
 				event.getIdentifier(),
-				event.getParam0(),
-				event.getParam1(),
+				event.getActionParam0(),
+				event.getActionParam1(),
 				false
 			);
 		}
@@ -384,15 +347,14 @@ private boolean isSearching()
 		tabInterface.handleAdd(event);
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (event.getParam1() == WidgetInfo.BANK_ITEM_CONTAINER.getId()
+		if (event.getActionParam1() == WidgetInfo.BANK_ITEM_CONTAINER.getId()
 			&& event.getMenuOpcode() == MenuOpcode.RUNELITE
 			&& event.getOption().startsWith(EDIT_TAGS_MENU_OPTION))
 		{
 			event.consume();
-			int inventoryIndex = event.getParam0();
+			int inventoryIndex = event.getActionParam0();
 			ItemContainer bankContainer = client.getItemContainer(InventoryID.BANK);
 			if (bankContainer == null)
 			{
@@ -424,7 +386,6 @@ private boolean isSearching()
 			String initialValue = Text.toCSV(tags);
 
 			chatboxPanelManager.openTextInput(name + " tags:<br>(append " + VAR_TAG_SUFFIX + " for variation tag)")
-				.addCharValidator(FILTERED_CHARS)
 				.value(initialValue)
 				.onDone((newValue) ->
 					clientThread.invoke(() ->
@@ -460,7 +421,6 @@ private boolean isSearching()
 		}
 	}
 
-	@Subscribe
 	private void onItemContainerChanged(ItemContainerChanged event)
 	{
 		if (event.getContainerId() == InventoryID.BANK.getId())
@@ -476,7 +436,6 @@ private boolean isSearching()
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged configChanged)
 	{
 		if (configChanged.getGroup().equals("banktags") && configChanged.getKey().equals("useTabs"))
@@ -492,19 +451,16 @@ private boolean isSearching()
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		tabInterface.update();
 	}
 
-	@Subscribe
 	private void onDraggingWidgetChanged(DraggingWidgetChanged event)
 	{
 		tabInterface.handleDrag(event.isDraggingWidget(), shiftPressed);
 	}
 
-	@Subscribe
 	private void onWidgetLoaded(WidgetLoaded event)
 	{
 		if (event.getGroupId() == WidgetID.BANK_GROUP_ID)
@@ -513,7 +469,6 @@ private boolean isSearching()
 		}
 	}
 
-	@Subscribe
 	private void onFocusChanged(FocusChanged event)
 	{
 		if (!event.isFocused())
@@ -579,7 +534,7 @@ private boolean isSearching()
 			long compare;
 			try
 			{
-				compare = QuantityFormatter.parseQuantity(matcher.group("num"));
+				compare = StackFormatter.stackSizeToQuantity(matcher.group("num"));
 			}
 			catch (ParseException e)
 			{
@@ -608,8 +563,8 @@ private boolean isSearching()
 			long compare1, compare2;
 			try
 			{
-				compare1 = QuantityFormatter.parseQuantity(num1);
-				compare2 = QuantityFormatter.parseQuantity(num2);
+				compare1 = StackFormatter.stackSizeToQuantity(num1);
+				compare2 = StackFormatter.stackSizeToQuantity(num2);
 			}
 			catch (ParseException e)
 			{

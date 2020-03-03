@@ -320,10 +320,6 @@ public interface RSWidget extends Widget
 	@Override
 	Object[] getOnLoadListener();
 
-	@Import("onOp")
-	@Override
-	Object[] getOnOp();
-
 	@Import("onDialogAbort")
 	@Override
 	void setOnDialogAbortListener(Object... args);
@@ -446,7 +442,7 @@ public interface RSWidget extends Widget
 
 	@Import("getFont")
 	@Override
-	RSFont getFont();
+	RSAbstractFont getFont();
 
 	@Import("fill")
 	@Override
@@ -496,20 +492,4 @@ public interface RSWidget extends Widget
 
 	@Import("getSprite")
 	RSSprite getSprite(boolean b);
-
-	@Import("onRelease")
-	@Override
-	void setOnReleaseListener(Object[] o);
-
-	@Import("varTransmitTriggers")
-	@Override
-	void setVarTransmitTrigger(int[] i);
-
-	@Import("onHold")
-	@Override
-	void setOnHoldListener(Object[] o);
-
-	@Import("onClick")
-	@Override
-	void setOnClickListener(Object[] o);
 }

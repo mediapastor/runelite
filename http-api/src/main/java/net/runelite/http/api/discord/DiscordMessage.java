@@ -29,12 +29,16 @@ package net.runelite.http.api.discord;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 public class DiscordMessage
 {
@@ -44,14 +48,24 @@ public class DiscordMessage
 	String avatarUrl;
 	@SerializedName("tts")
 	boolean textToSpeech;
-	final List<DiscordEmbed> embeds = new ArrayList<>();
+	List<DiscordEmbed> embeds = new ArrayList<>();
 
-	DiscordMessage(String username, String content, String avatar_url, DiscordEmbed embed)
+	public DiscordMessage()
 	{
-		this.username = username;
-		this.content = content;
-		this.avatarUrl = avatar_url;
-		this.embeds.add(embed);
+
+	}
+
+	public DiscordMessage(String username, String content, String avatar_url)
+	{
+		this(username, content, avatar_url, false);
+	}
+
+	public DiscordMessage(String username, String content, String avatar_url, boolean tts)
+	{
+		setUsername(username);
+		setContent(content);
+		setAvatarUrl(avatar_url);
+		setTextToSpeech(tts);
 	}
 
 	public void setUsername(String username)
@@ -63,6 +77,17 @@ public class DiscordMessage
 		else
 		{
 			this.username = null;
+		}
+	}
+
+	public static class DiscordMessageBuilder
+	{
+		List<DiscordEmbed> embeds = new ArrayList<>();
+
+		public DiscordMessageBuilder embed(DiscordEmbed embed)
+		{
+			embeds.add(embed);
+			return this;
 		}
 	}
 }

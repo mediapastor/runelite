@@ -28,7 +28,7 @@ package net.runelite.client.plugins.kingdomofmiscellania;
 import java.awt.image.BufferedImage;
 import javax.inject.Singleton;
 import net.runelite.client.ui.overlay.infobox.Counter;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 
 @Singleton
 class KingdomCounter extends Counter
@@ -55,7 +55,7 @@ class KingdomCounter extends Counter
 			.append("/127")
 			.append("</br>")
 			.append("Coffer: ")
-			.append(QuantityFormatter.quantityToStackSize(plugin.getCoffer()))
+			.append(StackFormatter.quantityToRSStackSize(plugin.getCoffer()))
 			.toString();
 	}
 }

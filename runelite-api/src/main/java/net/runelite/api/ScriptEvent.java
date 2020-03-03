@@ -61,9 +61,4 @@ public interface ScriptEvent
 	 * @see net.runelite.api.events.MenuOptionClicked
 	 */
 	String getOpbase();
-
-	/**
-	 * Parent relative x coordinate for mouse related events
-	 */
-	int getMouseX();
 }

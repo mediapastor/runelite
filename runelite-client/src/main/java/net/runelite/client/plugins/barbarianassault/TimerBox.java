@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019, 7ate9 <https://github.com/se7enAte9>
- * Copyright (c) 2019, https://openosrs.com
+ * Copyright (c) 2019, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,13 @@
  */
 package net.runelite.client.plugins.barbarianassault;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.ui.overlay.infobox.InfoBox;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

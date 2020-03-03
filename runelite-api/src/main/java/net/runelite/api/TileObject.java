@@ -28,69 +28,92 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Shape;
+import java.awt.geom.Area;
 import javax.annotation.Nullable;
 
 /**
- * Represents an object on a Tile
+ * Represents an object that a tile holds.
  */
-public interface TileObject extends Locatable
+public interface TileObject
 {
+	/**
+	 * Gets the hashed value of this object.
+	 *
+	 * @return the object hash
+	 */
 	long getHash();
 
 	/**
 	 * Gets the x-axis coordinate of the object in local context.
 	 *
-	 * @see LocalPoint
+	 * @return the x-axis coordinate
 	 */
 	int getX();
 
 	/**
 	 * Gets the y-axis coordinate of the object in local context.
 	 *
-	 * @see LocalPoint
+	 * @return the y-axis coordinate
 	 */
 	int getY();
 
 	/**
 	 * Gets the plane of the tile that the object is on.
+	 *
+	 * @return the tile plane
 	 */
 	int getPlane();
 
 	/**
 	 * Gets the ID of the object.
 	 *
-	 * @see ObjectID
-	 * @see NullObjectID
+	 * @return the object ID
 	 */
 	int getId();
 
+	/**
+	 * Gets the location coordinate of the object in the world.
+	 *
+	 * @return the world location
+	 */
 	WorldPoint getWorldLocation();
 
+	/**
+	 * Gets the local location of the object.
+	 *
+	 * @return the local location
+	 */
 	LocalPoint getLocalLocation();
 
 	/**
-	 * Calculates the position of the center of this tile on the canvas
+	 * Gets the upper-left canvas point where this object is drawn.
+	 *
+	 * @return the canvas location
 	 */
 	Point getCanvasLocation();
 
 	/**
-	 * Calculates the position of the center of this tile on the canvas
+	 * Gets the upper-left canvas point where this object is drawn,
+	 * offset by the passed value.
 	 *
-	 * @param zOffset Vertical offset to apply before projection
+	 * @param zOffset the z-axis offset
+	 * @return the canvas location
 	 */
 	Point getCanvasLocation(int zOffset);
 
 	/**
-	 * Creates a polygon outlining the tile this object is on
+	 * Gets the polygon of the objects model as drawn on the canvas.
+	 *
+	 * @return the canvas polygon
 	 */
 	Polygon getCanvasTilePoly();
 
 	/**
-	 * Calculates the canvas point to center {@code text} above the tile this object is on.
+	 * Gets the text position on the canvas.
 	 *
-	 * @param graphics the graphics to use for font size calculation
-	 * @param zOffset Vertical offset to apply before projection
+	 * @param graphics the client graphics
+	 * @param text the text to draw
+	 * @param zOffset the offset from ground plane
 	 * @return the canvas point to draw the text at
 	 */
 	Point getCanvasTextLocation(Graphics2D graphics, String text, int zOffset);
@@ -104,8 +127,10 @@ public interface TileObject extends Locatable
 	Point getMinimapLocation();
 
 	/**
-	 * Calculate the on-screen clickable area of the object.
+	 * Get the on-screen clickable area of the object.
+	 *
+	 * @return the clickable area
 	 */
 	@Nullable
-	Shape getClickbox();
+	Area getClickbox();
 }

@@ -1,4 +1,5 @@
 import net.runelite.mapping.ObfuscatedName;
 
-@ObfuscatedName("fu")
-public interface class161 {}
+@ObfuscatedName("fc")
+public interface class161 {
+}

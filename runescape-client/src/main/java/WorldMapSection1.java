@@ -1,56 +1,74 @@
-import java.awt.image.BufferedImage;
-import java.awt.image.PixelGrabber;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("av")
+@ObfuscatedName("at")
 @Implements("WorldMapSection1")
 public class WorldMapSection1 implements WorldMapSection {
-	@ObfuscatedName("br")
+	@ObfuscatedName("x")
+	@Export("SpriteBuffer_pixels")
+	public static byte[][] SpriteBuffer_pixels;
+	@ObfuscatedName("p")
 	@ObfuscatedSignature(
-		signature = "Lgw;"
+		signature = "[Lmw;"
 	)
-	@Export("clientLanguage")
-	static Language clientLanguage;
-	@ObfuscatedName("a")
+	@Export("JagexCache_idxFiles")
+	public static BufferedFile[] JagexCache_idxFiles;
+	@ObfuscatedName("bk")
+	@Export("otp")
+	static String otp;
+	@ObfuscatedName("de")
+	@ObfuscatedSignature(
+		signature = "Lid;"
+	)
+	@Export("archive14")
+	static Archive archive14;
+	@ObfuscatedName("gn")
 	@ObfuscatedGetter(
-		intValue = 1154068221
+		intValue = 1628860217
+	)
+	static int field283;
+	@ObfuscatedName("gy")
+	@ObfuscatedSignature(
+		signature = "[Lls;"
+	)
+	@Export("mapMarkerSprites")
+	static Sprite[] mapMarkerSprites;
+	@ObfuscatedName("s")
+	@ObfuscatedGetter(
+		intValue = -164716821
 	)
 	@Export("minPlane")
 	int minPlane;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedGetter(
-		intValue = -1054158347
+		intValue = 1156476113
 	)
 	@Export("planes")
 	int planes;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = -1028854111
+		intValue = -1419031029
 	)
 	@Export("regionStartX")
 	int regionStartX;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedGetter(
-		intValue = -1350471723
+		intValue = 797218073
 	)
 	@Export("regionStartY")
 	int regionStartY;
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedGetter(
-		intValue = -1028705705
+		intValue = -1475121161
 	)
 	@Export("regionEndX")
 	int regionEndX;
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -615162757
+		intValue = -1969567489
 	)
 	@Export("regionEndY")
 	int regionEndY;
@@ -58,10 +76,10 @@ public class WorldMapSection1 implements WorldMapSection {
 	WorldMapSection1() {
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Laa;B)V",
-		garbageValue = "-111"
+		signature = "(Lav;I)V",
+		garbageValue = "-1068467910"
 	)
 	@Export("expandBounds")
 	public void expandBounds(WorldMapArea var1) {
@@ -83,10 +101,10 @@ public class WorldMapSection1 implements WorldMapSection {
 
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
 		signature = "(IIII)Z",
-		garbageValue = "-1417818612"
+		garbageValue = "1014871771"
 	)
 	@Export("containsCoord")
 	public boolean containsCoord(int var1, int var2, int var3) {
@@ -97,20 +115,20 @@ public class WorldMapSection1 implements WorldMapSection {
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
 		signature = "(III)Z",
-		garbageValue = "-2132898041"
+		garbageValue = "694688168"
 	)
 	@Export("containsPosition")
 	public boolean containsPosition(int var1, int var2) {
 		return var1 >> 6 == this.regionEndX && var2 >> 6 == this.regionEndY;
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
 		signature = "(IIII)[I",
-		garbageValue = "1209167521"
+		garbageValue = "-45443461"
 	)
 	@Export("getBorderTileLengths")
 	public int[] getBorderTileLengths(int var1, int var2, int var3) {
@@ -122,10 +140,10 @@ public class WorldMapSection1 implements WorldMapSection {
 		}
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
-		signature = "(IIS)Lhf;",
-		garbageValue = "7283"
+		signature = "(III)Lhd;",
+		garbageValue = "1267204541"
 	)
 	@Export("coord")
 	public Coord coord(int var1, int var2) {
@@ -138,10 +156,10 @@ public class WorldMapSection1 implements WorldMapSection {
 		}
 	}
 
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(Lkc;I)V",
-		garbageValue = "-568369534"
+		signature = "(Lky;I)V",
+		garbageValue = "1072299144"
 	)
 	@Export("read")
 	public void read(Buffer var1) {
@@ -154,78 +172,56 @@ public class WorldMapSection1 implements WorldMapSection {
 		this.postRead();
 	}
 
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
 		signature = "(B)V",
-		garbageValue = "0"
+		garbageValue = "24"
 	)
 	@Export("postRead")
 	void postRead() {
 	}
 
-	@ObfuscatedName("a")
-	static double method636(double var0, double var2, double var4) {
-		double var8 = (var0 - var2) / var4;
-		double var6 = Math.exp(var8 * -var8 / 2.0D) / Math.sqrt(6.283185307179586D);
-		return var6 / var4;
-	}
-
-	@ObfuscatedName("a")
+	@ObfuscatedName("ks")
 	@ObfuscatedSignature(
-		signature = "([BS)Llx;",
-		garbageValue = "-10858"
+		signature = "(Lhp;B)Z",
+		garbageValue = "39"
 	)
-	@Export("convertJpgToSprite")
-	public static final Sprite convertJpgToSprite(byte[] var0) {
-		BufferedImage var1 = null;
+	static final boolean method563(Widget var0) {
+		int var1 = var0.contentType;
+		if (var1 == 205) {
+			Client.logoutTimer = 250;
+			return true;
+		} else {
+			int var2;
+			int var3;
+			if (var1 >= 300 && var1 <= 313) {
+				var2 = (var1 - 300) / 2;
+				var3 = var1 & 1;
+				Client.playerAppearance.changeAppearance(var2, var3 == 1);
+			}
 
-		try {
-			var1 = ImageIO.read(new ByteArrayInputStream(var0));
-			int var2 = var1.getWidth();
-			int var3 = var1.getHeight();
-			int[] var4 = new int[var2 * var3];
-			PixelGrabber var5 = new PixelGrabber(var1, 0, 0, var2, var3, var4, 0, var2);
-			var5.grabPixels();
-			return new Sprite(var4, var2, var3);
-		} catch (IOException var7) {
-		} catch (InterruptedException var8) {
+			if (var1 >= 314 && var1 <= 323) {
+				var2 = (var1 - 314) / 2;
+				var3 = var1 & 1;
+				Client.playerAppearance.method3930(var2, var3 == 1);
+			}
+
+			if (var1 == 324) {
+				Client.playerAppearance.changeSex(false);
+			}
+
+			if (var1 == 325) {
+				Client.playerAppearance.changeSex(true);
+			}
+
+			if (var1 == 326) {
+				PacketBufferNode var4 = MenuAction.getPacketBufferNode(ClientPacket.field2197, Client.packetWriter.isaacCipher);
+				Client.playerAppearance.write(var4.packetBuffer);
+				Client.packetWriter.addNode(var4);
+				return true;
+			} else {
+				return false;
+			}
 		}
-
-		return new Sprite(0, 0);
-	}
-
-	@ObfuscatedName("hf")
-	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "-1373255332"
-	)
-	static final void method622() {
-		Client.field745 = 0;
-		int var0 = UserComparator8.baseX * 64 + (class215.localPlayer.x >> 7);
-		int var1 = HealthBar.baseY * 64 + (class215.localPlayer.y >> 7);
-		if (var0 >= 3053 && var0 <= 3156 && var1 >= 3056 && var1 <= 3136) {
-			Client.field745 = 1;
-		}
-
-		if (var0 >= 3072 && var0 <= 3118 && var1 >= 9492 && var1 <= 9535) {
-			Client.field745 = 1;
-		}
-
-		if (Client.field745 == 1 && var0 >= 3139 && var0 <= 3199 && var1 >= 3008 && var1 <= 3062) {
-			Client.field745 = 0;
-		}
-
-	}
-
-	@ObfuscatedName("lk")
-	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "1886233259"
-	)
-	static void method650() {
-		if (Client.oculusOrbState == 1) {
-			Client.field645 = true;
-		}
-
 	}
 }

@@ -2,171 +2,172 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
+import net.runelite.rs.ScriptOpcodes;
 
-@ObfuscatedName("lc")
+@ObfuscatedName("lz")
 public enum class312 implements Enumerated {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Llc;"
+		signature = "Llz;"
 	)
-	field3799(0, 0),
-	@ObfuscatedName("t")
+	field3810(5, 0),
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Llc;"
+		signature = "Llz;"
 	)
-	field3798(4, 2),
+	field3811(1, 1),
+	@ObfuscatedName("i")
+	@ObfuscatedSignature(
+		signature = "Llz;"
+	)
+	field3813(3, 2),
+	@ObfuscatedName("k")
+	@ObfuscatedSignature(
+		signature = "Llz;"
+	)
+	field3812(7, 3),
+	@ObfuscatedName("u")
+	@ObfuscatedSignature(
+		signature = "Llz;"
+	)
+	field3816(4, 4),
 	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Llc;"
+		signature = "Llz;"
 	)
-	field3800(3, 5),
+	field3814(2, 5),
+	@ObfuscatedName("t")
+	@ObfuscatedSignature(
+		signature = "Llz;"
+	)
+	field3815(0, 6),
 	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "Llc;"
+		signature = "Llz;"
 	)
-	field3801(2, 6),
-	@ObfuscatedName("v")
+	field3809(8, 7),
+	@ObfuscatedName("x")
 	@ObfuscatedSignature(
-		signature = "Llc;"
+		signature = "Llz;"
 	)
-	field3805(5, 7),
-	@ObfuscatedName("l")
-	@ObfuscatedSignature(
-		signature = "Llc;"
-	)
-	field3802(1, 8);
+	field3817(6, 8);
 
-	@ObfuscatedName("e")
-	static String[] field3803;
-	@ObfuscatedName("c")
+	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = 710760119
+		intValue = 956871945
 	)
-	final int field3797;
-	@ObfuscatedName("o")
+	final int field3818;
+	@ObfuscatedName("f")
 	@ObfuscatedGetter(
-		intValue = 1869652173
+		intValue = 424280785
 	)
 	@Export("id")
 	final int id;
 
 	class312(int var3, int var4) {
-		this.field3797 = var3;
+		this.field3818 = var3;
 		this.id = var4;
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "-1993081102"
+		signature = "(B)I",
+		garbageValue = "-32"
 	)
 	@Export("rsOrdinal")
 	public int rsOrdinal() {
 		return this.id;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/CharSequence;I)Ljava/lang/String;",
-		garbageValue = "-911741396"
+		signature = "(IIII)V",
+		garbageValue = "-204174785"
 	)
-	public static String method6014(CharSequence var0) {
-		int var1 = var0.length();
-		StringBuilder var2 = new StringBuilder(var1);
-
-		for (int var3 = 0; var3 < var1; ++var3) {
-			char var4 = var0.charAt(var3);
-			if ((var4 < 'a' || var4 > 'z') && (var4 < 'A' || var4 > 'Z') && (var4 < '0' || var4 > '9') && var4 != '.' && var4 != '-' && var4 != '*' && var4 != '_') {
-				if (var4 == ' ') {
-					var2.append('+');
-				} else {
-					byte var5 = WorldMapData_1.charToByteCp1252(var4);
-					var2.append('%');
-					int var6 = var5 >> 4 & 15;
-					if (var6 >= 10) {
-						var2.append((char)(var6 + 55));
-					} else {
-						var2.append((char)(var6 + 48));
-					}
-
-					var6 = var5 & 15;
-					if (var6 >= 10) {
-						var2.append((char)(var6 + 55));
-					} else {
-						var2.append((char)(var6 + 48));
-					}
-				}
-			} else {
-				var2.append(var4);
+	static final void method5787(int var0, int var1, int var2) {
+		int var3;
+		for (var3 = 0; var3 < 8; ++var3) {
+			for (int var4 = 0; var4 < 8; ++var4) {
+				Tiles.Tiles_heights[var0][var3 + var1][var4 + var2] = 0;
 			}
 		}
 
-		return var2.toString();
+		if (var1 > 0) {
+			for (var3 = 1; var3 < 8; ++var3) {
+				Tiles.Tiles_heights[var0][var1][var3 + var2] = Tiles.Tiles_heights[var0][var1 - 1][var3 + var2];
+			}
+		}
+
+		if (var2 > 0) {
+			for (var3 = 1; var3 < 8; ++var3) {
+				Tiles.Tiles_heights[var0][var3 + var1][var2] = Tiles.Tiles_heights[var0][var3 + var1][var2 - 1];
+			}
+		}
+
+		if (var1 > 0 && Tiles.Tiles_heights[var0][var1 - 1][var2] != 0) {
+			Tiles.Tiles_heights[var0][var1][var2] = Tiles.Tiles_heights[var0][var1 - 1][var2];
+		} else if (var2 > 0 && Tiles.Tiles_heights[var0][var1][var2 - 1] != 0) {
+			Tiles.Tiles_heights[var0][var1][var2] = Tiles.Tiles_heights[var0][var1][var2 - 1];
+		} else if (var1 > 0 && var2 > 0 && Tiles.Tiles_heights[var0][var1 - 1][var2 - 1] != 0) {
+			Tiles.Tiles_heights[var0][var1][var2] = Tiles.Tiles_heights[var0][var1 - 1][var2 - 1];
+		}
+
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("y")
 	@ObfuscatedSignature(
-		signature = "(Lkc;IIIIIIB)V",
-		garbageValue = "106"
+		signature = "(ILcr;ZI)I",
+		garbageValue = "808433154"
 	)
-	@Export("loadTerrain")
-	static final void loadTerrain(Buffer var0, int var1, int var2, int var3, int var4, int var5, int var6) {
-		int var7;
-		if (var2 >= 0 && var2 < 104 && var3 >= 0 && var3 < 104) {
-			Tiles.Tiles_renderFlags[var1][var2][var3] = 0;
-
-			while (true) {
-				var7 = var0.readUnsignedByte();
-				if (var7 == 0) {
-					if (var1 == 0) {
-						Tiles.Tiles_heights[0][var2][var3] = -SpotAnimationDefinition.method4582(var2 + 932731 + var4, var5 + 556238 + var3) * 8;
-					} else {
-						Tiles.Tiles_heights[var1][var2][var3] = Tiles.Tiles_heights[var1 - 1][var2][var3] - 240;
-					}
-					break;
-				}
-
-				if (var7 == 1) {
-					int var8 = var0.readUnsignedByte();
-					if (var8 == 1) {
-						var8 = 0;
-					}
-
-					if (var1 == 0) {
-						Tiles.Tiles_heights[0][var2][var3] = -var8 * 8;
-					} else {
-						Tiles.Tiles_heights[var1][var2][var3] = Tiles.Tiles_heights[var1 - 1][var2][var3] - var8 * 8;
-					}
-					break;
-				}
-
-				if (var7 <= 49) {
-					Tiles.field485[var1][var2][var3] = var0.readByte();
-					Tiles.field482[var1][var2][var3] = (byte)((var7 - 2) / 4);
-					Tiles.field483[var1][var2][var3] = (byte)(var7 - 2 + var6 & 3);
-				} else if (var7 <= 81) {
-					Tiles.Tiles_renderFlags[var1][var2][var3] = (byte)(var7 - 49);
-				} else {
-					SoundSystem.field1414[var1][var2][var3] = (byte)(var7 - 81);
-				}
-			}
+	static int method5788(int var0, Script var1, boolean var2) {
+		Widget var3 = var2 ? class286.field3623 : class297.field3693;
+		if (var0 == ScriptOpcodes.CC_GETSCROLLX) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.scrollX;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETSCROLLY) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.scrollY;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETTEXT) {
+			Interpreter.Interpreter_stringStack[++Interpreter.Interpreter_stringStackSize - 1] = var3.text;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETSCROLLWIDTH) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.scrollWidth;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETSCROLLHEIGHT) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.scrollHeight;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETMODELZOOM) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.modelZoom;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETMODELANGLE_X) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.modelAngleX;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETMODELANGLE_Z) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.modelAngleZ;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETMODELANGLE_Y) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.modelAngleY;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETTRANSTOP) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.transparencyTop;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETTRANSBOT) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.transparencyBot;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETCOLOUR) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.color;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETFILLCOLOUR) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.color2;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETFILLMODE) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.fillMode.rsOrdinal();
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETMODELTRANSPARENT) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.modelTransparency ? 1 : 0;
+			return 1;
 		} else {
-			while (true) {
-				var7 = var0.readUnsignedByte();
-				if (var7 == 0) {
-					break;
-				}
-
-				if (var7 == 1) {
-					var0.readUnsignedByte();
-					break;
-				}
-
-				if (var7 <= 49) {
-					var0.readUnsignedByte();
-				}
-			}
+			return 2;
 		}
-
 	}
 }

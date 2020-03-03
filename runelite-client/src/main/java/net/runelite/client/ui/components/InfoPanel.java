@@ -55,11 +55,11 @@ import net.runelite.client.util.LinkBrowser;
 public class InfoPanel extends JPanel
 {
 	private static final String RUNELITE_VERSION = "runelite.version";
-	private static final String RUNELITE_PLUS_VERSION = "open.osrs.version";
-	private static final String RUNELITE_PLUS_DATE = "open.osrs.builddate";
+	private static final String RUNELITE_PLUS_VERSION = "runelite.plus.version";
+	private static final String RUNELITE_PLUS_DATE = "runelite.plus.builddate";
 	private static final Color DARK_GREY = new Color(10, 10, 10, 255);
 
-	private static final BufferedImage TRANSPARENT_LOGO = ImageUtil.getResourceStreamFromClass(InfoPanel.class, "/openosrs.png");
+	private static final BufferedImage TRANSPARENT_LOGO = ImageUtil.getResourceStreamFromClass(InfoPanel.class, "/runeliteplus_transparent.png");
 	static final Dimension PANEL_SIZE = new Dimension(200, RuneLiteSplashScreen.FRAME_SIZE.height);
 	private static final Dimension VERSION_SIZE = new Dimension(PANEL_SIZE.width, 25);
 	private static final File RUNELITE_DIR = new File(System.getProperty("user.home"), ".runelite");
@@ -69,7 +69,7 @@ public class InfoPanel extends JPanel
 
 	public InfoPanel()
 	{
-		try (InputStream in = getClass().getResourceAsStream("/open.osrs.properties"))
+		try (InputStream in = getClass().getResourceAsStream("/runelite.plus.properties"))
 		{
 			properties.load(in);
 		}
@@ -104,8 +104,12 @@ public class InfoPanel extends JPanel
 		c.anchor = GridBagConstraints.SOUTH;
 		c.weighty = 0;
 
-		// OpenOSRS version
-		this.add(createPanelTextButton("OpenOSRS Version: " + properties.getProperty(RUNELITE_PLUS_VERSION)), c);
+		// Version
+		this.add(createPanelTextButton("RuneLite Version: " + properties.getProperty(RUNELITE_VERSION)), c);
+		c.gridy++;
+
+		// Plus version
+		this.add(createPanelTextButton("Plus Version: " + properties.getProperty(RUNELITE_PLUS_VERSION)), c);
 		c.gridy++;
 
 		// Build date
@@ -116,7 +120,7 @@ public class InfoPanel extends JPanel
 		this.add(logsFolder, c);
 		c.gridy++;
 
-		final JLabel discord = createPanelButton("Get help on Discord", "Instant invite link to join the openosrs discord", () -> LinkBrowser.browse(RuneLiteProperties.getDiscordInvite()));
+		final JLabel discord = createPanelButton("Get help on Discord", "Instant invite link to join the RuneLitePlus discord", () -> LinkBrowser.browse(RuneLiteProperties.getDiscordInvite()));
 		this.add(discord, c);
 		c.gridy++;
 
@@ -134,7 +138,7 @@ public class InfoPanel extends JPanel
 		final JLabel textButton = new JLabel(title);
 		textButton.setFont(FontManager.getRunescapeSmallFont());
 		textButton.setHorizontalAlignment(JLabel.CENTER);
-		textButton.setForeground(ColorScheme.BRAND_BLUE);
+		textButton.setForeground(ColorScheme.BRAND_ORANGE);
 		textButton.setBackground(null);
 		textButton.setPreferredSize(VERSION_SIZE);
 		textButton.setMinimumSize(VERSION_SIZE);

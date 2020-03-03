@@ -57,21 +57,20 @@ import net.runelite.api.ProjectileID;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.ProjectileSpawned;
 import net.runelite.api.events.SpotAnimationChanged;
-import net.runelite.api.util.Text;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.api.util.Text;
 
 @PluginDescriptor(
 	name = "CoX Helper",
@@ -163,6 +162,7 @@ public class CoxPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 		overlayManager.add(coxOverlay);
 		overlayManager.add(coxInfoBox);
 		handCripple = false;
@@ -178,11 +178,22 @@ public class CoxPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
 		overlayManager.remove(coxOverlay);
 		overlayManager.remove(coxInfoBox);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+		eventBus.subscribe(ProjectileSpawned.class, this, this::onProjectileSpawned);
+		eventBus.subscribe(SpotAnimationChanged.class, this, this::onSpotAnimationChanged);
+		eventBus.subscribe(NpcSpawned.class, this, this::onNpcSpawned);
+		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("Cox"))
@@ -191,7 +202,6 @@ public class CoxPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (!inRaid())
@@ -207,16 +217,9 @@ public class CoxPlugin extends Plugin
 			{
 				for (Player player : client.getPlayers())
 				{
-					final String rawPlayerName = player.getName();
-
-					if (rawPlayerName != null)
+					if (player.getName().equals(tpMatcher.group(1)))
 					{
-						final String fixedPlayerName = Text.sanitize(rawPlayerName);
-
-						if (fixedPlayerName.equals(Text.sanitize(tpMatcher.group(1))))
-						{
-							victims.add(new Victim(player, Victim.Type.TELEPORT));
-						}
+						victims.add(new Victim(player, Victim.Type.TELEPORT));
 					}
 				}
 			}
@@ -264,7 +267,6 @@ public class CoxPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onProjectileSpawned(ProjectileSpawned event)
 	{
 		if (!inRaid())
@@ -290,7 +292,6 @@ public class CoxPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onSpotAnimationChanged(SpotAnimationChanged event)
 	{
 		if (!inRaid())
@@ -324,7 +325,6 @@ public class CoxPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcSpawned(NpcSpawned event)
 	{
 		if (!inRaid())
@@ -369,7 +369,6 @@ public class CoxPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcDespawned(NpcDespawned event)
 	{
 		if (!inRaid())
@@ -417,7 +416,6 @@ public class CoxPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (!inRaid())

@@ -53,6 +53,7 @@ import net.runelite.api.Varbits;
 import net.runelite.api.WorldType;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.PlayerDespawned;
@@ -60,17 +61,15 @@ import net.runelite.api.events.PlayerSpawned;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemMapping;
-import net.runelite.client.game.ItemReclaimCost;
+import net.runelite.client.game.PvPValueBrokenItem;
 import net.runelite.client.game.WorldLocation;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.util.PvPUtil;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 import net.runelite.http.api.discord.DiscordClient;
 import net.runelite.http.api.discord.DiscordEmbed;
 import net.runelite.http.api.discord.DiscordMessage;
@@ -94,7 +93,7 @@ public class PlayerScouter extends Plugin
 {
 	private static final HiscoreClient HISCORE_CLIENT = new HiscoreClient();
 	private static final DiscordClient DISCORD_CLIENT = new DiscordClient();
-	private static final Map<WorldArea, String> WILD_LOCS = WorldLocation.getLOCATION_MAP();
+	private static final Map<WorldArea, String> WILD_LOCS = WorldLocation.getLocationMap();
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("MMM dd h:mm a z");
 	private static final String ICON_URL = "https://www.osrsbox.com/osrsbox-db/items-icons/"; // Add item id + ".png"
 	@Inject
@@ -151,13 +150,13 @@ public class PlayerScouter extends Plugin
 
 	private void addSubscriptions()
 	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
 		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
 		eventBus.subscribe(GameTick.class, this, this::onGameTick);
 		eventBus.subscribe(PlayerDespawned.class, this, this::onPlayerDespawned);
 		eventBus.subscribe(PlayerSpawned.class, this, this::onPlayerSpawned);
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("playerscouter"))
@@ -183,7 +182,7 @@ public class PlayerScouter extends Plugin
 
 		resetBlacklist();
 
-		if (!checkWildy() || playerContainer.isEmpty() || this.webhook == null)
+		if (!checkWildy() || playerContainer.isEmpty())
 		{
 			return;
 		}
@@ -371,10 +370,10 @@ public class PlayerScouter extends Plugin
 				continue;
 			}
 
-			if (ItemReclaimCost.breaksOnDeath(id))
+			if (PvPValueBrokenItem.breaksOnDeath(id))
 			{
-				prices.put(id, itemManager.getRepairValue(id));
-				log.debug("Item has a broken value: Id {}, Value {}", id, itemManager.getRepairValue(id));
+				prices.put(id, itemManager.getBrokenValue(id));
+				log.debug("Item has a broken value: Id {}, Value {}", id, itemManager.getBrokenValue(id));
 				continue;
 			}
 
@@ -496,7 +495,7 @@ public class PlayerScouter extends Plugin
 
 		fieldList.add(FieldEmbed.builder()
 			.name("Risk")
-			.value(QuantityFormatter.quantityToRSDecimalStack(player.getRisk()))
+			.value(StackFormatter.quantityToRSDecimalStack(player.getRisk()))
 			.inline(true)
 			.build());
 
@@ -552,7 +551,6 @@ public class PlayerScouter extends Plugin
 				}
 
 				ItemStats item = itemManager.getItemStats(gear, false);
-				String name = itemManager.getItemDefinition(gear).getName();
 
 				if (item == null)
 				{
@@ -561,8 +559,8 @@ public class PlayerScouter extends Plugin
 				}
 
 				fieldList.add(FieldEmbed.builder()
-					.name(name)
-					.value("Value: " + QuantityFormatter.quantityToRSDecimalStack(value))
+					.name(item.getName())
+					.value("Value: " + StackFormatter.quantityToRSDecimalStack(value))
 					.inline(true)
 					.build());
 			}
@@ -587,6 +585,7 @@ public class PlayerScouter extends Plugin
 
 		message(name, icon, image, fieldList, color);
 		player.setScouted(true);
+		fieldList.clear();
 	}
 
 	private void message(String name, String iconUrl, ThumbnailEmbed thumbnail, List<FieldEmbed> fields, String color)
@@ -602,24 +601,25 @@ public class PlayerScouter extends Plugin
 
 		final Date currentTime = new Date(System.currentTimeMillis());
 
-		DiscordEmbed discordEmbed = new DiscordEmbed(
-			AuthorEmbed.builder()
+		DiscordEmbed discordEmbed = DiscordEmbed.builder()
+			.author(AuthorEmbed.builder()
 				.icon_url(iconUrl)
 				.name(name)
-				.build(),
-			thumbnail,
-			" ",
-			FooterEmbed.builder()
+				.build())
+			.thumbnail(thumbnail)
+			.description(" ")
+			.fields(fields)
+			.footer(FooterEmbed.builder()
 				.icon_url("https://raw.githubusercontent.com/runelite/runelite/master/runelite-client/src/main/resources/net/runelite/client/plugins/hiscore/ultimate_ironman.png")
 				.text("Gabon Scouter | Time: " + SDF.format(currentTime))
-				.build(),
-			color,
-			fields
-		);
+				.build())
+			.color(color)
+			.build();
 
-		DiscordMessage discordMessage = discordEmbed.toDiscordMessage("Gabon Scouter", " ", "https://i.imgur.com/2A6dr7q.png");
-
+		DiscordMessage discordMessage = new DiscordMessage("Gabon Scouter", " ", "https://i.imgur.com/2A6dr7q.png");
+		discordMessage.getEmbeds().add(discordEmbed);
 		DISCORD_CLIENT.message(this.webhook, discordMessage);
+		fields.clear();
 	}
 
 	private String location(PlayerContainer player)

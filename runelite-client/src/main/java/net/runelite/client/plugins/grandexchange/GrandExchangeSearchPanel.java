@@ -46,7 +46,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemDefinition;
 import net.runelite.client.callback.ClientThread;
-import net.runelite.client.util.AsyncBufferedImage;
+import net.runelite.client.game.AsyncBufferedImage;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.components.IconTextField;
@@ -108,7 +108,6 @@ class GrandExchangeSearchPanel extends JPanel
 		searchBar.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		searchBar.setHoverBackgroundColor(ColorScheme.DARK_GRAY_HOVER_COLOR);
 		searchBar.addActionListener(e -> executor.execute(() -> priceLookup(false)));
-		searchBar.addClearListener(e -> updateSearch());
 
 		searchItemsPanel.setLayout(new GridBagLayout());
 		searchItemsPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -155,7 +154,7 @@ class GrandExchangeSearchPanel extends JPanel
 		executor.execute(() -> priceLookup(true));
 	}
 
-	private boolean updateSearch()
+	private void priceLookup(boolean exactMatch)
 	{
 		String lookup = searchBar.getText();
 
@@ -163,7 +162,7 @@ class GrandExchangeSearchPanel extends JPanel
 		{
 			searchItemsPanel.removeAll();
 			SwingUtilities.invokeLater(searchItemsPanel::updateUI);
-			return false;
+			return;
 		}
 
 		// Input is not empty, add searching label
@@ -171,17 +170,8 @@ class GrandExchangeSearchPanel extends JPanel
 		searchBar.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		searchBar.setEditable(false);
 		searchBar.setIcon(IconTextField.Icon.LOADING);
-		return true;
-	}
 
-	private void priceLookup(boolean exactMatch)
-	{
-		if (!updateSearch())
-		{
-			return;
-		}
-
-		List<ItemPrice> result = itemManager.search(searchBar.getText());
+		List<ItemPrice> result = itemManager.search(lookup);
 		if (result.isEmpty())
 		{
 			searchBar.setIcon(IconTextField.Icon.ERROR);
@@ -192,7 +182,7 @@ class GrandExchangeSearchPanel extends JPanel
 		}
 
 		// move to client thread to lookup item composition
-		clientThread.invokeLater(() -> processResult(result, searchBar.getText(), exactMatch));
+		clientThread.invokeLater(() -> processResult(result, lookup, exactMatch));
 	}
 
 	private void processResult(List<ItemPrice> result, String lookup, boolean exactMatch)

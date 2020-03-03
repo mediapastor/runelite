@@ -193,7 +193,6 @@ public class Renamer implements Deobfuscator
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void run(ClassGroup group)
 	{
 		group.buildClassGraph();

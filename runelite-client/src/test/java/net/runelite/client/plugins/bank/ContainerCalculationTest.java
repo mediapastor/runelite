@@ -81,13 +81,11 @@ public class ContainerCalculationTest
 			.thenReturn(7); // 7 * .6 = 4, 4 * 1m overflows
 		when(itemManager.getItemDefinition(ItemID.ABYSSAL_WHIP))
 			.thenReturn(whipComp);
-		when(itemManager.getItemPrice(ItemID.ABYSSAL_WHIP))
-			.thenReturn(3); // 1b * 3 overflows
 
 		final ContainerPrices prices = containerCalculation.calculate(items);
 		assertNotNull(prices);
 
-		assertTrue(prices.getHighAlchPrice() > Integer.MAX_VALUE);
-		assertTrue(prices.getGePrice() > Integer.MAX_VALUE);
+		long value = prices.getHighAlchPrice();
+		assertTrue(value > Integer.MAX_VALUE);
 	}
 }

@@ -42,6 +42,7 @@ import net.runelite.api.NullObjectID;
 import net.runelite.api.ObjectID;
 import net.runelite.api.SpriteID;
 import net.runelite.api.WallObject;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameObjectChanged;
 import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
@@ -54,8 +55,7 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -125,6 +125,9 @@ public class BarrowsPlugin extends Plugin
 	@Inject
 	private BarrowsConfig config;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Provides
 	BarrowsConfig provideConfig(ConfigManager configManager)
 	{
@@ -147,6 +150,7 @@ public class BarrowsPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(barrowsOverlay);
 		overlayManager.add(brotherOverlay);
@@ -155,6 +159,8 @@ public class BarrowsPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(barrowsOverlay);
 		overlayManager.remove(brotherOverlay);
 		walls.clear();
@@ -177,7 +183,19 @@ public class BarrowsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(WallObjectSpawned.class, this, this::onWallObjectSpawned);
+		eventBus.subscribe(WallObjectChanged.class, this, this::onWallObjectChanged);
+		eventBus.subscribe(WallObjectDespawned.class, this, this::onWallObjectDespawned);
+		eventBus.subscribe(GameObjectSpawned.class, this, this::onGameObjectSpawned);
+		eventBus.subscribe(GameObjectChanged.class, this, this::onGameObjectChanged);
+		eventBus.subscribe(GameObjectDespawned.class, this, this::onGameObjectDespawned);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("barrows"))
@@ -201,7 +219,6 @@ public class BarrowsPlugin extends Plugin
 		this.showPrayerDrainTimer = config.showPrayerDrainTimer();
 	}
 
-	@Subscribe
 	private void onWallObjectSpawned(WallObjectSpawned event)
 	{
 		WallObject wallObject = event.getWallObject();
@@ -211,7 +228,6 @@ public class BarrowsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWallObjectChanged(WallObjectChanged event)
 	{
 		WallObject previous = event.getPrevious();
@@ -224,14 +240,12 @@ public class BarrowsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWallObjectDespawned(WallObjectDespawned event)
 	{
 		WallObject wallObject = event.getWallObject();
 		walls.remove(wallObject);
 	}
 
-	@Subscribe
 	private void onGameObjectSpawned(GameObjectSpawned event)
 	{
 		GameObject gameObject = event.getGameObject();
@@ -241,7 +255,6 @@ public class BarrowsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameObjectChanged(GameObjectChanged event)
 	{
 		GameObject previous = event.getPrevious();
@@ -254,14 +267,12 @@ public class BarrowsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameObjectDespawned(GameObjectDespawned event)
 	{
 		GameObject gameObject = event.getGameObject();
 		ladders.remove(gameObject);
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() == GameState.LOADING)
@@ -286,7 +297,6 @@ public class BarrowsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWidgetLoaded(WidgetLoaded event)
 	{
 		if (event.getGroupId() == WidgetID.BARROWS_PUZZLE_GROUP_ID)

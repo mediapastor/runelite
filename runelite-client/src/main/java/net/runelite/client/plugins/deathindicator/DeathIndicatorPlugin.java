@@ -30,34 +30,20 @@ import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
-import net.runelite.api.ItemDefinition;
 import net.runelite.api.ItemID;
-import net.runelite.api.MenuEntry;
-import net.runelite.api.MenuOpcode;
-import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.events.ItemDespawned;
-import net.runelite.api.events.MenuEntryAdded;
-import net.runelite.api.events.MenuOpened;
-import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.events.PlayerDeath;
-import net.runelite.api.events.PostItemDefinition;
-import net.runelite.api.util.Text;
-import net.runelite.client.callback.ClientThread;
+import net.runelite.api.events.LocalPlayerDeath;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -75,12 +61,7 @@ import net.runelite.client.util.ImageUtil;
 @Slf4j
 public class DeathIndicatorPlugin extends Plugin
 {
-	private static final Object BONES = new Object();
-	// A random number, that jagex probably won't actually use in the near future
-	static final int HIJACKED_ITEMID = 0x69696969;
-
 	private static final Set<Integer> RESPAWN_REGIONS = ImmutableSet.of(
-		6457, // Kourend
 		12850, // Lumbridge
 		11828, // Falador
 		12342, // Edgeville
@@ -107,14 +88,6 @@ public class DeathIndicatorPlugin extends Plugin
 	@Inject
 	private EventBus eventBus;
 
-	@Inject
-	private ConfigManager configManager;
-
-	@Inject
-	private ClientThread clientThread;
-
-	private final Bones bones = new Bones();
-
 	private BufferedImage mapArrow;
 
 	private Timer deathTimer;
@@ -122,7 +95,6 @@ public class DeathIndicatorPlugin extends Plugin
 	private WorldPoint lastDeath;
 	private Instant lastDeathTime;
 	private int lastDeathWorld;
-	private int despawnIdx = 0;
 
 	@Provides
 	DeathIndicatorConfig deathIndicatorConfig(ConfigManager configManager)
@@ -133,10 +105,7 @@ public class DeathIndicatorPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
-		if (config.permaBones())
-		{
-			addBoneSubs();
-		}
+		addSubscriptions();
 
 		if (!hasDied())
 		{
@@ -160,17 +129,12 @@ public class DeathIndicatorPlugin extends Plugin
 			worldMapPointManager.removeIf(DeathWorldMapPoint.class::isInstance);
 			worldMapPointManager.add(new DeathWorldMapPoint(new WorldPoint(config.deathLocationX(), config.deathLocationY(), config.deathLocationPlane()), this));
 		}
-
-		if (config.permaBones() && client.getGameState() == GameState.LOGGED_IN)
-		{
-			clientThread.invokeLater(this::initBones);
-		}
 	}
 
 	@Override
 	protected void shutDown()
 	{
-		eventBus.unregister(BONES);
+		eventBus.unregister(this);
 
 		if (client.hasHintArrow())
 		{
@@ -184,135 +148,28 @@ public class DeathIndicatorPlugin extends Plugin
 		}
 
 		worldMapPointManager.removeIf(DeathWorldMapPoint.class::isInstance);
-
-		clientThread.invokeLater(this::clearBones);
 	}
 
-	private void initBones()
+	private void addSubscriptions()
 	{
-		bones.init(client, configManager);
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(LocalPlayerDeath.class, this, this::onLocalPlayerDeath);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
 	}
 
-	private void clearBones()
-	{
-		bones.clear(client.getScene());
-	}
-
-	private void addBoneSubs()
-	{
-		eventBus.subscribe(ItemDespawned.class, BONES, this::onItemDespawn);
-		eventBus.subscribe(MenuEntryAdded.class, BONES, this::onMenuEntryAdded);
-		eventBus.subscribe(MenuOptionClicked.class, BONES, this::onMenuOptionClicked);
-		eventBus.subscribe(MenuOpened.class, BONES, this::onMenuOpened);
-		eventBus.subscribe(PostItemDefinition.class, BONES, this::onPostItemDefinition);
-	}
-
-	private void onPostItemDefinition(PostItemDefinition def)
-	{
-		ItemDefinition itemDef = def.getItemDefinition();
-		if (itemDef.getId() == HIJACKED_ITEMID)
-		{
-			itemDef.setModelOverride(ItemID.BONES);
-			itemDef.setName("Bones");
-			// This is so never hide untradeables doesn't not hide it
-			itemDef.setTradeable(true);
-		}
-	}
-
-	@Subscribe
-	private void onPlayerDeath(PlayerDeath death)
+	private void onLocalPlayerDeath(LocalPlayerDeath death)
 	{
 		if (client.isInInstancedRegion())
 		{
 			return;
 		}
 
-		final Player player = death.getPlayer();
-
-		if (config.permaBones() && player.getWorldLocation().getRegionID() != 13362)
-		{
-			newBoneFor(player);
-		}
-
-		if (player != client.getLocalPlayer())
-		{
-			return;
-		}
-
-		lastDeath = player.getWorldLocation();
+		lastDeath = client.getLocalPlayer().getWorldLocation();
 		lastDeathWorld = client.getWorld();
 		lastDeathTime = Instant.now();
 	}
 
-	private void newBoneFor(Player player)
-	{
-		Bone b = new Bone();
-
-		b.setName(Text.sanitize(player.getName()));
-		b.setTime(Instant.now());
-		b.setLoc(player.getWorldLocation());
-
-		while (!bones.add(b))
-		{
-			initBones();
-		}
-
-		b.addToScene(client.getScene());
-		bones.save(configManager, b.getLoc().getRegionID());
-	}
-
-	private void onMenuEntryAdded(MenuEntryAdded event)
-	{
-		if (event.getIdentifier() == HIJACKED_ITEMID)
-		{
-			if (event.getOpcode() == MenuOpcode.GROUND_ITEM_THIRD_OPTION.getId())
-			{
-				client.setMenuOptionCount(client.getMenuOptionCount() - 1);
-			}
-		}
-	}
-
-	private void onMenuOpened(MenuOpened event)
-	{
-		int idx = 0;
-
-		for (MenuEntry entry : event)
-		{
-			if (entry.getIdentifier() != HIJACKED_ITEMID)
-			{
-				continue;
-			}
-
-			// Only entries with appropriate identifier here will be examine so that's easy
-			// Add idx to id field, so we can find that back from clicked event
-			entry.setIdentifier(HIJACKED_ITEMID + idx);
-
-			Bone bone = bones.get(
-				WorldPoint.fromScene(client, entry.getParam0(), entry.getParam1(), client.getPlane()),
-				idx++
-			);
-
-			entry.setTarget(bone.getName());
-			event.setModified();
-		}
-	}
-
-	private void onMenuOptionClicked(MenuOptionClicked event)
-	{
-		if (event.getIdentifier() >= HIJACKED_ITEMID
-			&& event.getOpcode() == MenuOpcode.EXAMINE_ITEM_GROUND.getId())
-		{
-			Bone b = bones.get(
-				WorldPoint.fromScene(client, event.getParam0(), event.getParam1(), client.getPlane()),
-				event.getIdentifier() - HIJACKED_ITEMID
-			);
-
-			client.addChatMessage(ChatMessageType.ITEM_EXAMINE, "", b.getExamine(), "");
-			event.consume();
-		}
-	}
-
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		// Check if player respawned in a death respawn location
@@ -377,33 +234,10 @@ public class DeathIndicatorPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("deathIndicator"))
 		{
-			if ("permaBones".equals(event.getKey()))
-			{
-				if (config.permaBones())
-				{
-					addBoneSubs();
-
-					if (client.getGameState() == GameState.LOGGED_IN)
-					{
-						clientThread.invokeLater(this::initBones);
-					}
-				}
-				else
-				{
-					eventBus.unregister(BONES);
-
-					if (client.getGameState() == GameState.LOGGED_IN)
-					{
-						clientThread.invokeLater(this::clearBones);
-					}
-				}
-				return;
-			}
 			if (!config.showDeathHintArrow() && hasDied())
 			{
 				client.clearHintArrow();
@@ -431,64 +265,34 @@ public class DeathIndicatorPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
-		switch (event.getGameState())
+		if (!hasDied())
 		{
-			case LOADING:
-				clearBones();
-				break;
-			case LOGGED_IN:
-				if (config.permaBones())
-				{
-					initBones();
-				}
-
-				if (!hasDied())
-				{
-					return;
-				}
-
-				if (client.getWorld() == config.deathWorld())
-				{
-					WorldPoint deathPoint = new WorldPoint(config.deathLocationX(), config.deathLocationY(), config.deathLocationPlane());
-
-					if (config.showDeathHintArrow())
-					{
-						client.setHintArrow(deathPoint);
-					}
-
-					if (config.showDeathOnWorldMap())
-					{
-						worldMapPointManager.removeIf(DeathWorldMapPoint.class::isInstance);
-						worldMapPointManager.add(new DeathWorldMapPoint(deathPoint, this));
-					}
-				}
-				else
-				{
-					worldMapPointManager.removeIf(DeathWorldMapPoint.class::isInstance);
-				}
-				break;
+			return;
 		}
 
-	}
-
-	private void onItemDespawn(ItemDespawned event)
-	{
-		if (event.getItem().getId() == HIJACKED_ITEMID)
+		if (event.getGameState() == GameState.LOGGED_IN)
 		{
-			List<Bone> list = bones.get(event.getTile().getWorldLocation());
-			if (list == null)
+			if (client.getWorld() == config.deathWorld())
 			{
-				return;
+				WorldPoint deathPoint = new WorldPoint(config.deathLocationX(), config.deathLocationY(), config.deathLocationPlane());
+
+				if (config.showDeathHintArrow())
+				{
+					client.setHintArrow(deathPoint);
+				}
+
+				if (config.showDeathOnWorldMap())
+				{
+					worldMapPointManager.removeIf(DeathWorldMapPoint.class::isInstance);
+					worldMapPointManager.add(new DeathWorldMapPoint(deathPoint, this));
+				}
 			}
-			if (list.size() <= despawnIdx)
+			else
 			{
-				despawnIdx = 0;
+				worldMapPointManager.removeIf(DeathWorldMapPoint.class::isInstance);
 			}
-			Bone bone = list.get(despawnIdx++);
-			bone.addToScene(client.getScene());
 		}
 	}
 

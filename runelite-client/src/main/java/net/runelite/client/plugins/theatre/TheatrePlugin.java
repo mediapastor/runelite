@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GroundObjectSpawned;
 import net.runelite.api.events.NpcDefinitionChanged;
@@ -30,8 +31,6 @@ import net.runelite.api.events.SpotAnimationChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.graphics.ModelOutlineRenderer;
 import net.runelite.client.menus.MenuManager;
@@ -120,10 +119,11 @@ public class TheatrePlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 		room = TheatreRoom.UNKNOWN;
 		maidenHandler = new MaidenHandler(client, this, modelOutline);
 		bloatHandler = new BloatHandler(client, this);
-		nyloHandler = new NyloHandler(client, this, menuManager, eventBus);
+		nyloHandler = new NyloHandler(client, this, menuManager, itemManager, eventBus);
 		sotetsegHandler = new SotetsegHandler(client, this);
 		xarpusHandler = new XarpusHandler(client, this);
 		verzikHandler = new VerzikHandler(client, this);
@@ -133,6 +133,7 @@ public class TheatrePlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
 		maidenHandler.onStop();
 		maidenHandler = null;
 		bloatHandler.onStop();
@@ -150,7 +151,22 @@ public class TheatrePlugin extends Plugin
 		overlayManager.remove(overlay);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(AnimationChanged.class, this, this::onAnimationChanged);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(GroundObjectSpawned.class, this, this::onGroundObjectSpawned);
+		eventBus.subscribe(NpcDefinitionChanged.class, this, this::onNpcDefinitionChanged);
+		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+		eventBus.subscribe(NpcSpawned.class, this, this::onNpcSpawned);
+		eventBus.subscribe(ProjectileMoved.class, this, this::onProjectileMoved);
+		eventBus.subscribe(ProjectileSpawned.class, this, this::onProjectileSpawned);
+		eventBus.subscribe(SpotAnimationChanged.class, this, this::onSpotAnimationChanged);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+	}
+
 	private void onAnimationChanged(AnimationChanged event)
 	{
 		if (verzikHandler != null)
@@ -159,7 +175,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (maidenHandler != null)
@@ -168,7 +183,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("Theatre"))
@@ -182,7 +196,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (maidenHandler != null)
@@ -216,7 +229,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGroundObjectSpawned(GroundObjectSpawned event)
 	{
 		if (sotetsegHandler != null)
@@ -230,7 +242,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcDefinitionChanged(NpcDefinitionChanged event)
 	{
 		if (maidenHandler != null)
@@ -239,7 +250,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcDespawned(NpcDespawned event)
 	{
 		if (maidenHandler != null)
@@ -269,7 +279,6 @@ public class TheatrePlugin extends Plugin
 
 	}
 
-	@Subscribe
 	private void onNpcSpawned(NpcSpawned event)
 	{
 		if (maidenHandler != null)
@@ -304,7 +313,6 @@ public class TheatrePlugin extends Plugin
 
 	}
 
-	@Subscribe
 	private void onProjectileMoved(ProjectileMoved event)
 	{
 		if (verzikHandler != null)
@@ -313,7 +321,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onProjectileSpawned(ProjectileSpawned event)
 	{
 		if (sotetsegHandler != null)
@@ -323,7 +330,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onSpotAnimationChanged(SpotAnimationChanged event)
 	{
 		if (maidenHandler != null)
@@ -332,7 +338,6 @@ public class TheatrePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged event)
 	{
 		if (bloatHandler != null)

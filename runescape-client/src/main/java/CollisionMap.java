@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.IOException;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
@@ -9,31 +7,31 @@ import net.runelite.mapping.ObfuscatedSignature;
 @ObfuscatedName("fm")
 @Implements("CollisionMap")
 public class CollisionMap {
-	@ObfuscatedName("av")
+	@ObfuscatedName("at")
 	@ObfuscatedGetter(
-		intValue = 1716548279
+		intValue = 379779745
 	)
 	@Export("xInset")
-	int xInset;
-	@ObfuscatedName("am")
+	public int xInset;
+	@ObfuscatedName("as")
 	@ObfuscatedGetter(
-		intValue = 100209491
+		intValue = 899493249
 	)
 	@Export("yInset")
-	int yInset;
-	@ObfuscatedName("ab")
+	public int yInset;
+	@ObfuscatedName("ak")
 	@ObfuscatedGetter(
-		intValue = -1893583227
+		intValue = -67571785
 	)
 	@Export("xSize")
 	int xSize;
-	@ObfuscatedName("ax")
+	@ObfuscatedName("ao")
 	@ObfuscatedGetter(
-		intValue = 430347067
+		intValue = 1623106677
 	)
 	@Export("ySize")
 	int ySize;
-	@ObfuscatedName("al")
+	@ObfuscatedName("ac")
 	@Export("flags")
 	public int[][] flags;
 
@@ -46,10 +44,10 @@ public class CollisionMap {
 		this.clear();
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "-418924176"
+		signature = "(S)V",
+		garbageValue = "8482"
 	)
 	@Export("clear")
 	public void clear() {
@@ -65,12 +63,12 @@ public class CollisionMap {
 
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(IIIIZI)V",
-		garbageValue = "-622707761"
+		signature = "(IIIIZB)V",
+		garbageValue = "-37"
 	)
-	public void method3685(int var1, int var2, int var3, int var4, boolean var5) {
+	public void method3495(int var1, int var2, int var3, int var4, boolean var5) {
 		var1 -= this.xInset;
 		var2 -= this.yInset;
 		if (var3 == 0) {
@@ -217,10 +215,10 @@ public class CollisionMap {
 
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(IIIIZS)V",
-		garbageValue = "463"
+		signature = "(IIIIZI)V",
+		garbageValue = "-1939556917"
 	)
 	@Export("addGameObject")
 	public void addGameObject(int var1, int var2, int var3, int var4, boolean var5) {
@@ -244,10 +242,10 @@ public class CollisionMap {
 
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
 		signature = "(III)V",
-		garbageValue = "-712245850"
+		garbageValue = "-2081310668"
 	)
 	@Export("setBlockedByFloor")
 	public void setBlockedByFloor(int var1, int var2) {
@@ -257,10 +255,10 @@ public class CollisionMap {
 		var10000[var2] |= 2097152;
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
-		signature = "(III)V",
-		garbageValue = "1787525972"
+		signature = "(IIS)V",
+		garbageValue = "5864"
 	)
 	@Export("setBlockedByFloorDec")
 	public void setBlockedByFloorDec(int var1, int var2) {
@@ -270,10 +268,10 @@ public class CollisionMap {
 		var10000[var2] |= 262144;
 	}
 
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(IIII)V",
-		garbageValue = "-1353999324"
+		signature = "(IIIB)V",
+		garbageValue = "79"
 	)
 	@Export("setFlag")
 	void setFlag(int var1, int var2, int var3) {
@@ -281,12 +279,12 @@ public class CollisionMap {
 		var10000[var2] |= var3;
 	}
 
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
 		signature = "(IIIIZI)V",
-		garbageValue = "343029197"
+		garbageValue = "1397124488"
 	)
-	public void method3690(int var1, int var2, int var3, int var4, boolean var5) {
+	public void method3497(int var1, int var2, int var3, int var4, boolean var5) {
 		var1 -= this.xInset;
 		var2 -= this.yInset;
 		if (var3 == 0) {
@@ -433,10 +431,10 @@ public class CollisionMap {
 
 	}
 
-	@ObfuscatedName("o")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
 		signature = "(IIIIIZB)V",
-		garbageValue = "16"
+		garbageValue = "25"
 	)
 	@Export("setFlagOffNonSquare")
 	public void setFlagOffNonSquare(int var1, int var2, int var3, int var4, int var5, boolean var6) {
@@ -466,10 +464,10 @@ public class CollisionMap {
 
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@ObfuscatedSignature(
 		signature = "(IIII)V",
-		garbageValue = "-840002361"
+		garbageValue = "1656686360"
 	)
 	@Export("setFlagOff")
 	void setFlagOff(int var1, int var2, int var3) {
@@ -479,54 +477,35 @@ public class CollisionMap {
 
 	@ObfuscatedName("d")
 	@ObfuscatedSignature(
-		signature = "(IIS)V",
-		garbageValue = "-31094"
+		signature = "(III)V",
+		garbageValue = "-1414783341"
 	)
-	public void method3693(int var1, int var2) {
+	public void method3527(int var1, int var2) {
 		var1 -= this.xInset;
 		var2 -= this.yInset;
 		int[] var10000 = this.flags[var1];
 		var10000[var2] &= -262145;
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;Ljava/lang/String;ZI)Lmh;",
-		garbageValue = "1385178219"
+		signature = "(Lhz;I)V",
+		garbageValue = "-1914788069"
 	)
-	@Export("getPreferencesFile")
-	public static AccessFile getPreferencesFile(String var0, String var1, boolean var2) {
-		File var3 = new File(JagexCache.cacheDir, "preferences" + var0 + ".dat");
-		if (var3.exists()) {
-			try {
-				AccessFile var10 = new AccessFile(var3, "rw", 10000L);
-				return var10;
-			} catch (IOException var9) {
-			}
-		}
+	@Export("FloorUnderlayDefinition_setArchives")
+	public static void FloorUnderlayDefinition_setArchives(AbstractArchive var0) {
+		FloorUnderlayDefinition.FloorUnderlayDefinition_archive = var0;
+	}
 
-		String var4 = "";
-		if (class189.cacheGamebuild == 33) {
-			var4 = "_rc";
-		} else if (class189.cacheGamebuild == 34) {
-			var4 = "_wip";
-		}
-
-		File var5 = new File(class30.userHomeDirectory, "jagex_" + var1 + "_preferences" + var0 + var4 + ".dat");
-		AccessFile var6;
-		if (!var2 && var5.exists()) {
-			try {
-				var6 = new AccessFile(var5, "rw", 10000L);
-				return var6;
-			} catch (IOException var8) {
-			}
-		}
-
-		try {
-			var6 = new AccessFile(var3, "rw", 10000L);
-			return var6;
-		} catch (IOException var7) {
-			throw new RuntimeException();
+	@ObfuscatedName("js")
+	@ObfuscatedSignature(
+		signature = "(IS)V",
+		garbageValue = "-3946"
+	)
+	@Export("drawInterfaceModelComponents")
+	static final void drawInterfaceModelComponents(int var0) {
+		if (Projectile.loadInterface(var0)) {
+			Tile.drawModelComponents(Widget.Widget_interfaceComponents[var0], -1);
 		}
 	}
 }

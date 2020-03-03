@@ -123,10 +123,11 @@ public class NpcStatsDumper
 		return templates;
 	}
 
-	public static void dump(final Store store, final MediaWiki wiki, final File path) throws IOException
+	public static void dump(final Store store, final MediaWiki wiki) throws IOException
 	{
+		final File out = new File("../runelite-client/src/main/resources/");
 
-		log.info("Dumping npc stats to {}", path);
+		log.info("Dumping npc stats to {}", out);
 
 		final NpcManager npcManager = new NpcManager(store);
 		npcManager.load();
@@ -245,7 +246,7 @@ public class NpcStatsDumper
 		// Cast to TreeMap so sort output JSON in numerical order (npc id)
 		final Map<Integer, NpcStats> sorted = new TreeMap<>(npcStats);
 
-		try (FileWriter fw = new FileWriter(new File(path, "npc_stats.json")))
+		try (FileWriter fw = new FileWriter(new File(out, "npc_stats.json")))
 		{
 			fw.write(App.GSON.toJson(sorted));
 		}
@@ -260,7 +261,7 @@ public class NpcStatsDumper
 
 	private static boolean isAttackableNpc(final NpcDefinition n)
 	{
-		for (final String s : n.getActions())
+		for (final String s : n.getOptions())
 		{
 			if ("attack".equalsIgnoreCase(s))
 			{

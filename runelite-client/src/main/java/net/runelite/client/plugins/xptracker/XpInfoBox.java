@@ -44,8 +44,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.api.Client;
@@ -59,7 +57,7 @@ import net.runelite.client.ui.SkillColor;
 import net.runelite.client.ui.components.ProgressBar;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.LinkBrowser;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 
 class XpInfoBox extends JPanel
 {
@@ -152,24 +150,6 @@ class XpInfoBox extends JPanel
 		popupMenu.add(resetOthers);
 		popupMenu.add(pauseSkill);
 		popupMenu.add(canvasItem);
-		popupMenu.addPopupMenuListener(new PopupMenuListener()
-		{
-			@Override
-			public void popupMenuWillBecomeVisible(PopupMenuEvent popupMenuEvent)
-			{
-				canvasItem.setText(xpTrackerPlugin.hasOverlay(skill) ? REMOVE_STATE : ADD_STATE);
-			}
-
-			@Override
-			public void popupMenuWillBecomeInvisible(PopupMenuEvent popupMenuEvent)
-			{
-			}
-
-			@Override
-			public void popupMenuCanceled(PopupMenuEvent popupMenuEvent)
-			{
-			}
-		});
 
 		skillWrapper.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		skillWrapper.setLayout(new BorderLayout());
@@ -180,10 +160,12 @@ class XpInfoBox extends JPanel
 			if (canvasItem.getText().equals(REMOVE_STATE))
 			{
 				xpTrackerPlugin.removeOverlay(skill);
+				canvasItem.setText(ADD_STATE);
 			}
 			else
 			{
 				xpTrackerPlugin.addOverlay(skill);
+				canvasItem.setText(REMOVE_STATE);
 			}
 		});
 
@@ -364,7 +346,7 @@ class XpInfoBox extends JPanel
 
 	static String htmlLabel(String key, int value)
 	{
-		String valueStr = QuantityFormatter.quantityToRSDecimalStack(value, true);
+		String valueStr = StackFormatter.quantityToRSDecimalStack(value, true);
 		return String.format(HTML_LABEL_TEMPLATE, ColorUtil.toHexColor(ColorScheme.LIGHT_GRAY_COLOR), key, valueStr);
 	}
 }

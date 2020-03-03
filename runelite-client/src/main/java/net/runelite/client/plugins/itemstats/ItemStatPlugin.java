@@ -47,6 +47,7 @@ import net.runelite.api.ItemID;
 import net.runelite.api.SpriteID;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.events.VarbitChanged;
@@ -57,15 +58,14 @@ import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.JagexColors;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 import net.runelite.http.api.item.ItemEquipmentStats;
 import net.runelite.http.api.item.ItemStats;
 
@@ -97,6 +97,9 @@ public class ItemStatPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
+
+	@Inject
+	private EventBus eventBus;
 
 	private Widget itemInformationTitle;
 
@@ -140,17 +143,27 @@ public class ItemStatPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 		overlayManager.add(overlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 		clientThread.invokeLater(this::resetGEInventory);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+		eventBus.subscribe(ScriptCallbackEvent.class, this, this::onScriptCallbackEvent);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getKey().equals("geStats"))
@@ -160,7 +173,6 @@ public class ItemStatPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (itemInformationTitle != null && this.geStats
@@ -172,7 +184,6 @@ public class ItemStatPlugin extends Plugin
 	}
 
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged event)
 	{
 		if (client.getVar(VarPlayer.CURRENT_GE_ITEM) == -1 && this.geStats)
@@ -181,7 +192,6 @@ public class ItemStatPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onScriptCallbackEvent(ScriptCallbackEvent event)
 	{
 		if (event.getEventName().equals("geBuilt") && this.geStats)
@@ -366,7 +376,7 @@ public class ItemStatPlugin extends Plugin
 
 		createSeparator(invContainer, invContainer.getHeight() - 40);
 
-		final String coinText = "You have " + QuantityFormatter.quantityToStackSize(getCurrentGP())
+		final String coinText = "You have " + StackFormatter.quantityToRSStackSize(getCurrentGP())
 			+ (getCurrentGP() == 1 ? " coin." : " coins.");
 
 		final Widget coinWidget = createText(invContainer, coinText, FontID.PLAIN_12, ORANGE_TEXT,
@@ -376,7 +386,7 @@ public class ItemStatPlugin extends Plugin
 	}
 
 	private static Widget createText(Widget parent, String text, int fontId, int textColor,
-		int x, int y, int width, int height)
+									int x, int y, int width, int height)
 	{
 		final Widget widget = parent.createChild(-1, WidgetType.TEXT);
 		widget.setText(text);

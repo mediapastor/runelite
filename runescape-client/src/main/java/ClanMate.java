@@ -3,18 +3,18 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("jn")
+@ObfuscatedName("jr")
 @Implements("ClanMate")
 public class ClanMate extends Buddy {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Ljs;"
+		signature = "Ljj;"
 	)
 	@Export("friend")
 	TriBool friend;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Ljs;"
+		signature = "Ljj;"
 	)
 	@Export("ignored")
 	TriBool ignored;
@@ -24,20 +24,20 @@ public class ClanMate extends Buddy {
 		this.ignored = TriBool.TriBool_unknown;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "1787297671"
+		garbageValue = "1629200475"
 	)
 	@Export("clearIsFriend")
 	void clearIsFriend() {
 		this.friend = TriBool.TriBool_unknown;
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
 		signature = "(I)Z",
-		garbageValue = "2015099973"
+		garbageValue = "-431370449"
 	)
 	@Export("isFriend")
 	public final boolean isFriend() {
@@ -48,30 +48,30 @@ public class ClanMate extends Buddy {
 		return this.friend == TriBool.TriBool_true;
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "36"
+		signature = "(I)V",
+		garbageValue = "-2053877048"
 	)
 	@Export("fillIsFriend")
 	void fillIsFriend() {
-		this.friend = PacketWriter.friendSystem.friendsList.contains(super.username) ? TriBool.TriBool_true : TriBool.TriBool_false;
+		this.friend = class32.friendSystem.friendsList.contains(super.username) ? TriBool.TriBool_true : TriBool.TriBool_false;
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
 		signature = "(B)V",
-		garbageValue = "-59"
+		garbageValue = "-72"
 	)
 	@Export("clearIsIgnored")
 	void clearIsIgnored() {
 		this.ignored = TriBool.TriBool_unknown;
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
-		signature = "(B)Z",
-		garbageValue = "-8"
+		signature = "(I)Z",
+		garbageValue = "1045653770"
 	)
 	@Export("isIgnored")
 	public final boolean isIgnored() {
@@ -82,26 +82,23 @@ public class ClanMate extends Buddy {
 		return this.ignored == TriBool.TriBool_true;
 	}
 
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "-1162251482"
+		garbageValue = "-1531975898"
 	)
 	@Export("fillIsIgnored")
 	void fillIsIgnored() {
-		this.ignored = PacketWriter.friendSystem.ignoreList.contains(super.username) ? TriBool.TriBool_true : TriBool.TriBool_false;
+		this.ignored = class32.friendSystem.ignoreList.contains(super.username) ? TriBool.TriBool_true : TriBool.TriBool_false;
 	}
 
-	@ObfuscatedName("lx")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "([BIB)V",
-		garbageValue = "81"
+		signature = "(CB)Z",
+		garbageValue = "96"
 	)
-	static void method5151(byte[] var0, int var1) {
-		if (Client.randomDatData == null) {
-			Client.randomDatData = new byte[24];
-		}
-
-		class300.writeRandomDat(var0, var1, Client.randomDatData, 0, 24);
+	@Export("isCharAlphabetic")
+	public static boolean isCharAlphabetic(char var0) {
+		return var0 >= 'A' && var0 <= 'Z' || var0 >= 'a' && var0 <= 'z';
 	}
 }

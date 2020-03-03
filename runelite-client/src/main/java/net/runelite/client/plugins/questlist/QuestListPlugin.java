@@ -47,7 +47,6 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.events.VarClientIntChanged;
 import net.runelite.api.events.VarbitChanged;
-import net.runelite.api.util.Text;
 import net.runelite.api.vars.InterfaceTab;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
@@ -55,11 +54,12 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.game.chatbox.ChatboxTextInput;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.api.util.Text;
 
 @PluginDescriptor(
 	name = "Quest List",
@@ -88,6 +88,9 @@ public class QuestListPlugin extends Plugin
 	@Inject
 	private ClientThread clientThread;
 
+	@Inject
+	private EventBus eventBus;
+
 	private ChatboxTextInput searchInput;
 	private Widget questSearchButton;
 	private Widget questHideButton;
@@ -99,12 +102,15 @@ public class QuestListPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
+		addSubscriptions();
 		clientThread.invoke(this::addQuestButtons);
 	}
 
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
+
 		Widget header = client.getWidget(WidgetInfo.QUESTLIST_BOX);
 		if (header != null)
 		{
@@ -112,7 +118,14 @@ public class QuestListPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(ScriptCallbackEvent.class, this, this::onScriptCallbackEvent);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+		eventBus.subscribe(VarClientIntChanged.class, this, this::onVarClientIntChanged);
+	}
+
 	private void onGameStateChanged(GameStateChanged e)
 	{
 		if (e.getGameState() == GameState.LOGGING_IN)
@@ -121,7 +134,6 @@ public class QuestListPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onScriptCallbackEvent(ScriptCallbackEvent event)
 	{
 		if (!event.getEventName().equals("questProgressUpdated"))
@@ -171,7 +183,6 @@ public class QuestListPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged varbitChanged)
 	{
 		if (isChatboxOpen() && isNotOnQuestTab())
@@ -180,7 +191,6 @@ public class QuestListPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onVarClientIntChanged(VarClientIntChanged varClientIntChanged)
 	{
 		if (varClientIntChanged.getIndex() == VarClientInt.INTERFACE_TAB.getIndex() && isChatboxOpen() && isNotOnQuestTab())

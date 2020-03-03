@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, https://openosrs.com
+ * Copyright (c) 2018, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import lombok.AccessLevel;
-import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -45,13 +43,12 @@ public class AntiDragOverlay extends Overlay
 	private static final int RADIUS = 20;
 
 	private final Client client;
-
-	@Setter(AccessLevel.PACKAGE)
-	private Color color;
+	private final AntiDragPlugin plugin;
 
 	@Inject
-	private AntiDragOverlay(final Client client)
+	private AntiDragOverlay(final Client client, final AntiDragPlugin plugin)
 	{
+		this.plugin = plugin;
 		this.client = client;
 		setPosition(OverlayPosition.TOOLTIP);
 		setPriority(OverlayPriority.HIGHEST);
@@ -61,6 +58,7 @@ public class AntiDragOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D g)
 	{
+		final Color color = plugin.getColor();
 		g.setColor(color);
 
 		final net.runelite.api.Point mouseCanvasPosition = client.getMouseCanvasPosition();

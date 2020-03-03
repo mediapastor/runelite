@@ -45,25 +45,24 @@ import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Experience;
 import net.runelite.api.GameState;
-import net.runelite.api.MenuEntry;
 import net.runelite.api.MenuOpcode;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.WorldType;
+import net.runelite.api.events.ConfigChanged;
+import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NpcDespawned;
-import net.runelite.api.events.StatChanged;
-import net.runelite.api.util.Text;
 import net.runelite.api.widgets.WidgetID;
 import static net.runelite.api.widgets.WidgetInfo.TO_GROUP;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.NPCManager;
 import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.plugins.Plugin;
@@ -74,6 +73,7 @@ import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.api.util.Text;
 import net.runelite.http.api.xp.XpClient;
 
 @PluginDescriptor(
@@ -118,6 +118,9 @@ public class XpTrackerPlugin extends Plugin
 	@Inject
 	private OverlayManager overlayManager;
 
+	@Inject
+	private EventBus eventBus;
+
 	private NavigationButton navButton;
 	@Setter(AccessLevel.PACKAGE)
 	@VisibleForTesting
@@ -159,6 +162,7 @@ public class XpTrackerPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		xpPanel = new XpPanel(this, client, skillIconManager);
 
@@ -181,12 +185,23 @@ public class XpTrackerPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
 		overlayManager.removeIf(e -> e instanceof XpInfoBoxOverlay);
 		xpState.reset();
 		clientToolbar.removeNavigation(navButton);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(ExperienceChanged.class, this, this::onExperienceChanged);
+		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+	}
+
 	void onGameStateChanged(GameStateChanged event)
 	{
 		GameState state = event.getGameState();
@@ -209,11 +224,11 @@ public class XpTrackerPlugin extends Plugin
 				fetchXp = true;
 				lastWorldType = type;
 				resetState();
-				// Must be set from hitting the LOGGING_IN or HOPPING case below
+				// Must be set from hitting the LOGGING_IN case below
 				assert initializeTracker;
 			}
 		}
-		else if (state == GameState.LOGGING_IN || state == GameState.HOPPING)
+		else if (state == GameState.LOGGING_IN)
 		{
 			initializeTracker = true;
 		}
@@ -274,17 +289,6 @@ public class XpTrackerPlugin extends Plugin
 	void removeOverlay(Skill skill)
 	{
 		overlayManager.removeIf(e -> e instanceof XpInfoBoxOverlay && ((XpInfoBoxOverlay) e).getSkill() == skill);
-	}
-
-	/**
-	 * Check if there is an overlay on the canvas for the skill.
-	 *
-	 * @param skill the skill which should have an overlay.
-	 * @return true if the skill has an overlay.
-	 */
-	boolean hasOverlay(final Skill skill)
-	{
-		return overlayManager.anyMatch(o -> o instanceof XpInfoBoxOverlay && ((XpInfoBoxOverlay) o).getSkill() == skill);
 	}
 
 	/**
@@ -356,12 +360,11 @@ public class XpTrackerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	void onStatChanged(StatChanged statChanged)
+	void onExperienceChanged(ExperienceChanged event)
 	{
-		final Skill skill = statChanged.getSkill();
-		final int currentXp = statChanged.getXp();
-		final int currentLevel = statChanged.getLevel();
+		final Skill skill = event.getSkill();
+		final int currentXp = client.getSkillExperience(skill);
+		final int currentLevel = Experience.getLevelForXp(currentXp);
 		final VarPlayer startGoal = startGoalVarpForSkill(skill);
 		final VarPlayer endGoal = endGoalVarpForSkill(skill);
 		final int startGoalXp = startGoal != null ? client.getVar(startGoal) : -1;
@@ -396,7 +399,6 @@ public class XpTrackerPlugin extends Plugin
 		xpPanel.updateTotal(xpState.getTotalSnapshot());
 	}
 
-	@Subscribe
 	private void onNpcDespawned(NpcDespawned event)
 	{
 		final NPC npc = event.getNpc();
@@ -416,7 +418,6 @@ public class XpTrackerPlugin extends Plugin
 		xpPanel.updateTotal(xpState.getTotalSnapshot());
 	}
 
-	@Subscribe
 	void onGameTick(GameTick event)
 	{
 		if (initializeTracker)
@@ -484,10 +485,9 @@ public class XpTrackerPlugin extends Plugin
 		rebuildSkills();
 	}
 
-	@Subscribe
 	private void onMenuEntryAdded(final MenuEntryAdded event)
 	{
-		int widgetID = event.getParam1();
+		int widgetID = event.getActionParam1();
 
 		if (TO_GROUP(widgetID) != WidgetID.SKILLS_GROUP_ID
 			|| !event.getOption().startsWith("View")
@@ -506,18 +506,17 @@ public class XpTrackerPlugin extends Plugin
 		MenuEntry menuEntry = menuEntries[menuEntries.length - 1] = new MenuEntry();
 		menuEntry.setTarget(skillText);
 		menuEntry.setOption(hasOverlay(skill) ? MENUOP_REMOVE_CANVAS_TRACKER : MENUOP_ADD_CANVAS_TRACKER);
-		menuEntry.setParam0(event.getParam0());
+		menuEntry.setParam0(event.getActionParam0());
 		menuEntry.setParam1(widgetID);
 		menuEntry.setOpcode(MenuOpcode.RUNELITE.getId());
 
 		client.setMenuEntries(menuEntries);
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if (event.getMenuOpcode().getId() != MenuOpcode.RUNELITE.getId()
-			|| TO_GROUP(event.getParam1()) != WidgetID.SKILLS_GROUP_ID)
+			|| TO_GROUP(event.getActionParam1()) != WidgetID.SKILLS_GROUP_ID)
 		{
 			return;
 		}
@@ -736,7 +735,11 @@ public class XpTrackerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
+	private boolean hasOverlay(final Skill skill)
+	{
+		return overlayManager.anyMatch(o -> o instanceof XpInfoBoxOverlay && ((XpInfoBoxOverlay) o).getSkill() == skill);
+	}
+	
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("xpTracker"))

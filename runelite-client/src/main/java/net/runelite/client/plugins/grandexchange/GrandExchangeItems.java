@@ -25,7 +25,7 @@
 package net.runelite.client.plugins.grandexchange;
 
 import lombok.Value;
-import net.runelite.client.util.AsyncBufferedImage;
+import net.runelite.client.game.AsyncBufferedImage;
 
 @Value
 class GrandExchangeItems

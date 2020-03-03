@@ -3,16 +3,10 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("fs")
+@ObfuscatedName("fi")
 @Implements("BuddyRankComparator")
 public class BuddyRankComparator extends AbstractUserComparator {
-	@ObfuscatedName("do")
-	@ObfuscatedSignature(
-		signature = "Lij;"
-	)
-	@Export("archive0")
-	static Archive archive0;
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@Export("reversed")
 	final boolean reversed;
 
@@ -20,10 +14,10 @@ public class BuddyRankComparator extends AbstractUserComparator {
 		this.reversed = var1;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Ljx;Ljx;I)I",
-		garbageValue = "63405397"
+		signature = "(Ljt;Ljt;I)I",
+		garbageValue = "1327154519"
 	)
 	@Export("compareBuddy")
 	int compareBuddy(Buddy var1, Buddy var2) {
@@ -38,10 +32,37 @@ public class BuddyRankComparator extends AbstractUserComparator {
 		return this.compareBuddy((Buddy)var1, (Buddy)var2);
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(Lij;IIIBZI)V",
-		garbageValue = "-1505675157"
+		signature = "(ILkv;Lid;I)V",
+		garbageValue = "1244891024"
+	)
+	static void method3376(int var0, ArchiveDisk var1, Archive var2) {
+		ArchiveDiskAction var3 = new ArchiveDiskAction();
+		var3.type = 1;
+		var3.key = (long)var0;
+		var3.archiveDisk = var1;
+		var3.archive = var2;
+		synchronized(ArchiveDiskActionHandler.ArchiveDiskActionHandler_requestQueue) {
+			ArchiveDiskActionHandler.ArchiveDiskActionHandler_requestQueue.addFirst(var3);
+		}
+
+		synchronized(ArchiveDiskActionHandler.ArchiveDiskActionHandler_lock) {
+			if (ArchiveDiskActionHandler.field3124 == 0) {
+				class13.ArchiveDiskActionHandler_thread = new Thread(new ArchiveDiskActionHandler());
+				class13.ArchiveDiskActionHandler_thread.setDaemon(true);
+				class13.ArchiveDiskActionHandler_thread.start();
+				class13.ArchiveDiskActionHandler_thread.setPriority(5);
+			}
+
+			ArchiveDiskActionHandler.field3124 = 600;
+		}
+	}
+
+	@ObfuscatedName("k")
+	@ObfuscatedSignature(
+		signature = "(Lid;IIIBZI)V",
+		garbageValue = "-800902094"
 	)
 	@Export("requestNetFile")
 	static void requestNetFile(Archive var0, int var1, int var2, int var3, byte var4, boolean var5) {
@@ -85,13 +106,64 @@ public class BuddyRankComparator extends AbstractUserComparator {
 		}
 	}
 
-	@ObfuscatedName("p")
+	@ObfuscatedName("fs")
 	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "2092280519"
+		signature = "(Ljava/lang/String;I)V",
+		garbageValue = "124595109"
 	)
-	public static void method3568() {
-		SequenceDefinition.SequenceDefinition_cached.clear();
-		SequenceDefinition.SequenceDefinition_cachedFrames.clear();
+	@Export("doCheat")
+	static final void doCheat(String var0) {
+		if (var0.equalsIgnoreCase("toggleroof")) {
+			GrandExchangeOffer.clientPreferences.roofsHidden = !GrandExchangeOffer.clientPreferences.roofsHidden;
+			GrandExchangeOfferAgeComparator.savePreferences();
+			if (GrandExchangeOffer.clientPreferences.roofsHidden) {
+				DirectByteArrayCopier.addGameMessage(99, "", "Roofs are now all hidden");
+			} else {
+				DirectByteArrayCopier.addGameMessage(99, "", "Roofs will only be removed selectively");
+			}
+		}
+
+		if (var0.equalsIgnoreCase("displayfps")) {
+			Client.displayFps = !Client.displayFps;
+		}
+
+		if (var0.equalsIgnoreCase("renderself")) {
+			Client.renderSelf = !Client.renderSelf;
+		}
+
+		if (var0.equalsIgnoreCase("mouseovertext")) {
+			Client.showMouseOverText = !Client.showMouseOverText;
+		}
+
+		if (Client.staffModLevel >= 2) {
+			if (var0.equalsIgnoreCase("errortest")) {
+				throw new RuntimeException();
+			}
+
+			if (var0.equalsIgnoreCase("showcoord")) {
+				WorldMapCacheName.worldMap.showCoord = !WorldMapCacheName.worldMap.showCoord;
+			}
+
+			if (var0.equalsIgnoreCase("fpson")) {
+				Client.displayFps = true;
+			}
+
+			if (var0.equalsIgnoreCase("fpsoff")) {
+				Client.displayFps = false;
+			}
+
+			if (var0.equalsIgnoreCase("gc")) {
+				System.gc();
+			}
+
+			if (var0.equalsIgnoreCase("clientdrop")) {
+				class2.method31();
+			}
+		}
+
+		PacketBufferNode var1 = MenuAction.getPacketBufferNode(ClientPacket.field2238, Client.packetWriter.isaacCipher);
+		var1.packetBuffer.writeByte(var0.length() + 1);
+		var1.packetBuffer.writeStringCp1252NullTerminated(var0);
+		Client.packetWriter.addNode(var1);
 	}
 }

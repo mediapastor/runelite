@@ -2,12 +2,14 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("hw")
+@ObfuscatedName("he")
 public class class210 {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Lhx;"
+		signature = "Lhr;"
 	)
 	@Export("huffman")
-	static Huffman huffman;
+	public static Huffman huffman;
+	@ObfuscatedName("n")
+	static byte[][][] field2492;
 }

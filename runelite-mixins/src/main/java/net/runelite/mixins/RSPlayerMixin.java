@@ -24,9 +24,6 @@
  */
 package net.runelite.mixins;
 
-import java.awt.Polygon;
-import java.awt.Shape;
-import java.util.ArrayList;
 import net.runelite.api.HeadIcon;
 import static net.runelite.api.HeadIcon.MAGIC;
 import static net.runelite.api.HeadIcon.MELEE;
@@ -36,6 +33,7 @@ import static net.runelite.api.HeadIcon.RETRIBUTION;
 import static net.runelite.api.HeadIcon.SMITE;
 import net.runelite.api.Model;
 import net.runelite.api.Perspective;
+import net.runelite.api.Point;
 import net.runelite.api.SkullIcon;
 import static net.runelite.api.SkullIcon.DEAD_MAN_FIVE;
 import static net.runelite.api.SkullIcon.DEAD_MAN_FOUR;
@@ -45,9 +43,14 @@ import static net.runelite.api.SkullIcon.DEAD_MAN_TWO;
 import static net.runelite.api.SkullIcon.SKULL;
 import static net.runelite.api.SkullIcon.SKULL_FIGHT_PIT;
 import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.mixins.MethodHook;
+import net.runelite.api.model.Triangle;
+import net.runelite.api.model.Vertex;
+import java.awt.Polygon;
+import java.util.ArrayList;
+import java.util.List;
 import net.runelite.api.mixins.Copy;
 import net.runelite.api.mixins.Inject;
-import net.runelite.api.mixins.MethodHook;
 import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Replace;
 import net.runelite.api.mixins.Shadow;
@@ -145,42 +148,56 @@ public abstract class RSPlayerMixin implements RSPlayer
 			return null;
 		}
 
-		int[] x2d = new int[model.getVerticesCount()];
-		int[] y2d = new int[model.getVerticesCount()];
-
 		int localX = getX();
 		int localY = getY();
 
+		int orientation = getOrientation();
+
 		final int tileHeight = Perspective.getTileHeight(client, new LocalPoint(localX, localY), client.getPlane());
 
-		Perspective.modelToCanvas(client, model.getVerticesCount(), localX, localY, tileHeight, getOrientation(), model.getVerticesX(), model.getVerticesZ(), model.getVerticesY(), x2d, y2d);
-		ArrayList polys = new ArrayList(model.getTrianglesCount());
+		List<Triangle> triangles = model.getTriangles();
 
-		int[] trianglesX = model.getTrianglesX();
-		int[] trianglesY = model.getTrianglesY();
-		int[] trianglesZ = model.getTrianglesZ();
+		triangles = rotate(triangles, orientation);
 
-		for (int triangle = 0; triangle < model.getTrianglesCount(); ++triangle)
+		List<Polygon> polys = new ArrayList<Polygon>();
+		for (Triangle triangle : triangles)
 		{
+			Vertex vx = triangle.getA();
+			Vertex vy = triangle.getB();
+			Vertex vz = triangle.getC();
+
+			Point x = Perspective.localToCanvas(client,
+					localX - vx.getX(),
+					localY - vx.getZ(),
+					tileHeight + vx.getY());
+
+			Point y = Perspective.localToCanvas(client,
+					localX - vy.getX(),
+					localY - vy.getZ(),
+					tileHeight + vy.getY());
+
+			Point z = Perspective.localToCanvas(client,
+					localX - vz.getX(),
+					localY - vz.getZ(),
+					tileHeight + vz.getY());
+
 			int[] xx =
-				{
-					x2d[trianglesX[triangle]], x2d[trianglesY[triangle]], x2d[trianglesZ[triangle]]
-				};
-
+					{
+						x.getX(), y.getX(), z.getX()
+					};
 			int[] yy =
-				{
-					y2d[trianglesX[triangle]], y2d[trianglesY[triangle]], y2d[trianglesZ[triangle]]
-				};
-
+					{
+						x.getY(), y.getY(), z.getY()
+					};
 			polys.add(new Polygon(xx, yy, 3));
 		}
 
-		return (Polygon[]) polys.toArray(new Polygon[0]);
+		return polys.toArray(new Polygon[polys.size()]);
 	}
 
 	@Inject
 	@Override
-	public Shape getConvexHull()
+	public Polygon getConvexHull()
 	{
 		RSModel model = getModel();
 		if (model == null)
@@ -189,8 +206,27 @@ public abstract class RSPlayerMixin implements RSPlayer
 		}
 
 		int tileHeight = Perspective.getTileHeight(client, new LocalPoint(getX(), getY()), client.getPlane());
-
 		return model.getConvexHull(getX(), getY(), getOrientation(), tileHeight);
+	}
+
+	@Inject
+	private List<Triangle> rotate(List<Triangle> triangles, int orientation)
+	{
+		List<Triangle> rotatedTriangles = new ArrayList<Triangle>();
+		for (Triangle triangle : triangles)
+		{
+			Vertex a = triangle.getA();
+			Vertex b = triangle.getB();
+			Vertex c = triangle.getC();
+
+			Triangle rotatedTriangle = new Triangle(
+					a.rotate(orientation),
+					b.rotate(orientation),
+					c.rotate(orientation)
+			);
+			rotatedTriangles.add(rotatedTriangle);
+		}
+		return rotatedTriangles;
 	}
 
 	@Copy("getModel")

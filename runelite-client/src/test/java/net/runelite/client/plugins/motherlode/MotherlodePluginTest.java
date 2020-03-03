@@ -41,7 +41,6 @@ import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ChatColorConfig;
-import net.runelite.client.config.OpenOSRSConfig;
 import net.runelite.client.config.RuneLiteConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,10 +101,6 @@ public class MotherlodePluginTest
 	@Mock
 	@Bind
 	private Notifier notifier;
-
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
 
 	@Before
 	public void before()

@@ -4,27 +4,27 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ko")
+@ObfuscatedName("kr")
 @Implements("Fonts")
 public class Fonts {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lhz;"
 	)
 	@Export("spritesArchive")
 	AbstractArchive spritesArchive;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lhz;"
 	)
 	@Export("fontsArchive")
 	AbstractArchive fontsArchive;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@Export("map")
 	HashMap map;
 
 	@ObfuscatedSignature(
-		signature = "(Lhq;Lhq;)V"
+		signature = "(Lhz;Lhz;)V"
 	)
 	public Fonts(AbstractArchive var1, AbstractArchive var2) {
 		this.spritesArchive = var1;
@@ -32,10 +32,10 @@ public class Fonts {
 		this.map = new HashMap();
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "([Lkq;B)Ljava/util/HashMap;",
-		garbageValue = "-73"
+		signature = "([Lkz;I)Ljava/util/HashMap;",
+		garbageValue = "2107388628"
 	)
 	@Export("createMap")
 	public HashMap createMap(FontName[] var1) {
@@ -47,12 +47,7 @@ public class Fonts {
 			if (this.map.containsKey(var5)) {
 				var2.put(var5, this.map.get(var5));
 			} else {
-				AbstractArchive var7 = this.spritesArchive;
-				AbstractArchive var8 = this.fontsArchive;
-				String var9 = var5.name;
-				int var10 = var7.getGroupId(var9);
-				int var11 = var7.getFileId(var10, "");
-				Font var6 = class269.method5114(var7, var8, var10, var11);
+				Font var6 = PcmPlayer.SpriteBuffer_getFontByName(this.spritesArchive, this.fontsArchive, var5.name, "");
 				if (var6 != null) {
 					this.map.put(var5, var6);
 					var2.put(var5, var6);
@@ -61,5 +56,25 @@ public class Fonts {
 		}
 
 		return var2;
+	}
+
+	@ObfuscatedName("s")
+	@ObfuscatedSignature(
+		signature = "(I)[Lha;",
+		garbageValue = "1384146854"
+	)
+	public static ServerBuild[] method5240() {
+		return new ServerBuild[]{ServerBuild.WIP, ServerBuild.LIVE, ServerBuild.BUILDLIVE, ServerBuild.RC};
+	}
+
+	@ObfuscatedName("s")
+	@ObfuscatedSignature(
+		signature = "(Lhz;Lhz;Lhz;I)V",
+		garbageValue = "-1215139257"
+	)
+	public static void method5234(AbstractArchive var0, AbstractArchive var1, AbstractArchive var2) {
+		SequenceDefinition.SequenceDefinition_archive = var0;
+		SequenceDefinition.SequenceDefinition_animationsArchive = var1;
+		SequenceDefinition.SequenceDefinition_skeletonsArchive = var2;
 	}
 }

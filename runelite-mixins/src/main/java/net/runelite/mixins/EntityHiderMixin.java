@@ -25,8 +25,6 @@
  */
 package net.runelite.mixins;
 
-import java.util.HashMap;
-import java.util.List;
 import net.runelite.api.mixins.Copy;
 import net.runelite.api.mixins.Inject;
 import net.runelite.api.mixins.Mixin;
@@ -40,6 +38,9 @@ import net.runelite.rs.api.RSNPC;
 import net.runelite.rs.api.RSPlayer;
 import net.runelite.rs.api.RSProjectile;
 import net.runelite.rs.api.RSScene;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Mixin(RSScene.class)
 public abstract class EntityHiderMixin implements RSScene
@@ -149,7 +150,7 @@ public abstract class EntityHiderMixin implements RSScene
 			{
 				if (name != null && !name.equals(""))
 				{
-					if (player.getName() != null && player.getName().equalsIgnoreCase(name))
+					if (Text.standardize(player.getName()).equals(name))
 					{
 						return false;
 					}

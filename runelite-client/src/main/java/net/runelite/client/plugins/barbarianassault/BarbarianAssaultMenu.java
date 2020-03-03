@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019, 7ate9 <https://github.com/se7enAte9>
- * Copyright (c) 2019, https://openosrs.com
+ * Copyright (c) 2019, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +26,17 @@
 package net.runelite.client.plugins.barbarianassault;
 
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.client.menus.AbstractComparableEntry;
 import net.runelite.client.menus.MenuManager;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 class BarbarianAssaultMenu
 {

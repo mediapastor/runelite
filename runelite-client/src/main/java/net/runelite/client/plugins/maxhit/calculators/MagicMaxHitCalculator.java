@@ -78,10 +78,6 @@ public class MagicMaxHitCalculator extends MaxHitCalculator
 			}
 
 			SpellBaseDamageConfig autoCastSpell = SpellBaseDamageConfig.findSpellById(autoCastSpellId);
-			if (autoCastSpell == null)
-			{
-				return 0.0;
-			}
 			spellBaseDamage = autoCastSpell.getBaseDamage();
 		}
 

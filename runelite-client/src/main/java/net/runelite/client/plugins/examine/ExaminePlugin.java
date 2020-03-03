@@ -54,11 +54,11 @@ import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 import net.runelite.http.api.examine.ExamineClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 
@@ -102,13 +102,33 @@ public class ExaminePlugin extends Plugin
 	@Inject
 	private ScheduledExecutorService executor;
 
-	@Subscribe
+	@Inject
+	private EventBus eventBus;
+
+	@Override
+	protected void startUp() throws Exception
+	{
+		addSubscriptions();
+	}
+
+	@Override
+	protected void shutDown() throws Exception
+	{
+		eventBus.unregister(this);
+	}
+
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+	}
+
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		pending.clear();
 	}
 
-	@Subscribe
 	void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if (!event.getOption().equals("Examine"))
@@ -125,22 +145,18 @@ public class ExaminePlugin extends Plugin
 				type = ExamineType.ITEM;
 				id = event.getIdentifier();
 
-				int widgetId = event.getParam1();
+				int widgetId = event.getActionParam1();
 				int widgetGroup = TO_GROUP(widgetId);
 				int widgetChild = TO_CHILD(widgetId);
 				Widget widget = client.getWidget(widgetGroup, widgetChild);
-				WidgetItem widgetItem = widget.getWidgetItem(event.getParam0());
+				WidgetItem widgetItem = widget.getWidgetItem(event.getActionParam0());
 				quantity = widgetItem != null && widgetItem.getId() >= 0 ? widgetItem.getQuantity() : 1;
 				break;
 			}
-			case EXAMINE_ITEM_GROUND:
-				type = ExamineType.ITEM;
-				id = event.getIdentifier();
-				break;
 			case EXAMINE_ITEM_BANK_EQ:
 			{
 				type = ExamineType.ITEM_BANK_EQ;
-				int[] qi = findItemFromWidget(event.getParam1(), event.getParam0());
+				int[] qi = findItemFromWidget(event.getActionParam1(), event.getActionParam0());
 				if (qi == null)
 				{
 					log.debug("Examine for item with unknown widget: {}", event);
@@ -170,7 +186,6 @@ public class ExaminePlugin extends Plugin
 		pending.push(pendingExamine);
 	}
 
-	@Subscribe
 	void onChatMessage(ChatMessage event)
 	{
 		ExamineType type;
@@ -273,7 +288,7 @@ public class ExaminePlugin extends Plugin
 			Widget widgetItem = widget.getChild(1);
 			if (widgetItem != null)
 			{
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetInfo.SMITHING_INVENTORY_ITEMS_CONTAINER.getGroupId() == widgetGroup)
@@ -281,7 +296,7 @@ public class ExaminePlugin extends Plugin
 			Widget widgetItem = widget.getChild(2);
 			if (widgetItem != null)
 			{
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetInfo.BANK_INVENTORY_ITEMS_CONTAINER.getGroupId() == widgetGroup
@@ -290,22 +305,20 @@ public class ExaminePlugin extends Plugin
 			Widget widgetItem = widget.getChild(actionParam);
 			if (widgetItem != null)
 			{
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetInfo.BANK_ITEM_CONTAINER.getGroupId() == widgetGroup
 			|| WidgetInfo.CLUE_SCROLL_REWARD_ITEM_CONTAINER.getGroupId() == widgetGroup
 			|| WidgetInfo.LOOTING_BAG_CONTAINER.getGroupId() == widgetGroup
 			|| WidgetID.SEED_VAULT_INVENTORY_GROUP_ID == widgetGroup
-			|| WidgetID.SEED_BOX_GROUP_ID == widgetGroup
-			|| WidgetID.PLAYER_TRADE_SCREEN_GROUP_ID == widgetGroup
-			|| WidgetID.PLAYER_TRADE_INVENTORY_GROUP_ID == widgetGroup)
+			|| WidgetID.SEED_BOX_GROUP_ID == widgetGroup)
 		{
 			Widget[] children = widget.getDynamicChildren();
 			if (actionParam < children.length)
 			{
 				Widget widgetItem = children[actionParam];
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetInfo.SHOP_ITEMS_CONTAINER.getGroupId() == widgetGroup)
@@ -314,7 +327,7 @@ public class ExaminePlugin extends Plugin
 			if (actionParam < children.length)
 			{
 				Widget widgetItem = children[actionParam];
-				return new int[] {1, widgetItem.getItemId()};
+				return new int[]{1, widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetInfo.CLUE_SCROLL_REWARD_ITEM_CONTAINER.getGroupId() == widgetGroup)
@@ -323,7 +336,7 @@ public class ExaminePlugin extends Plugin
 			if (actionParam < children.length)
 			{
 				Widget widgetItem = children[actionParam];
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetInfo.LOOTING_BAG_CONTAINER.getGroupId() == widgetGroup)
@@ -332,7 +345,7 @@ public class ExaminePlugin extends Plugin
 			if (actionParam < children.length)
 			{
 				Widget widgetItem = children[actionParam];
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetID.SEED_VAULT_GROUP_ID == widgetGroup)
@@ -341,7 +354,7 @@ public class ExaminePlugin extends Plugin
 			if (actionParam < children.length)
 			{
 				Widget widgetItem = children[actionParam];
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 		else if (WidgetID.SEED_VAULT_INVENTORY_GROUP_ID == widgetGroup)
@@ -350,7 +363,7 @@ public class ExaminePlugin extends Plugin
 			if (actionParam < children.length)
 			{
 				Widget widgetItem = children[actionParam];
-				return new int[] {widgetItem.getItemQuantity(), widgetItem.getItemId()};
+				return new int[]{widgetItem.getItemQuantity(), widgetItem.getItemId()};
 			}
 		}
 
@@ -375,7 +388,7 @@ public class ExaminePlugin extends Plugin
 			if (quantity > 1)
 			{
 				message
-					.append(QuantityFormatter.formatNumber(quantity))
+					.append(StackFormatter.formatNumber(quantity))
 					.append(" x ");
 			}
 
@@ -397,7 +410,7 @@ public class ExaminePlugin extends Plugin
 								.append(ChatColorType.NORMAL)
 								.append(" GE  ")
 								.append(ChatColorType.HIGHLIGHT)
-								.append(QuantityFormatter.formatNumber(gePrice * finalQuantity));
+								.append(StackFormatter.formatNumber(gePrice * finalQuantity));
 
 							if (osbresult != null)
 							{
@@ -405,7 +418,7 @@ public class ExaminePlugin extends Plugin
 									.append(ChatColorType.NORMAL)
 									.append(" OSB  ")
 									.append(ChatColorType.HIGHLIGHT)
-									.append(QuantityFormatter.formatNumber(osbresult.getOverall_average() * finalQuantity));
+									.append(StackFormatter.formatNumber(osbresult.getOverall_average() * finalQuantity));
 							}
 
 							if (finalQuantity > 1)
@@ -414,7 +427,7 @@ public class ExaminePlugin extends Plugin
 									.append(ChatColorType.NORMAL)
 									.append(" (")
 									.append(ChatColorType.HIGHLIGHT)
-									.append(QuantityFormatter.formatNumber(gePrice))
+									.append(StackFormatter.formatNumber(gePrice))
 									.append(ChatColorType.NORMAL)
 									.append("ea)");
 							}
@@ -423,7 +436,7 @@ public class ExaminePlugin extends Plugin
 								.append(ChatColorType.NORMAL)
 								.append(" HA value ")
 								.append(ChatColorType.HIGHLIGHT)
-								.append(QuantityFormatter.formatNumber(alchPrice * finalQuantity));
+								.append(StackFormatter.formatNumber(alchPrice * finalQuantity));
 
 							if (finalQuantity > 1)
 							{
@@ -431,7 +444,7 @@ public class ExaminePlugin extends Plugin
 									.append(ChatColorType.NORMAL)
 									.append(" (")
 									.append(ChatColorType.HIGHLIGHT)
-									.append(QuantityFormatter.formatNumber(alchPrice))
+									.append(StackFormatter.formatNumber(alchPrice))
 									.append(ChatColorType.NORMAL)
 									.append("ea)");
 							}
@@ -450,7 +463,7 @@ public class ExaminePlugin extends Plugin
 					.append(ChatColorType.NORMAL)
 					.append(" HA value ")
 					.append(ChatColorType.HIGHLIGHT)
-					.append(QuantityFormatter.formatNumber(alchPrice * quantity));
+					.append(StackFormatter.formatNumber(alchPrice * quantity));
 
 				if (quantity > 1)
 				{
@@ -458,7 +471,7 @@ public class ExaminePlugin extends Plugin
 						.append(ChatColorType.NORMAL)
 						.append(" (")
 						.append(ChatColorType.HIGHLIGHT)
-						.append(QuantityFormatter.formatNumber(alchPrice))
+						.append(StackFormatter.formatNumber(alchPrice))
 						.append(ChatColorType.NORMAL)
 						.append("ea)");
 				}

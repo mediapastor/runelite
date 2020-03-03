@@ -28,25 +28,28 @@
 package net.runelite.client.plugins.dropparty;
 
 import com.google.inject.Provides;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.util.Text;
+import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @PluginDescriptor(
@@ -57,6 +60,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 	enabledByDefault = false
 )
 @Singleton
+@Slf4j
 public class DropPartyPlugin extends Plugin
 {
 	@Inject
@@ -74,9 +78,13 @@ public class DropPartyPlugin extends Plugin
 	private Color overlayColor;
 
 	@Inject
+	private Notifier notifier;
+	@Inject
 	private OverlayManager overlayManager;
 	@Inject
 	private DropPartyOverlay coreOverlay;
+	@Inject
+	private EventBus eventbus;
 	@Inject
 	private Client client;
 	@Getter(AccessLevel.PACKAGE)
@@ -94,6 +102,7 @@ public class DropPartyPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 		overlayManager.add(coreOverlay);
 		reset();
 	}
@@ -103,9 +112,16 @@ public class DropPartyPlugin extends Plugin
 	{
 		overlayManager.remove(coreOverlay);
 		reset();
-		}
+		eventbus.unregister(this);
+	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventbus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventbus.subscribe(GameTick.class, this, this::onGameTick);
+	}
+
+
 	private void onGameTick(GameTick event)
 	{
 		shuffleList();
@@ -168,7 +184,6 @@ public class DropPartyPlugin extends Plugin
 
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("drop"))

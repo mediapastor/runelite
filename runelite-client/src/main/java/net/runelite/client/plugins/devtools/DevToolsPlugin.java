@@ -37,20 +37,21 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.Experience;
 import net.runelite.api.MenuOpcode;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AreaSoundEffectPlayed;
+import net.runelite.api.events.BoostedLevelChanged;
 import net.runelite.api.events.CommandExecuted;
+import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.SoundEffectPlayed;
-import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
@@ -143,6 +144,7 @@ public class DevToolsPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
+		addSubscriptions();
 
 		players = new DevToolsButton("Players");
 		npcs = new DevToolsButton("NPCs");
@@ -206,6 +208,8 @@ public class DevToolsPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 		overlayManager.remove(locationOverlay);
 		overlayManager.remove(sceneOverlay);
@@ -216,7 +220,14 @@ public class DevToolsPlugin extends Plugin
 		clientToolbar.removeNavigation(navButton);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(CommandExecuted.class, this, this::onCommandExecuted);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(AreaSoundEffectPlayed.class, this, this::onAreaSoundEffectPlayed);
+		eventBus.subscribe(SoundEffectPlayed.class, this, this::onSoundEffectPlayed);
+	}
+
 	private void onCommandExecuted(CommandExecuted commandExecuted)
 	{
 		String[] args = commandExecuted.getArguments();
@@ -291,13 +302,9 @@ public class DevToolsPlugin extends Plugin
 
 				client.queueChangedSkill(skill);
 
-				StatChanged statChanged = new StatChanged(
-					skill,
-					totalXp,
-					level,
-					level
-				);
-				eventBus.post(StatChanged.class, statChanged);
+				ExperienceChanged experienceChanged = new ExperienceChanged();
+				experienceChanged.setSkill(skill);
+				eventBus.post(ExperienceChanged.class, experienceChanged);
 				break;
 			}
 			case "setstat":
@@ -314,13 +321,13 @@ public class DevToolsPlugin extends Plugin
 
 				client.queueChangedSkill(skill);
 
-				StatChanged statChanged = new StatChanged(
-					skill,
-					xp,
-					level,
-					level
-				);
-				eventBus.post(StatChanged.class, statChanged);
+				ExperienceChanged experienceChanged = new ExperienceChanged();
+				experienceChanged.setSkill(skill);
+				eventBus.post(ExperienceChanged.class, experienceChanged);
+
+				BoostedLevelChanged boostedLevelChanged = new BoostedLevelChanged();
+				boostedLevelChanged.setSkill(skill);
+				eventBus.post(BoostedLevelChanged.class, boostedLevelChanged);
 				break;
 			}
 			case "anim":
@@ -370,19 +377,20 @@ public class DevToolsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	private void onMenuEntryAdded(MenuEntryAdded entry)
+	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
 		if (!examine.isActive())
 		{
 			return;
 		}
 
-		MenuOpcode action = MenuOpcode.of(entry.getOpcode());
+		MenuOpcode action = MenuOpcode.of(event.getType());
 
 		if (EXAMINE_MENU_ACTIONS.contains(action))
 		{
-			final int identifier = entry.getIdentifier();
+			final MenuEntry entry = event.getMenuEntry();
+
+			final int identifier = event.getIdentifier();
 			String info = "ID: ";
 
 			if (action == MenuOpcode.EXAMINE_NPC)
@@ -402,11 +410,10 @@ public class DevToolsPlugin extends Plugin
 			}
 
 			entry.setTarget(entry.getTarget() + " " + ColorUtil.prependColorTag("(" + info + ")", JagexColors.MENU_TARGET));
-			entry.setModified();
+			event.setWasModified(true);
 		}
 	}
 
-	@Subscribe
 	private void onSoundEffectPlayed(SoundEffectPlayed event)
 	{
 		if (!getSoundEffects().isActive() || soundEffectOverlay == null)
@@ -417,7 +424,6 @@ public class DevToolsPlugin extends Plugin
 		soundEffectOverlay.onSoundEffectPlayed(event);
 	}
 
-	@Subscribe
 	private void onAreaSoundEffectPlayed(AreaSoundEffectPlayed event)
 	{
 		if (!getSoundEffects().isActive() || soundEffectOverlay == null)

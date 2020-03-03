@@ -43,19 +43,20 @@ import net.runelite.api.GameState;
 import net.runelite.api.Player;
 import net.runelite.api.SpriteID;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.events.PlayerSpawned;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.WeaponType;
 
 @PluginDescriptor(
 	name = "Pray Against Player",
@@ -103,6 +104,9 @@ public class PrayAgainstPlayerPlugin extends Plugin
 	@Inject
 	private PrayAgainstPlayerConfig config;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Getter(AccessLevel.PACKAGE)
 	private Color attackerPlayerColor;
 	@Getter(AccessLevel.PACKAGE)
@@ -140,7 +144,6 @@ public class PrayAgainstPlayerPlugin extends Plugin
 		return configManager.getConfig(PrayAgainstPlayerConfig.class);
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
@@ -153,6 +156,7 @@ public class PrayAgainstPlayerPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 
 		potentialPlayersAttackingMe = new ArrayList<>();
 		playersAttackingMe = new ArrayList<>();
@@ -163,11 +167,22 @@ public class PrayAgainstPlayerPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 		overlayManager.remove(overlayPrayerTab);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(AnimationChanged.class, this, this::onAnimationChanged);
+		eventBus.subscribe(InteractingChanged.class, this, this::onInteractingChanged);
+		eventBus.subscribe(PlayerDespawned.class, this, this::onPlayerDespawned);
+		eventBus.subscribe(PlayerSpawned.class, this, this::onPlayerSpawned);
+	}
+
 	private void onAnimationChanged(AnimationChanged animationChanged)
 	{
 		if ((animationChanged.getActor() instanceof Player) && (animationChanged.getActor().getInteracting() instanceof Player) && (animationChanged.getActor().getInteracting() == client.getLocalPlayer()))
@@ -206,7 +221,6 @@ public class PrayAgainstPlayerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onInteractingChanged(InteractingChanged interactingChanged)
 	{
 		// if someone interacts with you, add them to the potential attackers list
@@ -233,7 +247,6 @@ public class PrayAgainstPlayerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onPlayerDespawned(PlayerDespawned playerDespawned)
 	{
 		PlayerContainer container = findPlayerInAttackerList(playerDespawned.getPlayer());
@@ -248,7 +261,6 @@ public class PrayAgainstPlayerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onPlayerSpawned(PlayerSpawned playerSpawned)
 	{
 		if (this.markNewPlayer)
@@ -414,7 +426,6 @@ public class PrayAgainstPlayerPlugin extends Plugin
 		return null;
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("prayagainstplayer"))

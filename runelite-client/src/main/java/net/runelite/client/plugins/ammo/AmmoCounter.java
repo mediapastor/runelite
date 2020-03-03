@@ -33,7 +33,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.ui.overlay.infobox.Counter;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 
 class AmmoCounter extends Counter
 {
@@ -56,7 +56,7 @@ class AmmoCounter extends Counter
 	@Override
 	public String getText()
 	{
-		return QuantityFormatter.quantityToRSDecimalStack(getCount());
+		return StackFormatter.quantityToRSDecimalStack(getCount());
 	}
 
 	@Override

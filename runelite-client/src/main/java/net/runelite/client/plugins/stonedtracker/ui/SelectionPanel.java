@@ -46,6 +46,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import net.runelite.client.game.AsyncBufferedImage;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.stonedtracker.data.BossTab;
 import net.runelite.client.ui.ColorScheme;
@@ -53,7 +54,6 @@ import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.IconTextField;
 import net.runelite.client.ui.components.materialtabs.MaterialTab;
 import net.runelite.client.ui.components.materialtabs.MaterialTabGroup;
-import net.runelite.client.util.AsyncBufferedImage;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 
 class SelectionPanel extends JPanel
@@ -289,7 +289,7 @@ class SelectionPanel extends JPanel
 				materialTab.setVerticalAlignment(SwingConstants.CENTER);
 				materialTab.setPreferredSize(new Dimension(35, 35));
 			};
-			image.onLoaded(resize);
+			image.onChanged(resize);
 			resize.run();
 
 			thisTabGroup.addTab(materialTab);

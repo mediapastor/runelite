@@ -29,4 +29,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LoginHandshakePacket extends HandshakePacket {}
+public class LoginHandshakePacket extends HandshakePacket
+{
+
+}

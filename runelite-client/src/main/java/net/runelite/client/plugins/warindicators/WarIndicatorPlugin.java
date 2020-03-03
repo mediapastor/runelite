@@ -31,13 +31,24 @@ import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.api.Client;
+import static net.runelite.api.MenuOpcode.FOLLOW;
+import static net.runelite.api.MenuOpcode.ITEM_USE_ON_PLAYER;
+import static net.runelite.api.MenuOpcode.PLAYER_EIGTH_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_FIFTH_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_FIRST_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_FOURTH_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_SECOND_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_SEVENTH_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_SIXTH_OPTION;
+import static net.runelite.api.MenuOpcode.PLAYER_THIRD_OPTION;
+import static net.runelite.api.MenuOpcode.SPELL_CAST_ON_PLAYER;
+import static net.runelite.api.MenuOpcode.TRADE;
 import net.runelite.api.MenuEntry;
-import static net.runelite.api.MenuOpcode.*;
 import net.runelite.api.Player;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
@@ -68,6 +79,9 @@ public class WarIndicatorPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private EventBus eventBus;
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean highLightCallers;
@@ -100,6 +114,7 @@ public class WarIndicatorPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(warIndicatorOverlay);
 		overlayManager.add(warIndicatorMiniMapOverlay);
@@ -108,14 +123,20 @@ public class WarIndicatorPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
 		overlayManager.remove(warIndicatorOverlay);
 		overlayManager.remove(warIndicatorMiniMapOverlay);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+	}
+
 	private void onMenuEntryAdded(MenuEntryAdded onMenuEntryAdded)
 	{
-		int type = onMenuEntryAdded.getOpcode();
+		int type = onMenuEntryAdded.getType();
 
 		if (type >= 2000)
 		{
@@ -184,7 +205,6 @@ public class WarIndicatorPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("warIndicators"))

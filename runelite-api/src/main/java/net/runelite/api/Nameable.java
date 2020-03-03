@@ -27,4 +27,6 @@ package net.runelite.api;
 /**
  * Represents a chat entity that has a name.
  */
-public interface Nameable extends Comparable {}
+public interface Nameable extends Comparable
+{
+}

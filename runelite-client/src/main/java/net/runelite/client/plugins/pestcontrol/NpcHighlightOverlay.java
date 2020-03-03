@@ -31,7 +31,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Shape;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -142,7 +141,7 @@ public class NpcHighlightOverlay extends Overlay
 
 	private void renderHullOverlay(Graphics2D graphics, NPC npc, Color color)
 	{
-		Shape objectClickbox = npc.getConvexHull();
+		Polygon objectClickbox = npc.getConvexHull();
 		if (objectClickbox != null)
 		{
 			graphics.setColor(color);

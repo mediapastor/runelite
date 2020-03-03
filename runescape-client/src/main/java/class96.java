@@ -1,45 +1,42 @@
 import net.runelite.mapping.Export;
+import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("cs")
+@ObfuscatedName("cz")
 public class class96 {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Ljm;"
+		signature = "Ljp;"
 	)
 	@Export("reflectionChecks")
 	public static IterableNodeDeque reflectionChecks;
-	@ObfuscatedName("o")
-	static byte[][][] field1300;
-	@ObfuscatedName("d")
+	@ObfuscatedName("y")
 	@ObfuscatedSignature(
-		signature = "Ler;"
+		signature = "Llq;"
 	)
-	@Export("World_request")
-	static UrlRequest World_request;
-	@ObfuscatedName("k")
-	@ObfuscatedSignature(
-		signature = "Lhi;"
+	static IndexedSprite field1303;
+	@ObfuscatedName("kk")
+	@ObfuscatedGetter(
+		intValue = -894552657
 	)
-	static Widget field1301;
-	@ObfuscatedName("z")
-	public static String field1299;
+	@Export("menuY")
+	static int menuY;
 
 	static {
 		reflectionChecks = new IterableNodeDeque();
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("r")
 	@ObfuscatedSignature(
-		signature = "(IZIZI)V",
-		garbageValue = "422781217"
+		signature = "(II)Ljava/lang/String;",
+		garbageValue = "-1331218775"
 	)
-	@Export("sortWorldList")
-	static void sortWorldList(int var0, boolean var1, int var2, boolean var3) {
-		if (Username.World_worlds != null) {
-			ModelData0.doWorldSorting(0, Username.World_worlds.length - 1, var0, var1, var2, var3);
+	static final String method2201(int var0) {
+		if (var0 < 100000) {
+			return "<col=ffff00>" + var0 + "</col>";
+		} else {
+			return var0 < 10000000 ? "<col=ffffff>" + var0 / 1000 + "K" + "</col>" : "<col=00ff80>" + var0 / 1000000 + "M" + "</col>";
 		}
-
 	}
 }

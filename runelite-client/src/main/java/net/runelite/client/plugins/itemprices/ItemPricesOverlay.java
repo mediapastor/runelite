@@ -33,11 +33,11 @@ import net.runelite.api.Client;
 import net.runelite.api.Constants;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
-import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemDefinition;
+import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
-import net.runelite.api.MenuEntry;
 import net.runelite.api.MenuOpcode;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.game.ItemManager;
@@ -46,7 +46,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.tooltip.Tooltip;
 import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 import net.runelite.client.util.ColorUtil;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 
 @Singleton
 class ItemPricesOverlay extends Overlay
@@ -185,11 +185,11 @@ class ItemPricesOverlay extends Overlay
 		// Special case for coins and platinum tokens
 		if (id == ItemID.COINS_995)
 		{
-			return QuantityFormatter.formatNumber(qty) + " gp";
+			return StackFormatter.formatNumber(qty) + " gp";
 		}
 		else if (id == ItemID.PLATINUM_TOKEN)
 		{
-			return QuantityFormatter.formatNumber(qty * 1000) + " gp";
+			return StackFormatter.formatNumber(qty * 1000) + " gp";
 		}
 
 		ItemDefinition itemDef = itemManager.getItemDefinition(id);
@@ -236,12 +236,12 @@ class ItemPricesOverlay extends Overlay
 		if (gePrice > 0)
 		{
 			itemStringBuilder.append("EX: ")
-				.append(QuantityFormatter.quantityToStackSize(gePrice * qty))
+				.append(StackFormatter.quantityToStackSize(gePrice * qty))
 				.append(" gp");
 			if (plugin.isShowEA() && qty > 1)
 			{
 				itemStringBuilder.append(" (")
-					.append(QuantityFormatter.quantityToStackSize(gePrice))
+					.append(StackFormatter.quantityToStackSize(gePrice))
 					.append(" ea)");
 			}
 		}
@@ -253,12 +253,12 @@ class ItemPricesOverlay extends Overlay
 			}
 
 			itemStringBuilder.append("HA: ")
-				.append(QuantityFormatter.quantityToStackSize(haValue * qty))
+				.append(StackFormatter.quantityToStackSize(haValue * qty))
 				.append(" gp");
 			if (plugin.isShowEA() && qty > 1)
 			{
 				itemStringBuilder.append(" (")
-					.append(QuantityFormatter.quantityToStackSize(haValue))
+					.append(StackFormatter.quantityToStackSize(haValue))
 					.append(" ea)");
 			}
 		}

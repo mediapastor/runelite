@@ -28,29 +28,15 @@ package net.runelite.client.plugins.entityhider;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
-import net.runelite.client.config.ConfigTitleSection;
-import net.runelite.client.config.Title;
 
 @ConfigGroup("entityhider")
 public interface EntityHiderConfig extends Config
 {
-	@ConfigTitleSection(
-		keyName = "playersTitle",
-		name = "Other players",
-		description = "",
-		position = 1
-	)
-	default Title playersTitle()
-	{
-		return new Title();
-	}
-
 	@ConfigItem(
-		position = 2,
+		position = 1,
 		keyName = "hidePlayers",
 		name = "Hide Players",
-		description = "Configures whether or not players are hidden",
-		titleSection = "playersTitle"
+		description = "Configures whether or not players are hidden"
 	)
 	default boolean hidePlayers()
 	{
@@ -58,11 +44,10 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 3,
+		position = 2,
 		keyName = "hidePlayers2D",
 		name = "Hide Players 2D",
-		description = "Configures whether or not players 2D elements are hidden",
-		titleSection = "playersTitle"
+		description = "Configures whether or not players 2D elements are hidden"
 	)
 	default boolean hidePlayers2D()
 	{
@@ -70,81 +55,10 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 4,
-		keyName = "hideSpecificPlayers",
-		name = "Hide Specific Players",
-		description = "Hides players you never wish to see.",
-		titleSection = "playersTitle"
-	)
-	default String hideSpecificPlayers()
-	{
-		return "";
-	}
-
-	@ConfigItem(
-		position = 5,
-		keyName = "hideAttackers",
-		name = "Hide Attackers",
-		description = "Configures whether or not NPCs/players attacking you are hidden",
-		titleSection = "playersTitle"
-	)
-	default boolean hideAttackers()
-	{
-		return false;
-	}
-
-	@ConfigTitleSection(
-		keyName = "localPlayerTitle",
-		name = "Local player",
-		description = "",
-		position = 6
-	)
-	default Title localPlayerTitle()
-	{
-		return new Title();
-	}
-
-	@ConfigItem(
-		position = 7,
-		keyName = "hideLocalPlayer",
-		name = "Hide Local Player",
-		description = "Configures whether or not the local player is hidden",
-		titleSection = "localPlayerTitle"
-	)
-	default boolean hideLocalPlayer()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-		position = 8,
-		keyName = "hideLocalPlayer2D",
-		name = "Hide Local Player 2D",
-		description = "Configures whether or not the local player's 2D elements are hidden",
-		titleSection = "localPlayerTitle"
-	)
-	default boolean hideLocalPlayer2D()
-	{
-		return false;
-	}
-
-	@ConfigTitleSection(
-		keyName = "friendsTitle",
-		name = "Friends / clan",
-		description = "",
-		position = 9
-	)
-	default Title friendsTitle()
-	{
-		return new Title();
-	}
-
-	@ConfigItem(
-		position = 10,
+		position = 3,
 		keyName = "hideFriends",
 		name = "Hide Friends",
-		description = "Configures whether or not friends are hidden",
-		titleSection = "friendsTitle"
+		description = "Configures whether or not friends are hidden"
 	)
 	default boolean hideFriends()
 	{
@@ -152,34 +66,43 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 11,
+		position = 4,
 		keyName = "hideClanMates",
 		name = "Hide Clan Mates",
-		description = "Configures whether or not clan mates are hidden",
-		titleSection = "friendsTitle"
+		description = "Configures whether or not clan mates are hidden"
 	)
 	default boolean hideClanMates()
 	{
 		return false;
 	}
 
-	@ConfigTitleSection(
-		keyName = "npcsTitle",
-		name = "NPCs",
-		description = "",
-		position = 12
+	@ConfigItem(
+		position = 5,
+		keyName = "hideLocalPlayer",
+		name = "Hide Local Player",
+		description = "Configures whether or not the local player is hidden"
 	)
-	default Title npcsTitle()
+	default boolean hideLocalPlayer()
 	{
-		return new Title();
+		return false;
 	}
 
 	@ConfigItem(
-		position = 13,
+		position = 6,
+		keyName = "hideLocalPlayer2D",
+		name = "Hide Local Player 2D",
+		description = "Configures whether or not the local player's 2D elements are hidden"
+	)
+	default boolean hideLocalPlayer2D()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		position = 7,
 		keyName = "hideNPCs",
 		name = "Hide NPCs",
-		description = "Configures whether or not NPCs are hidden",
-		titleSection = "npcsTitle"
+		description = "Configures whether or not NPCs are hidden"
 	)
 	default boolean hideNPCs()
 	{
@@ -187,11 +110,10 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 14,
+		position = 8,
 		keyName = "hideNPCs2D",
 		name = "Hide NPCs 2D",
-		description = "Configures whether or not NPCs 2D elements are hidden",
-		titleSection = "npcsTitle"
+		description = "Configures whether or not NPCs 2D elements are hidden"
 	)
 	default boolean hideNPCs2D()
 	{
@@ -199,11 +121,21 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 15,
+		position = 9,
+		keyName = "hideAttackers",
+		name = "Hide Attackers",
+		description = "Configures whether or not NPCs/players attacking you are hidden"
+	)
+	default boolean hideAttackers()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		position = 10,
 		keyName = "hideNPCsNames",
 		name = "Hide NPCs Names",
-		description = "Configures which NPCs to hide",
-		titleSection = "npcsTitle"
+		description = "Configures which NPCs to hide"
 	)
 	default String hideNPCsNames()
 	{
@@ -211,11 +143,10 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 16,
+		position = 11,
 		keyName = "hideDeadNPCs",
 		name = "Hide Dead NPCs",
-		description = "Configures whether or not NPCs that just died are hidden",
-		titleSection = "npcsTitle"
+		description = "Configures whether or not NPCs that just died are hidden"
 	)
 	default boolean hideDeadNPCs()
 	{
@@ -223,34 +154,32 @@ public interface EntityHiderConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 17,
+		position = 12,
 		keyName = "hideNPCsOnDeath",
 		name = "Hide NPCs On Death",
-		description = "Configures which NPCs to hide when they die",
-		titleSection = "npcsTitle"
+		description = "Configures which NPCs to hide when they die"
 	)
 	default String hideNPCsOnDeath()
 	{
 		return "";
 	}
 
-	@ConfigTitleSection(
-		keyName = "miscTitle",
-		name = "Miscellaneous",
-		description = "",
-		position = 18
+	@ConfigItem(
+		position = 13,
+		keyName = "hideSpecificPlayers",
+		name = "Hide Specific Players",
+		description = "Hides players you never wish to see."
 	)
-	default Title miscTitle()
+	default String hideSpecificPlayers()
 	{
-		return new Title();
+		return "";
 	}
 
 	@ConfigItem(
-		position = 19,
+		position = 14,
 		keyName = "hideProjectiles",
 		name = "Hide Projectiles",
-		description = "Configures whether or not projectiles are hidden",
-		titleSection = "miscTitle"
+		description = "Configures whether or not projectiles are hidden"
 	)
 	default boolean hideProjectiles()
 	{

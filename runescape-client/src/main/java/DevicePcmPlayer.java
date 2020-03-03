@@ -9,84 +9,90 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("at")
+@ObfuscatedName("aw")
 @Implements("DevicePcmPlayer")
 public class DevicePcmPlayer extends PcmPlayer {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@Export("format")
 	AudioFormat format;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@Export("line")
 	SourceDataLine line;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = 1308062251
+		intValue = 305940879
 	)
 	@Export("capacity2")
 	int capacity2;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@Export("byteSamples")
 	byte[] byteSamples;
 
 	DevicePcmPlayer() {
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
 		signature = "(B)V",
-		garbageValue = "-122"
+		garbageValue = "1"
 	)
 	@Export("init")
 	protected void init() {
-		this.format = new AudioFormat((float)(PcmPlayer.PcmPlayer_sampleRate * 22050), 16, InterfaceParent.PcmPlayer_stereo ? 2 : 1, true, false);
-		this.byteSamples = new byte[256 << (InterfaceParent.PcmPlayer_stereo ? 2 : 1)];
+		this.format = new AudioFormat((float)PcmPlayer.PcmPlayer_sampleRate, 16, PcmPlayer.PcmPlayer_stereo ? 2 : 1, true, false);
+		this.byteSamples = new byte[256 << (PcmPlayer.PcmPlayer_stereo ? 2 : 1)];
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
 		signature = "(II)V",
-		garbageValue = "1329305761"
+		garbageValue = "1939802329"
 	)
 	@Export("open")
 	protected void open(int var1) throws LineUnavailableException {
 		try {
-			Info var2 = new Info(SourceDataLine.class, this.format, var1 << (InterfaceParent.PcmPlayer_stereo ? 2 : 1));
+			Info var2 = new Info(SourceDataLine.class, this.format, var1 << (PcmPlayer.PcmPlayer_stereo ? 2 : 1));
 			this.line = (SourceDataLine)AudioSystem.getLine(var2);
 			this.line.open();
 			this.line.start();
 			this.capacity2 = var1;
-		} catch (LineUnavailableException var5) {
-			if (GraphicsObject.method2158(var1) != 1) {
-				int var4 = var1 - 1;
-				var4 |= var4 >>> 1;
-				var4 |= var4 >>> 2;
-				var4 |= var4 >>> 4;
-				var4 |= var4 >>> 8;
-				var4 |= var4 >>> 16;
-				int var3 = var4 + 1;
-				this.open(var3);
+		} catch (LineUnavailableException var7) {
+			int var4 = (var1 >>> 1 & 1431655765) + (var1 & 1431655765);
+			var4 = (var4 >>> 2 & 858993459) + (var4 & 858993459);
+			var4 = (var4 >>> 4) + var4 & 252645135;
+			var4 += var4 >>> 8;
+			var4 += var4 >>> 16;
+			int var3 = var4 & 255;
+			if (var3 != 1) {
+				int var6 = var1 - 1;
+				var6 |= var6 >>> 1;
+				var6 |= var6 >>> 2;
+				var6 |= var6 >>> 4;
+				var6 |= var6 >>> 8;
+				var6 |= var6 >>> 16;
+				int var5 = var6 + 1;
+				this.open(var5);
 			} else {
 				this.line = null;
-				throw var5;
+				throw var7;
 			}
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
 		signature = "(I)I",
-		garbageValue = "-2053382901"
+		garbageValue = "428413683"
 	)
 	@Export("position")
 	protected int position() {
-		return this.capacity2 - (this.line.available() >> (InterfaceParent.PcmPlayer_stereo ? 2 : 1));
+		return this.capacity2 - (this.line.available() >> (PcmPlayer.PcmPlayer_stereo ? 2 : 1));
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@Export("write")
 	protected void write() {
 		int var1 = 256;
-		if (InterfaceParent.PcmPlayer_stereo) {
+		if (PcmPlayer.PcmPlayer_stereo) {
 			var1 <<= 1;
 		}
 
@@ -103,10 +109,10 @@ public class DevicePcmPlayer extends PcmPlayer {
 		this.line.write(this.byteSamples, 0, var1 << 1);
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "-359946727"
+		garbageValue = "37766209"
 	)
 	@Export("close")
 	protected void close() {
@@ -117,10 +123,10 @@ public class DevicePcmPlayer extends PcmPlayer {
 
 	}
 
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "47548316"
+		garbageValue = "645078569"
 	)
 	@Export("discard")
 	protected void discard() {

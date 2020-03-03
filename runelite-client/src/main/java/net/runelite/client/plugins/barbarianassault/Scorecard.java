@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, Jacob M <https://github.com/jacoblairm>
- * Copyright (c) 2019, https://openosrs.com
+ * Copyright (c) 2019, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@ package net.runelite.client.plugins.barbarianassault;
 
 import java.awt.Color;
 import java.util.ArrayList;
+
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;

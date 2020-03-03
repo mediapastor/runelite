@@ -1,515 +1,324 @@
 import net.runelite.mapping.Export;
+import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("t")
+@ObfuscatedName("j")
 final class class1 implements class0 {
-	@ObfuscatedName("ou")
+	@ObfuscatedName("bj")
 	@ObfuscatedSignature(
-		signature = "Lcz;"
+		signature = "[Llq;"
 	)
-	@Export("varcs")
-	static Varcs varcs;
-	@ObfuscatedName("a")
+	@Export("worldSelectFlagSprites")
+	static IndexedSprite[] worldSelectFlagSprites;
+	@ObfuscatedName("bq")
+	static String field6;
+	@ObfuscatedName("iz")
+	@ObfuscatedGetter(
+		intValue = 517474423
+	)
+	@Export("selectedItemId")
+	static int selectedItemId;
+	@ObfuscatedName("kp")
+	@ObfuscatedGetter(
+		intValue = -333767243
+	)
+	@Export("menuHeight")
+	static int menuHeight;
+	@ObfuscatedName("lk")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lcd;"
 	)
-	@Export("InvDefinition_archive")
-	public static AbstractArchive InvDefinition_archive;
-	@ObfuscatedName("gh")
-	@ObfuscatedSignature(
-		signature = "Llx;"
-	)
-	@Export("compass")
-	static Sprite compass;
+	@Export("tempMenuAction")
+	static MenuAction tempMenuAction;
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/Object;Lkc;B)V",
-		garbageValue = "25"
+		signature = "(Ljava/lang/Object;Lky;I)V",
+		garbageValue = "254789492"
 	)
-	public void vmethod89(Object var1, Buffer var2) {
-		this.method12((Integer)var1, var2);
+	public void vmethod58(Object var1, Buffer var2) {
+		this.method9((Integer)var1, var2);
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(Lkc;I)Ljava/lang/Object;",
-		garbageValue = "242985434"
+		signature = "(Lky;I)Ljava/lang/Object;",
+		garbageValue = "1267204541"
 	)
-	public Object vmethod74(Buffer var1) {
+	public Object vmethod70(Buffer var1) {
 		return var1.readInt();
 	}
 
-	@ObfuscatedName("p")
+	@ObfuscatedName("x")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/Integer;Lkc;I)V",
-		garbageValue = "1640474163"
+		signature = "(Ljava/lang/Integer;Lky;I)V",
+		garbageValue = "-1964979998"
 	)
-	void method12(Integer var1, Buffer var2) {
+	void method9(Integer var1, Buffer var2) {
 		var2.writeInt(var1);
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "646080011"
+		signature = "(II)V",
+		garbageValue = "1888870541"
 	)
-	public static int method26() {
-		return KeyHandler.KeyHandler_idleCycles;
-	}
-
-	@ObfuscatedName("o")
-	@ObfuscatedSignature(
-		signature = "(I)Lbk;",
-		garbageValue = "1796263151"
-	)
-	@Export("getNextWorldListWorld")
-	static World getNextWorldListWorld() {
-		return World.World_listCount < World.World_count ? Username.World_worlds[++World.World_listCount - 1] : null;
-	}
-
-	@ObfuscatedName("m")
-	@ObfuscatedSignature(
-		signature = "(Lks;Lks;Lks;I)V",
-		garbageValue = "-196875939"
-	)
-	@Export("drawTitle")
-	static void drawTitle(Font var0, Font var1, Font var2) {
-		Login.xPadding = (class286.canvasWidth - 765) / 2;
-		Login.loginBoxX = Login.xPadding + 202;
-		class192.loginBoxCenter = Login.loginBoxX + 180;
-		if (Login.worldSelectOpen) {
-			UrlRequester.method3430(var0, var1);
-		} else {
-			Login.leftTitleSprite.drawAt(Login.xPadding, 0);
-			FontName.rightTitleSprite.drawAt(Login.xPadding + 382, 0);
-			Tiles.logoSprite.drawAt(Login.xPadding + 382 - Tiles.logoSprite.subWidth / 2, 18);
-			int var4;
-			if (Client.gameState == 0 || Client.gameState == 5) {
-				byte var3 = 20;
-				var0.drawCentered("RuneScape is loading - please wait...", Login.loginBoxX + 180, 245 - var3, 16777215, -1);
-				var4 = 253 - var3;
-				Rasterizer2D.Rasterizer2D_drawRectangle(Login.loginBoxX + 180 - 152, var4, 304, 34, 9179409);
-				Rasterizer2D.Rasterizer2D_drawRectangle(Login.loginBoxX + 180 - 151, var4 + 1, 302, 32, 0);
-				Rasterizer2D.Rasterizer2D_fillRectangle(Login.loginBoxX + 180 - 150, var4 + 2, Login.Login_loadingPercent * 3, 30, 9179409);
-				Rasterizer2D.Rasterizer2D_fillRectangle(Login.loginBoxX + 180 - 150 + Login.Login_loadingPercent * 3, var4 + 2, 300 - Login.Login_loadingPercent * 3, 30, 0);
-				var0.drawCentered(Login.Login_loadingText, Login.loginBoxX + 180, 276 - var3, 16777215, -1);
-			}
-
-			String var5;
-			String var7;
-			String var8;
-			int var9;
-			char[] var10;
-			int var11;
-			short var25;
-			int var26;
-			short var27;
-			if (Client.gameState == 20) {
-				NPC.titleboxSprite.drawAt(Login.loginBoxX + 180 - NPC.titleboxSprite.subWidth / 2, 271 - NPC.titleboxSprite.subHeight / 2);
-				var25 = 201;
-				var0.drawCentered(Login.Login_response1, Login.loginBoxX + 180, var25, 16776960, 0);
-				var26 = var25 + 15;
-				var0.drawCentered(Login.Login_response2, Login.loginBoxX + 180, var26, 16776960, 0);
-				var26 += 15;
-				var0.drawCentered(Login.Login_response3, Login.loginBoxX + 180, var26, 16776960, 0);
-				var26 += 15;
-				var26 += 7;
-				if (Login.loginIndex != 4) {
-					var0.draw("Login: ", Login.loginBoxX + 180 - 110, var26, 16777215, 0);
-					var27 = 200;
-
-					for (var5 = ScriptEvent.method1277(); var0.stringWidth(var5) > var27; var5 = var5.substring(0, var5.length() - 1)) {
-					}
-
-					var0.draw(AbstractFont.escapeBrackets(var5), Login.loginBoxX + 180 - 70, var26, 16777215, 0);
-					var26 += 15;
-					var7 = Login.Login_password;
-					var9 = var7.length();
-					var10 = new char[var9];
-
-					for (var11 = 0; var11 < var9; ++var11) {
-						var10[var11] = '*';
-					}
-
-					var8 = new String(var10);
-
-					for (var8 = var8; var0.stringWidth(var8) > var27; var8 = var8.substring(1)) {
-					}
-
-					var0.draw("Password: " + var8, Login.loginBoxX + 180 - 108, var26, 16777215, 0);
-					var26 += 15;
-				}
-			}
-
-			if (Client.gameState == 10 || Client.gameState == 11) {
-				NPC.titleboxSprite.drawAt(Login.loginBoxX, 171);
-				short var19;
-				if (Login.loginIndex == 0) {
-					var25 = 251;
-					var0.drawCentered("Welcome to RuneScape", Login.loginBoxX + 180, var25, 16776960, 0);
-					var26 = var25 + 30;
-					var4 = Login.loginBoxX + 180 - 80;
-					var19 = 291;
-					UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-					var0.drawLines("New User", var4 - 73, var19 - 20, 144, 40, 16777215, 0, 1, 1, 0);
-					var4 = Login.loginBoxX + 180 + 80;
-					UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-					var0.drawLines("Existing User", var4 - 73, var19 - 20, 144, 40, 16777215, 0, 1, 1, 0);
-				} else if (Login.loginIndex == 1) {
-					var0.drawCentered(Login.Login_response0, Login.loginBoxX + 180, 201, 16776960, 0);
-					var25 = 236;
-					var0.drawCentered(Login.Login_response1, Login.loginBoxX + 180, var25, 16777215, 0);
-					var26 = var25 + 15;
-					var0.drawCentered(Login.Login_response2, Login.loginBoxX + 180, var26, 16777215, 0);
-					var26 += 15;
-					var0.drawCentered(Login.Login_response3, Login.loginBoxX + 180, var26, 16777215, 0);
-					var26 += 15;
-					var4 = Login.loginBoxX + 180 - 80;
-					var19 = 321;
-					UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-					var0.drawCentered("Continue", var4, var19 + 5, 16777215, 0);
-					var4 = Login.loginBoxX + 180 + 80;
-					UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-					var0.drawCentered("Cancel", var4, var19 + 5, 16777215, 0);
-				} else {
-					IndexedSprite var29;
-					if (Login.loginIndex == 2) {
-						var25 = 201;
-						var0.drawCentered(Login.Login_response1, class192.loginBoxCenter, var25, 16776960, 0);
-						var26 = var25 + 15;
-						var0.drawCentered(Login.Login_response2, class192.loginBoxCenter, var26, 16776960, 0);
-						var26 += 15;
-						var0.drawCentered(Login.Login_response3, class192.loginBoxCenter, var26, 16776960, 0);
-						var26 += 15;
-						var26 += 7;
-						var0.draw("Login: ", class192.loginBoxCenter - 110, var26, 16777215, 0);
-						var27 = 200;
-
-						for (var5 = ScriptEvent.method1277(); var0.stringWidth(var5) > var27; var5 = var5.substring(1)) {
-						}
-
-						var0.draw(AbstractFont.escapeBrackets(var5) + (Login.currentLoginField == 0 & Client.cycle % 40 < 20 ? AbstractArchive.colorStartTag(16776960) + "|" : ""), class192.loginBoxCenter - 70, var26, 16777215, 0);
-						var26 += 15;
-						var7 = Login.Login_password;
-						var9 = var7.length();
-						var10 = new char[var9];
-
-						for (var11 = 0; var11 < var9; ++var11) {
-							var10[var11] = '*';
-						}
-
-						var8 = new String(var10);
-
-						for (var8 = var8; var0.stringWidth(var8) > var27; var8 = var8.substring(1)) {
-						}
-
-						var0.draw("Password: " + var8 + (Login.currentLoginField == 1 & Client.cycle % 40 < 20 ? AbstractArchive.colorStartTag(16776960) + "|" : ""), class192.loginBoxCenter - 108, var26, 16777215, 0);
-						var26 += 15;
-						var25 = 277;
-						var9 = class192.loginBoxCenter + -117;
-						boolean var30 = Client.Login_isUsernameRemembered;
-						boolean var12 = Login.field1159;
-						var29 = var30 ? (var12 ? class4.field23 : Login.options_buttons_2Sprite) : (var12 ? class51.field412 : UserComparator8.options_buttons_0Sprite);
-						var29.drawAt(var9, var25);
-						var9 = var9 + var29.subWidth + 5;
-						var1.draw("Remember username", var9, var25 + 13, 16776960, 0);
-						var9 = class192.loginBoxCenter + 24;
-						boolean var15 = ScriptEvent.clientPreferences.hideUsername;
-						boolean var16 = Login.field1175;
-						IndexedSprite var14 = var15 ? (var16 ? class4.field23 : Login.options_buttons_2Sprite) : (var16 ? class51.field412 : UserComparator8.options_buttons_0Sprite);
-						var14.drawAt(var9, var25);
-						var9 = var9 + var14.subWidth + 5;
-						var1.draw("Hide username", var9, var25 + 13, 16776960, 0);
-						var26 = var25 + 15;
-						int var17 = class192.loginBoxCenter - 80;
-						short var18 = 321;
-						UserComparator9.titlebuttonSprite.drawAt(var17 - 73, var18 - 20);
-						var0.drawCentered("Login", var17, var18 + 5, 16777215, 0);
-						var17 = class192.loginBoxCenter + 80;
-						UserComparator9.titlebuttonSprite.drawAt(var17 - 73, var18 - 20);
-						var0.drawCentered("Cancel", var17, var18 + 5, 16777215, 0);
-						var25 = 357;
-						switch(Login.field1166) {
-						case 2:
-							VarbitDefinition.field3288 = "Having trouble logging in?";
-							break;
-						default:
-							VarbitDefinition.field3288 = "Can't login? Click here.";
-						}
-
-						WorldMapLabel.field225 = new Bounds(class192.loginBoxCenter, var25, var1.stringWidth(VarbitDefinition.field3288), 11);
-						WorldMapManager.field319 = new Bounds(class192.loginBoxCenter, var25, var1.stringWidth("Still having trouble logging in?"), 11);
-						var1.drawCentered(VarbitDefinition.field3288, class192.loginBoxCenter, var25, 16777215, 0);
-					} else if (Login.loginIndex == 3) {
-						var25 = 201;
-						var0.drawCentered("Invalid credentials.", Login.loginBoxX + 180, var25, 16776960, 0);
-						var26 = var25 + 20;
-						var1.drawCentered("For accounts created after 24th November 2010, please use your", Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var1.drawCentered("email address to login. Otherwise please login with your username.", Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var4 = Login.loginBoxX + 180;
-						var19 = 276;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var2.drawCentered("Try again", var4, var19 + 5, 16777215, 0);
-						var4 = Login.loginBoxX + 180;
-						var19 = 326;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var2.drawCentered("Forgotten password?", var4, var19 + 5, 16777215, 0);
-					} else if (Login.loginIndex == 4) {
-						var0.drawCentered("Authenticator", Login.loginBoxX + 180, 201, 16776960, 0);
-						var25 = 236;
-						var0.drawCentered(Login.Login_response1, Login.loginBoxX + 180, var25, 16777215, 0);
-						var26 = var25 + 15;
-						var0.drawCentered(Login.Login_response2, Login.loginBoxX + 180, var26, 16777215, 0);
-						var26 += 15;
-						var0.drawCentered(Login.Login_response3, Login.loginBoxX + 180, var26, 16777215, 0);
-						var26 += 15;
-						var5 = "PIN: ";
-						var7 = class268.otp;
-						var9 = var7.length();
-						var10 = new char[var9];
-
-						for (var11 = 0; var11 < var9; ++var11) {
-							var10[var11] = '*';
-						}
-
-						var8 = new String(var10);
-						var0.draw(var5 + var8 + (Client.cycle % 40 < 20 ? AbstractArchive.colorStartTag(16776960) + "|" : ""), Login.loginBoxX + 180 - 108, var26, 16777215, 0);
-						var26 -= 8;
-						var0.draw("Trust this computer", Login.loginBoxX + 180 - 9, var26, 16776960, 0);
-						var26 += 15;
-						var0.draw("for 30 days: ", Login.loginBoxX + 180 - 9, var26, 16776960, 0);
-						int var23 = Login.loginBoxX + 180 - 9 + var0.stringWidth("for 30 days: ") + 15;
-						var9 = var26 - var0.ascent;
-						if (Login.field1177) {
-							var29 = Login.options_buttons_2Sprite;
-						} else {
-							var29 = UserComparator8.options_buttons_0Sprite;
-						}
-
-						var29.drawAt(var23, var9);
-						var26 += 15;
-						var11 = Login.loginBoxX + 180 - 80;
-						short var31 = 321;
-						UserComparator9.titlebuttonSprite.drawAt(var11 - 73, var31 - 20);
-						var0.drawCentered("Continue", var11, var31 + 5, 16777215, 0);
-						var11 = Login.loginBoxX + 180 + 80;
-						UserComparator9.titlebuttonSprite.drawAt(var11 - 73, var31 - 20);
-						var0.drawCentered("Cancel", var11, var31 + 5, 16777215, 0);
-						var1.drawCentered("<u=ff>Can't Log In?</u>", Login.loginBoxX + 180, var31 + 36, 255, 0);
-					} else if (Login.loginIndex == 5) {
-						var0.drawCentered("Forgotten your password?", Login.loginBoxX + 180, 201, 16776960, 0);
-						var25 = 221;
-						var2.drawCentered(Login.Login_response1, Login.loginBoxX + 180, var25, 16776960, 0);
-						var26 = var25 + 15;
-						var2.drawCentered(Login.Login_response2, Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var2.drawCentered(Login.Login_response3, Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var26 += 14;
-						var0.draw("Username/email: ", Login.loginBoxX + 180 - 145, var26, 16777215, 0);
-						var27 = 174;
-
-						for (var5 = ScriptEvent.method1277(); var0.stringWidth(var5) > var27; var5 = var5.substring(1)) {
-						}
-
-						var0.draw(AbstractFont.escapeBrackets(var5) + (Client.cycle % 40 < 20 ? AbstractArchive.colorStartTag(16776960) + "|" : ""), Login.loginBoxX + 180 - 34, var26, 16777215, 0);
-						var26 += 15;
-						int var6 = Login.loginBoxX + 180 - 80;
-						short var24 = 321;
-						UserComparator9.titlebuttonSprite.drawAt(var6 - 73, var24 - 20);
-						var0.drawCentered("Recover", var6, var24 + 5, 16777215, 0);
-						var6 = Login.loginBoxX + 180 + 80;
-						UserComparator9.titlebuttonSprite.drawAt(var6 - 73, var24 - 20);
-						var0.drawCentered("Back", var6, var24 + 5, 16777215, 0);
-						var24 = 356;
-						var1.drawCentered("Still having trouble logging in?", class192.loginBoxCenter, var24, 268435455, 0);
-					} else if (Login.loginIndex == 6) {
-						var25 = 201;
-						var0.drawCentered(Login.Login_response1, Login.loginBoxX + 180, var25, 16776960, 0);
-						var26 = var25 + 15;
-						var0.drawCentered(Login.Login_response2, Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var0.drawCentered(Login.Login_response3, Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var4 = Login.loginBoxX + 180;
-						var19 = 321;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var0.drawCentered("Back", var4, var19 + 5, 16777215, 0);
-					} else if (Login.loginIndex == 7) {
-						var25 = 216;
-						var0.drawCentered("Your date of birth isn't set.", Login.loginBoxX + 180, var25, 16776960, 0);
-						var26 = var25 + 15;
-						var2.drawCentered("Please verify your account status by", Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var2.drawCentered("setting your date of birth.", Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var4 = Login.loginBoxX + 180 - 80;
-						var19 = 321;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var0.drawCentered("Set Date of Birth", var4, var19 + 5, 16777215, 0);
-						var4 = Login.loginBoxX + 180 + 80;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var0.drawCentered("Back", var4, var19 + 5, 16777215, 0);
-					} else if (Login.loginIndex == 8) {
-						var25 = 216;
-						var0.drawCentered("Sorry, but your account is not eligible to play.", Login.loginBoxX + 180, var25, 16776960, 0);
-						var26 = var25 + 15;
-						var2.drawCentered("For more information, please take a look at", Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var2.drawCentered("our privacy policy.", Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var4 = Login.loginBoxX + 180 - 80;
-						var19 = 321;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var0.drawCentered("Privacy Policy", var4, var19 + 5, 16777215, 0);
-						var4 = Login.loginBoxX + 180 + 80;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var0.drawCentered("Back", var4, var19 + 5, 16777215, 0);
-					} else if (Login.loginIndex == 12) {
-						var25 = 201;
-						String var22 = "";
-						var5 = "";
-						String var21 = "";
-						switch(Login.field1156) {
-						case 0:
-							var22 = "Your account has been disabled.";
-							var5 = Strings.field2797;
-							var21 = "";
-							break;
-						case 1:
-							var22 = "Account locked as we suspect it has been stolen.";
-							var5 = Strings.field3006;
-							var21 = "";
-							break;
-						default:
-							UserComparator3.Login_promptCredentials(false);
-						}
-
-						var0.drawCentered(var22, Login.loginBoxX + 180, var25, 16776960, 0);
-						var26 = var25 + 15;
-						var2.drawCentered(var5, Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						var2.drawCentered(var21, Login.loginBoxX + 180, var26, 16776960, 0);
-						var26 += 15;
-						int var34 = Login.loginBoxX + 180;
-						short var33 = 276;
-						UserComparator9.titlebuttonSprite.drawAt(var34 - 73, var33 - 20);
-						var0.drawCentered("Support Page", var34, var33 + 5, 16777215, 0);
-						var34 = Login.loginBoxX + 180;
-						var33 = 326;
-						UserComparator9.titlebuttonSprite.drawAt(var34 - 73, var33 - 20);
-						var0.drawCentered("Back", var34, var33 + 5, 16777215, 0);
-					} else if (Login.loginIndex == 24) {
-						var25 = 221;
-						var0.drawCentered(Login.Login_response1, Login.loginBoxX + 180, var25, 16777215, 0);
-						var26 = var25 + 15;
-						var0.drawCentered(Login.Login_response2, Login.loginBoxX + 180, var26, 16777215, 0);
-						var26 += 15;
-						var0.drawCentered(Login.Login_response3, Login.loginBoxX + 180, var26, 16777215, 0);
-						var26 += 15;
-						var4 = Login.loginBoxX + 180;
-						var19 = 301;
-						UserComparator9.titlebuttonSprite.drawAt(var4 - 73, var19 - 20);
-						var0.drawCentered("Ok", var4, var19 + 5, 16777215, 0);
-					}
-				}
-			}
-
-			if (Client.gameState >= 10) {
-				int[] var20 = new int[4];
-				Rasterizer2D.Rasterizer2D_getClipArray(var20);
-				Rasterizer2D.Rasterizer2D_setClip(Login.xPadding, 0, Login.xPadding + 765, FloorUnderlayDefinition.canvasHeight);
-				Login.loginScreenRunesAnimation.draw(Login.xPadding - 22, Client.cycle);
-				Login.loginScreenRunesAnimation.draw(Login.xPadding + 22 + 765 - 128, Client.cycle);
-				Rasterizer2D.Rasterizer2D_setClipArray(var20);
-			}
-
-			Decimator.title_muteSprite[ScriptEvent.clientPreferences.titleMusicDisabled ? 1 : 0].drawAt(Login.xPadding + 765 - 40, 463);
-			if (Client.gameState > 5 && Language.Language_EN == WorldMapSection1.clientLanguage) {
-				if (Message.field587 != null) {
-					var26 = Login.xPadding + 5;
-					var27 = 463;
-					byte var32 = 100;
-					byte var28 = 35;
-					Message.field587.drawAt(var26, var27);
-					var0.drawCentered("World" + " " + Client.worldId, var32 / 2 + var26, var28 / 2 + var27 - 2, 16777215, 0);
-					if (class96.World_request != null) {
-						var1.drawCentered("Loading...", var32 / 2 + var26, var28 / 2 + var27 + 12, 16777215, 0);
-					} else {
-						var1.drawCentered("Click to switch", var32 / 2 + var26, var28 / 2 + var27 + 12, 16777215, 0);
-					}
-				} else {
-					Message.field587 = ClientPacket.SpriteBuffer_getIndexedSpriteByName(GrandExchangeOfferUnitPriceComparator.archive8, "sl_button", "");
-				}
-			}
-
+	static void method21(int var0) {
+		ItemContainer var1 = (ItemContainer)ItemContainer.itemContainers.get((long)var0);
+		if (var1 != null) {
+			var1.remove();
 		}
 	}
 
-	@ObfuscatedName("fx")
+	@ObfuscatedName("fi")
 	@ObfuscatedSignature(
 		signature = "(B)V",
-		garbageValue = "12"
+		garbageValue = "1"
 	)
-	@Export("logOut")
-	static final void logOut() {
-		Client.packetWriter.close();
+	static final void method18() {
 		FloorOverlayDefinition.FloorOverlayDefinition_cached.clear();
-		Login.method2258();
-		WorldMapCacheName.method682();
-		ObjectDefinition.ObjectDefinition_cached.clear();
-		ObjectDefinition.ObjectDefinition_cachedModelData.clear();
-		ObjectDefinition.ObjectDefinition_cachedEntities.clear();
-		ObjectDefinition.ObjectDefinition_cachedModels.clear();
-		NPCDefinition.NpcDefinition_cached.clear();
-		NPCDefinition.NpcDefinition_cachedModels.clear();
-		FriendSystem.method2038();
-		BuddyRankComparator.method3568();
-		class81.method2207();
-		VarbitDefinition.VarbitDefinition_cached.clear();
-		WorldMapRectangle.method331();
-		HitSplatDefinition.HitSplatDefinition_cached.clear();
-		HitSplatDefinition.HitSplatDefinition_cachedSprites.clear();
-		HitSplatDefinition.HitSplatDefinition_cachedFonts.clear();
-		HealthBarDefinition.HealthBarDefinition_cached.clear();
-		HealthBarDefinition.HealthBarDefinition_cachedSprites.clear();
+		FloorUnderlayDefinition.FloorUnderlayDefinition_cached.clear();
+		KitDefinition.KitDefinition_cached.clear();
+		FontName.ObjectDefinition_clearCached();
+		ArchiveLoader.NpcDefinition_clearCached();
+		TileItemPile.method2700();
+		SequenceDefinition.SequenceDefinition_cached.clear();
+		SequenceDefinition.SequenceDefinition_cachedFrames.clear();
+		TileItem.method2048();
+		GrandExchangeOfferUnitPriceComparator.VarbitDefinition_clearCached();
+		class51.method846();
+		WorldMapData_0.method177();
+		InvDefinition.HealthBarDefinition_clearCached();
 		StructDefinition.StructDefinition_cached.clear();
-		ParamDefinition.ParamDefinition_cached.clear();
-		MusicPatchNode.method3973();
-		DirectByteArrayCopier.method4101();
-		Widget.Widget_cachedSprites.clear();
-		Widget.Widget_cachedModels.clear();
-		Widget.Widget_cachedFonts.clear();
-		Widget.Widget_cachedSpriteMasks.clear();
+		class13.ParamDefinition_clearCached();
+		WorldMapSection2.WorldMapElement_clearCached();
+		PlayerAppearance.PlayerAppearance_cachedModels.clear();
+		GrandExchangeOfferAgeComparator.Widget_clearCached();
 		((TextureProvider)Rasterizer3D.Rasterizer3D_textureLoader).clear();
 		Script.Script_cached.clear();
-		BuddyRankComparator.archive0.clearFiles();
-		LoginPacket.archive1.clearFiles();
-		SpriteMask.archive3.clearFiles();
-		NetFileRequest.archive4.clearFiles();
-		WorldMapRectangle.archive5.clearFiles();
-		class216.archive6.clearFiles();
-		Language.archive7.clearFiles();
-		GrandExchangeOfferUnitPriceComparator.archive8.clearFiles();
-		WorldMapSprite.archive9.clearFiles();
-		WorldMapID.archive10.clearFiles();
-		Decimator.archive11.clearFiles();
-		Occluder.archive12.clearFiles();
-		WorldMapArea.scene.clear();
+		Client.archive0.clearFiles();
+		class269.archive1.clearFiles();
+		UserComparator8.archive3.clearFiles();
+		WorldMapSprite.archive4.clearFiles();
+		WorldMapDecoration.archive5.clearFiles();
+		GrandExchangeEvent.archive6.clearFiles();
+		class51.archive7.clearFiles();
+		class2.archive8.clearFiles();
+		WorldMapDecoration.archive9.clearFiles();
+		GameObject.archive10.clearFiles();
+		WorldMapRectangle.archive11.clearFiles();
+		GameShell.archive12.clearFiles();
+	}
 
-		for (int var0 = 0; var0 < 4; ++var0) {
-			Client.collisionMaps[var0].clear();
+	@ObfuscatedName("fq")
+	@ObfuscatedSignature(
+		signature = "(Lbu;II)V",
+		garbageValue = "504714765"
+	)
+	@Export("calculateActorPosition")
+	static final void calculateActorPosition(Actor var0, int var1) {
+		if (var0.field941 > Client.cycle) {
+			Tiles.method1075(var0);
+		} else {
+			int var2;
+			int var3;
+			int var4;
+			int var5;
+			int var7;
+			if (var0.field965 >= Client.cycle) {
+				if (var0.field965 == Client.cycle || var0.sequence == -1 || var0.sequenceDelay != 0 || var0.sequenceFrameCycle + 1 > Widget.SequenceDefinition_get(var0.sequence).frameLengths[var0.sequenceFrame]) {
+					var2 = var0.field965 - var0.field941;
+					var3 = Client.cycle - var0.field941;
+					var4 = var0.field960 * 128 + var0.size * -178253824;
+					var5 = var0.field954 * 128 + var0.size * -178253824;
+					int var6 = var0.field961 * 128 + var0.size * -178253824;
+					var7 = var0.field963 * 128 + var0.size * -178253824;
+					var0.x = (var6 * var3 + var4 * (var2 - var3)) / var2;
+					var0.y = (var3 * var7 + var5 * (var2 - var3)) / var2;
+				}
+
+				var0.field976 = 0;
+				var0.orientation = var0.field966;
+				var0.rotation = var0.orientation;
+			} else {
+				var0.movementSequence = var0.readySequence;
+				if (var0.pathLength == 0) {
+					var0.field976 = 0;
+				} else {
+					label301: {
+						if (var0.sequence != -1 && var0.sequenceDelay == 0) {
+							SequenceDefinition var11 = Widget.SequenceDefinition_get(var0.sequence);
+							if (var0.field947 > 0 && var11.field3506 == 0) {
+								++var0.field976;
+								break label301;
+							}
+
+							if (var0.field947 <= 0 && var11.field3505 == 0) {
+								++var0.field976;
+								break label301;
+							}
+						}
+
+						var2 = var0.x;
+						var3 = var0.y;
+						var4 = var0.pathX[var0.pathLength - 1] * 128 + var0.size * -178253824;
+						var5 = var0.pathY[var0.pathLength - 1] * 128 + var0.size * -178253824;
+						if (var2 < var4) {
+							if (var3 < var5) {
+								var0.orientation = 1280;
+							} else if (var3 > var5) {
+								var0.orientation = 1792;
+							} else {
+								var0.orientation = 1536;
+							}
+						} else if (var2 > var4) {
+							if (var3 < var5) {
+								var0.orientation = 768;
+							} else if (var3 > var5) {
+								var0.orientation = 256;
+							} else {
+								var0.orientation = 512;
+							}
+						} else if (var3 < var5) {
+							var0.orientation = 1024;
+						} else if (var3 > var5) {
+							var0.orientation = 0;
+						}
+
+						byte var12 = var0.pathTraversed[var0.pathLength - 1];
+						if (var4 - var2 <= 256 && var4 - var2 >= -256 && var5 - var3 <= 256 && var5 - var3 >= -256) {
+							var7 = var0.orientation - var0.rotation & 2047;
+							if (var7 > 1024) {
+								var7 -= 2048;
+							}
+
+							int var8 = var0.walkBackSequence;
+							if (var7 >= -256 && var7 <= 256) {
+								var8 = var0.walkSequence;
+							} else if (var7 >= 256 && var7 < 768) {
+								var8 = var0.walkRightSequence;
+							} else if (var7 >= -768 && var7 <= -256) {
+								var8 = var0.walkLeftSequence;
+							}
+
+							if (var8 == -1) {
+								var8 = var0.walkSequence;
+							}
+
+							var0.movementSequence = var8;
+							int var9 = 4;
+							boolean var10 = true;
+							if (var0 instanceof NPC) {
+								var10 = ((NPC)var0).definition.isClickable;
+							}
+
+							if (var10) {
+								if (var0.rotation != var0.orientation && var0.targetIndex == -1 && var0.field971 != 0) {
+									var9 = 2;
+								}
+
+								if (var0.pathLength > 2) {
+									var9 = 6;
+								}
+
+								if (var0.pathLength > 3) {
+									var9 = 8;
+								}
+
+								if (var0.field976 > 0 && var0.pathLength > 1) {
+									var9 = 8;
+									--var0.field976;
+								}
+							} else {
+								if (var0.pathLength > 1) {
+									var9 = 6;
+								}
+
+								if (var0.pathLength > 2) {
+									var9 = 8;
+								}
+
+								if (var0.field976 > 0 && var0.pathLength > 1) {
+									var9 = 8;
+									--var0.field976;
+								}
+							}
+
+							if (var12 == 2) {
+								var9 <<= 1;
+							}
+
+							if (var9 >= 8 && var0.movementSequence == var0.walkSequence && var0.runSequence != -1) {
+								var0.movementSequence = var0.runSequence;
+							}
+
+							if (var4 != var2 || var5 != var3) {
+								if (var2 < var4) {
+									var0.x += var9;
+									if (var0.x > var4) {
+										var0.x = var4;
+									}
+								} else if (var2 > var4) {
+									var0.x -= var9;
+									if (var0.x < var4) {
+										var0.x = var4;
+									}
+								}
+
+								if (var3 < var5) {
+									var0.y += var9;
+									if (var0.y > var5) {
+										var0.y = var5;
+									}
+								} else if (var3 > var5) {
+									var0.y -= var9;
+									if (var0.y < var5) {
+										var0.y = var5;
+									}
+								}
+							}
+
+							if (var4 == var0.x && var5 == var0.y) {
+								--var0.pathLength;
+								if (var0.field947 > 0) {
+									--var0.field947;
+								}
+							}
+						} else {
+							var0.x = var4;
+							var0.y = var5;
+							--var0.pathLength;
+							if (var0.field947 > 0) {
+								--var0.field947;
+							}
+						}
+					}
+				}
+			}
 		}
 
-		System.gc();
-		class80.method2194(2);
-		Client.currentTrackGroupId = -1;
-		Client.field855 = false;
-		GameShell.method1141();
-		Tile.updateGameState(10);
+		if (var0.x < 128 || var0.y < 128 || var0.x >= 13184 || var0.y >= 13184) {
+			var0.sequence = -1;
+			var0.spotAnimation = -1;
+			var0.field941 = 0;
+			var0.field965 = 0;
+			var0.x = var0.pathX[0] * 128 + var0.size * -178253824;
+			var0.y = var0.size * -178253824 + var0.pathY[0] * 128;
+			var0.method1671();
+		}
+
+		if (WorldMapIcon_1.localPlayer == var0 && (var0.x < 1536 || var0.y < 1536 || var0.x >= 11776 || var0.y >= 11776)) {
+			var0.sequence = -1;
+			var0.spotAnimation = -1;
+			var0.field941 = 0;
+			var0.field965 = 0;
+			var0.x = var0.size * -178253824 + var0.pathX[0] * 128;
+			var0.y = var0.size * -178253824 + var0.pathY[0] * 128;
+			var0.method1671();
+		}
+
+		class65.method1178(var0);
+		GrandExchangeOfferNameComparator.method149(var0);
 	}
 }

@@ -34,17 +34,23 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.concurrent.ScheduledExecutorService;
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
 import net.runelite.api.Client;
 import static net.runelite.client.RuneLite.LOGS_DIR;
 import net.runelite.client.RuneLiteProperties;
+import net.runelite.client.account.SessionManager;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.events.SessionClose;
+import net.runelite.client.events.SessionOpen;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
@@ -52,8 +58,10 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.LinkBrowser;
 
 @Singleton
-class InfoPanel extends PluginPanel
+public class InfoPanel extends PluginPanel
 {
+	private static final String RUNELITE_LOGIN = "https://runelite_login/";
+
 	private static final ImageIcon ARROW_RIGHT_ICON;
 	private static final ImageIcon GITHUB_ICON;
 	private static final ImageIcon FOLDER_ICON;
@@ -61,11 +69,20 @@ class InfoPanel extends PluginPanel
 	private static final ImageIcon PATREON_ICON;
 	private static final ImageIcon IMPORT_ICON;
 
+	private final JLabel loggedLabel = new JLabel();
+	private final JRichTextPane emailLabel = new JRichTextPane();
 	private JPanel syncPanel;
+	private JPanel actionsContainer;
 
 	@Inject
 	@Nullable
 	private Client client;
+
+	@Inject
+	private SessionManager sessionManager;
+
+	@Inject
+	private ScheduledExecutorService executor;
 
 	@Inject
 	private ConfigManager configManager;
@@ -96,7 +113,7 @@ class InfoPanel extends PluginPanel
 		JLabel version = new JLabel(htmlLabel("RuneLite version: ", RuneLiteProperties.getVersion()));
 		version.setFont(smallFont);
 
-		JLabel plusVersion = new JLabel(htmlLabel("OpenOSRS version: ", RuneLiteProperties.getPlusVersion()));
+		JLabel plusVersion = new JLabel(htmlLabel("RuneLitePlus version: ", RuneLiteProperties.getPlusVersion()));
 		plusVersion.setFont(smallFont);
 
 		JLabel revision = new JLabel();
@@ -110,11 +127,28 @@ class InfoPanel extends PluginPanel
 
 		revision.setText(htmlLabel("Oldschool revision: ", engineVer));
 
+		loggedLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+		loggedLabel.setFont(smallFont);
+
+		emailLabel.setForeground(Color.WHITE);
+		emailLabel.setFont(smallFont);
+		emailLabel.enableAutoLinkHandler(false);
+		emailLabel.addHyperlinkListener(e ->
+		{
+			if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType()) && e.getURL() != null && e.getURL().toString().equals(RUNELITE_LOGIN))
+			{
+				executor.execute(sessionManager::login);
+			}
+		});
+
 		versionPanel.add(version);
 		versionPanel.add(plusVersion);
 		versionPanel.add(revision);
+		versionPanel.add(Box.createGlue());
+		versionPanel.add(loggedLabel);
+		versionPanel.add(emailLabel);
 
-		JPanel actionsContainer = new JPanel();
+		actionsContainer = new JPanel();
 		actionsContainer.setBorder(new EmptyBorder(10, 0, 0, 0));
 		actionsContainer.setLayout(new GridLayout(5, 1, 0, 10));
 
@@ -134,11 +168,13 @@ class InfoPanel extends PluginPanel
 		actionsContainer.add(buildLinkPanel(GITHUB_ICON, "License info", "for distribution", "https://github.com/runelite-extended/runelite/blob/master/LICENSE"));
 		actionsContainer.add(buildLinkPanel(FOLDER_ICON, "Open logs directory", "(for bug reports)", LOGS_DIR));
 		actionsContainer.add(buildLinkPanel(DISCORD_ICON, "Talk to us on our", "discord server", "https://discord.gg/HN5gf3m"));
-		actionsContainer.add(buildLinkPanel(PATREON_ICON, "Patreon to support", "the OpenOSRS devs", RuneLiteProperties.getPatreonLink()));
+		actionsContainer.add(buildLinkPanel(PATREON_ICON, "Patreon to support", "the RuneLitePlus devs", RuneLiteProperties.getPatreonLink()));
 		/*		actionsContainer.add(buildLinkPanel(WIKI_ICON, "Information about", "RuneLite and plugins", runeLiteProperties.getWikiLink()));*/
 
 		add(versionPanel, BorderLayout.NORTH);
 		add(actionsContainer, BorderLayout.CENTER);
+
+		updateLoggedIn();
 	}
 
 	/**
@@ -231,8 +267,40 @@ class InfoPanel extends PluginPanel
 		return container;
 	}
 
+	private void updateLoggedIn()
+	{
+		final String name = sessionManager.getAccountSession() != null
+			? sessionManager.getAccountSession().getUsername()
+			: null;
+
+		if (name != null)
+		{
+			emailLabel.setContentType("text/plain");
+			emailLabel.setText(name);
+			loggedLabel.setText("Logged in as");
+			actionsContainer.add(syncPanel, 0);
+		}
+		else
+		{
+			//emailLabel.setContentType("text/html");
+			//emailLabel.setText("<a href=\"" + RUNELITE_LOGIN + "\">Login</a> to sync settings to the cloud.");
+			//loggedLabel.setText("Not logged in");
+			actionsContainer.remove(syncPanel);
+		}
+	}
+
 	private static String htmlLabel(String key, String value)
 	{
 		return "<html><body style = 'color:#a5a5a5'>" + key + "<span style = 'color:white'>" + value + "</span></body></html>";
+	}
+
+	public void onSessionOpen(SessionOpen sessionOpen)
+	{
+		updateLoggedIn();
+	}
+
+	public void onSessionClose(SessionClose e)
+	{
+		updateLoggedIn();
 	}
 }

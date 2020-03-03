@@ -4,48 +4,39 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("aj")
+@ObfuscatedName("au")
 @Implements("WorldMapData_1")
 public class WorldMapData_1 extends AbstractWorldMapData {
-	@ObfuscatedName("sf")
+	@ObfuscatedName("af")
+	@Export("fontHelvetica13")
+	static java.awt.Font fontHelvetica13;
+	@ObfuscatedName("gh")
 	@ObfuscatedSignature(
-		signature = "Lc;"
+		signature = "[Lls;"
 	)
-	@Export("grandExchangeEvents")
-	static GrandExchangeEvents grandExchangeEvents;
-	@ObfuscatedName("hv")
+	@Export("headIconHintSprites")
+	static Sprite[] headIconHintSprites;
+	@ObfuscatedName("b")
 	@ObfuscatedGetter(
-		intValue = 1575560349
-	)
-	@Export("cameraYaw")
-	static int cameraYaw;
-	@ObfuscatedName("kb")
-	@ObfuscatedGetter(
-		intValue = 1504630099
-	)
-	@Export("menuHeight")
-	static int menuHeight;
-	@ObfuscatedName("j")
-	@ObfuscatedGetter(
-		intValue = 1445881523
+		intValue = 481404885
 	)
 	@Export("chunkXLow")
 	int chunkXLow;
-	@ObfuscatedName("r")
+	@ObfuscatedName("g")
 	@ObfuscatedGetter(
-		intValue = 687230799
+		intValue = 1912285693
 	)
 	@Export("chunkYLow")
 	int chunkYLow;
 	@ObfuscatedName("e")
 	@ObfuscatedGetter(
-		intValue = -218420461
+		intValue = -1552157643
 	)
 	@Export("chunkX")
 	int chunkX;
-	@ObfuscatedName("s")
+	@ObfuscatedName("z")
 	@ObfuscatedGetter(
-		intValue = 875111377
+		intValue = 730581483
 	)
 	@Export("chunkY")
 	int chunkY;
@@ -53,10 +44,10 @@ public class WorldMapData_1 extends AbstractWorldMapData {
 	WorldMapData_1() {
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Lkc;B)V",
-		garbageValue = "0"
+		signature = "(Lky;I)V",
+		garbageValue = "-1265892747"
 	)
 	@Export("init")
 	void init(Buffer var1) {
@@ -74,26 +65,26 @@ public class WorldMapData_1 extends AbstractWorldMapData {
 			super.regionY = var1.readUnsignedShort();
 			this.chunkX = var1.readUnsignedByte();
 			this.chunkY = var1.readUnsignedByte();
-			super.groupId = var1.method5638();
-			super.fileId = var1.method5638();
+			super.groupId = var1.method5602();
+			super.fileId = var1.method5602();
 		}
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(Lkc;I)V",
-		garbageValue = "1045041620"
+		signature = "(Lky;B)V",
+		garbageValue = "120"
 	)
 	@Export("readGeography")
 	void readGeography(Buffer var1) {
 		super.planes = Math.min(super.planes, 4);
 		super.floorUnderlayIds = new short[1][64][64];
 		super.floorOverlayIds = new short[super.planes][64][64];
-		super.field161 = new byte[super.planes][64][64];
-		super.field157 = new byte[super.planes][64][64];
+		super.field145 = new byte[super.planes][64][64];
+		super.field156 = new byte[super.planes][64][64];
 		super.decorations = new WorldMapDecoration[super.planes][64][64][];
 		int var2 = var1.readUnsignedByte();
-		if (var2 != class30.field249.value) {
+		if (var2 != class30.field250.value) {
 			throw new IllegalStateException("");
 		} else {
 			int var3 = var1.readUnsignedByte();
@@ -113,48 +104,44 @@ public class WorldMapData_1 extends AbstractWorldMapData {
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "2139324279"
+		signature = "(B)I",
+		garbageValue = "18"
 	)
 	@Export("getChunkXLow")
 	int getChunkXLow() {
 		return this.chunkXLow;
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("au")
 	@ObfuscatedSignature(
 		signature = "(I)I",
-		garbageValue = "-1481651643"
+		garbageValue = "1399552642"
 	)
 	@Export("getChunkYLow")
 	int getChunkYLow() {
 		return this.chunkYLow;
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("ax")
 	@ObfuscatedSignature(
 		signature = "(I)I",
-		garbageValue = "-1549655791"
+		garbageValue = "234574049"
 	)
 	@Export("getChunkX")
 	int getChunkX() {
 		return this.chunkX;
 	}
 
-	@ObfuscatedName("aj")
+	@ObfuscatedName("ag")
 	@ObfuscatedSignature(
-		signature = "(B)I",
-		garbageValue = "104"
+		signature = "(I)I",
+		garbageValue = "2005972449"
 	)
 	@Export("getChunkY")
 	int getChunkY() {
 		return this.chunkY;
-	}
-
-	public int hashCode() {
-		return super.regionX | super.regionY << 8 | this.chunkX << 16 | this.chunkY << 24;
 	}
 
 	public boolean equals(Object var1) {
@@ -162,124 +149,113 @@ public class WorldMapData_1 extends AbstractWorldMapData {
 			return false;
 		} else {
 			WorldMapData_1 var2 = (WorldMapData_1)var1;
-			if (super.regionX == var2.regionX && super.regionY == var2.regionY) {
-				return var2.chunkX == this.chunkX && this.chunkY == var2.chunkY;
+			if (var2.regionX == super.regionX && var2.regionY == super.regionY) {
+				return this.chunkX == var2.chunkX && this.chunkY == var2.chunkY;
 			} else {
 				return false;
 			}
 		}
 	}
 
-	@ObfuscatedName("a")
-	@ObfuscatedSignature(
-		signature = "(CB)B",
-		garbageValue = "-60"
-	)
-	@Export("charToByteCp1252")
-	public static byte charToByteCp1252(char var0) {
-		byte var1;
-		if (var0 > 0 && var0 < 128 || var0 >= 160 && var0 <= 255) {
-			var1 = (byte)var0;
-		} else if (var0 == 8364) {
-			var1 = -128;
-		} else if (var0 == 8218) {
-			var1 = -126;
-		} else if (var0 == 402) {
-			var1 = -125;
-		} else if (var0 == 8222) {
-			var1 = -124;
-		} else if (var0 == 8230) {
-			var1 = -123;
-		} else if (var0 == 8224) {
-			var1 = -122;
-		} else if (var0 == 8225) {
-			var1 = -121;
-		} else if (var0 == 710) {
-			var1 = -120;
-		} else if (var0 == 8240) {
-			var1 = -119;
-		} else if (var0 == 352) {
-			var1 = -118;
-		} else if (var0 == 8249) {
-			var1 = -117;
-		} else if (var0 == 338) {
-			var1 = -116;
-		} else if (var0 == 381) {
-			var1 = -114;
-		} else if (var0 == 8216) {
-			var1 = -111;
-		} else if (var0 == 8217) {
-			var1 = -110;
-		} else if (var0 == 8220) {
-			var1 = -109;
-		} else if (var0 == 8221) {
-			var1 = -108;
-		} else if (var0 == 8226) {
-			var1 = -107;
-		} else if (var0 == 8211) {
-			var1 = -106;
-		} else if (var0 == 8212) {
-			var1 = -105;
-		} else if (var0 == 732) {
-			var1 = -104;
-		} else if (var0 == 8482) {
-			var1 = -103;
-		} else if (var0 == 353) {
-			var1 = -102;
-		} else if (var0 == 8250) {
-			var1 = -101;
-		} else if (var0 == 339) {
-			var1 = -100;
-		} else if (var0 == 382) {
-			var1 = -98;
-		} else if (var0 == 376) {
-			var1 = -97;
-		} else {
-			var1 = 63;
-		}
-
-		return var1;
+	public int hashCode() {
+		return super.regionX | super.regionY << 8 | this.chunkX << 16 | this.chunkY << 24;
 	}
 
-	@ObfuscatedName("h")
+	@ObfuscatedName("ha")
 	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "-1236464487"
+		signature = "(III)V",
+		garbageValue = "129676953"
 	)
-	public static void method787() {
-		SecureRandomFuture.SpriteBuffer_xOffsets = null;
-		HealthBar.SpriteBuffer_yOffsets = null;
-		SecureRandomCallable.SpriteBuffer_spriteWidths = null;
-		AttackOption.SpriteBuffer_spriteHeights = null;
-		class325.SpriteBuffer_spritePalette = null;
-		class325.SpriteBuffer_pixels = null;
-	}
+	@Export("calculateMenuBounds")
+	static void calculateMenuBounds(int var0, int var1) {
+		int var2 = class43.fontBold12.stringWidth("Choose Option");
 
-	@ObfuscatedName("gf")
-	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "104"
-	)
-	static final void method767() {
-		int var0 = Players.Players_count;
-		int[] var1 = Players.Players_indices;
+		int var3;
+		for (var3 = 0; var3 < Client.menuOptionsCount; ++var3) {
+			Font var4 = class43.fontBold12;
+			String var5;
+			if (var3 < 0) {
+				var5 = "";
+			} else if (Client.menuTargets[var3].length() > 0) {
+				var5 = Client.menuActions[var3] + " " + Client.menuTargets[var3];
+			} else {
+				var5 = Client.menuActions[var3];
+			}
 
-		for (int var2 = 0; var2 < var0; ++var2) {
-			Player var3 = Client.players[var1[var2]];
-			if (var3 != null) {
-				HitSplatDefinition.updateActorSequence(var3, 1);
+			int var6 = var4.stringWidth(var5);
+			if (var6 > var2) {
+				var2 = var6;
 			}
 		}
 
+		var2 += 8;
+		var3 = Client.menuOptionsCount * 15 + 22;
+		int var7 = var0 - var2 / 2;
+		if (var7 + var2 > KitDefinition.canvasWidth) {
+			var7 = KitDefinition.canvasWidth - var2;
+		}
+
+		if (var7 < 0) {
+			var7 = 0;
+		}
+
+		int var8 = var1;
+		if (var3 + var1 > class30.canvasHeight) {
+			var8 = class30.canvasHeight - var3;
+		}
+
+		if (var8 < 0) {
+			var8 = 0;
+		}
+
+		MilliClock.menuX = var7;
+		class96.menuY = var8;
+		World.menuWidth = var2;
+		class1.menuHeight = Client.menuOptionsCount * 15 + 22;
 	}
 
-	@ObfuscatedName("js")
+	@ObfuscatedName("ij")
 	@ObfuscatedSignature(
-		signature = "(I)Z",
-		garbageValue = "-175974338"
+		signature = "(Lhp;IIIIIII)V",
+		garbageValue = "-599054515"
 	)
-	@Export("getTapToDrop")
-	static boolean getTapToDrop() {
-		return Client.tapToDrop;
+	static final void method682(Widget var0, int var1, int var2, int var3, int var4, int var5, int var6) {
+		if (Client.field725) {
+			Client.alternativeScrollbarWidth = 32;
+		} else {
+			Client.alternativeScrollbarWidth = 0;
+		}
+
+		Client.field725 = false;
+		int var7;
+		if (MouseHandler.MouseHandler_currentButton == 1 || !FriendSystem.mouseCam && MouseHandler.MouseHandler_currentButton == 4) {
+			if (var5 >= var1 && var5 < var1 + 16 && var6 >= var2 && var6 < var2 + 16) {
+				var0.scrollY -= 4;
+				FriendSystem.invalidateWidget(var0);
+			} else if (var5 >= var1 && var5 < var1 + 16 && var6 >= var3 + var2 - 16 && var6 < var3 + var2) {
+				var0.scrollY += 4;
+				FriendSystem.invalidateWidget(var0);
+			} else if (var5 >= var1 - Client.alternativeScrollbarWidth && var5 < Client.alternativeScrollbarWidth + var1 + 16 && var6 >= var2 + 16 && var6 < var3 + var2 - 16) {
+				var7 = var3 * (var3 - 32) / var4;
+				if (var7 < 8) {
+					var7 = 8;
+				}
+
+				int var8 = var6 - var2 - 16 - var7 / 2;
+				int var9 = var3 - 32 - var7;
+				var0.scrollY = var8 * (var4 - var3) / var9;
+				FriendSystem.invalidateWidget(var0);
+				Client.field725 = true;
+			}
+		}
+
+		if (Client.mouseWheelRotation != 0) {
+			var7 = var0.width;
+			if (var5 >= var1 - var7 && var6 >= var2 && var5 < var1 + 16 && var6 <= var3 + var2) {
+				var0.scrollY += Client.mouseWheelRotation * 45;
+				FriendSystem.invalidateWidget(var0);
+			}
+		}
+
 	}
 }

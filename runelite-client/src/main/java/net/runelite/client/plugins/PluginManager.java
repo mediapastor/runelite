@@ -99,7 +99,7 @@ public class PluginManager
 		.getAnnotation(ConfigGroup.class).value();
 
 	@Inject
-	ExternalPluginLoader externalPluginLoader;
+	PluginWatcher pluginWatcher;
 
 	@Setter
 	boolean isOutdated;
@@ -126,6 +126,11 @@ public class PluginManager
 			eventBus.subscribe(SessionOpen.class, this, this::onSessionOpen);
 			eventBus.subscribe(SessionClose.class, this, this::onSessionClose);
 		}
+	}
+
+	public void watch()
+	{
+		pluginWatcher.start();
 	}
 
 	private void onSessionOpen(SessionOpen event)
@@ -203,11 +208,6 @@ public class PluginManager
 		{
 			configManager.setDefaultConfiguration(config, false);
 		}
-	}
-
-	public void loadExternalPlugins()
-	{
-		externalPluginLoader.scanAndLoad();
 	}
 
 	public void loadCorePlugins() throws IOException
@@ -376,8 +376,6 @@ public class PluginManager
 				}
 			});
 
-			plugin.addAnnotatedSubscriptions(eventBus);
-
 			log.debug("Plugin {} is now running", plugin.getClass().getSimpleName());
 			if (!isOutdated && sceneTileManager != null)
 			{
@@ -388,6 +386,7 @@ public class PluginManager
 				}
 			}
 
+			// eventBus.register(plugin);
 			schedule(plugin);
 			eventBus.post(PluginChanged.class, new PluginChanged(plugin, true));
 		}
@@ -424,8 +423,6 @@ public class PluginManager
 					throw new RuntimeException(ex);
 				}
 			});
-
-			plugin.removeAnnotatedSubscriptions(eventBus);
 
 			log.debug("Plugin {} is now stopped", plugin.getClass().getSimpleName());
 			eventBus.post(PluginChanged.class, new PluginChanged(plugin, false));

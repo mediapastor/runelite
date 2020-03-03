@@ -3,23 +3,23 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ca")
+@ObfuscatedName("co")
 @Implements("RawSound")
 public class RawSound extends AbstractSound {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@Export("sampleRate")
 	public int sampleRate;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@Export("samples")
 	public byte[] samples;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@Export("start")
 	public int start;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@Export("end")
 	int end;
-	@ObfuscatedName("v")
-	public boolean field1363;
+	@ObfuscatedName("u")
+	public boolean field1362;
 
 	RawSound(int var1, byte[] var2, int var3, int var4) {
 		this.sampleRate = var1;
@@ -33,12 +33,12 @@ public class RawSound extends AbstractSound {
 		this.samples = var2;
 		this.start = var3;
 		this.end = var4;
-		this.field1363 = var5;
+		this.field1362 = var5;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Ldo;)Lca;"
+		signature = "(Ldb;)Lco;"
 	)
 	@Export("resample")
 	public RawSound resample(Decimator var1) {

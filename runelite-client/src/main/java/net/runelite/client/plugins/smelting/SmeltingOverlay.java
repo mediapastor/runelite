@@ -34,7 +34,6 @@ import javax.inject.Singleton;
 import static net.runelite.api.AnimationID.SMITHING_CANNONBALL;
 import static net.runelite.api.AnimationID.SMITHING_SMELTING;
 import net.runelite.api.Client;
-import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY;
 import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY_CONFIG;
 import net.runelite.api.Skill;
 import net.runelite.client.plugins.xptracker.XpTrackerService;
@@ -51,7 +50,6 @@ import net.runelite.client.ui.overlay.components.table.TableComponent;
 class SmeltingOverlay extends Overlay
 {
 	private static final int SMELT_TIMEOUT = 7;
-	static final String SMELTING_RESET = "Reset";
 
 	private final Client client;
 	private final SmeltingPlugin plugin;
@@ -68,7 +66,6 @@ class SmeltingOverlay extends Overlay
 		this.xpTrackerService = xpTrackerService;
 		setPosition(OverlayPosition.TOP_LEFT);
 		getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Smelting overlay"));
-		getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY, SMELTING_RESET, "Smelting overlay"));
 	}
 
 	@Override

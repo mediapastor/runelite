@@ -39,9 +39,7 @@ class LootTrackerItem
 	@Getter(AccessLevel.PACKAGE)
 	private final int quantity;
 	@Getter(AccessLevel.PACKAGE)
-	private final long gePrice;
-	@Getter
-	private final long haPrice;
+	private final long price;
 	@Getter(AccessLevel.PACKAGE)
 	@Setter(AccessLevel.PACKAGE)
 	private boolean ignored;

@@ -28,10 +28,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import java.applet.Applet;
-import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import net.runelite.api.Client;
@@ -42,41 +40,39 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ChatColorConfig;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.RuneLiteConfig;
-import net.runelite.client.config.OpenOSRSConfig;
+import net.runelite.client.config.RuneLitePlusConfig;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.PluginManager;
+import net.runelite.client.rs.ClientLoader;
+import net.runelite.client.rs.ClientUpdateCheckMode;
 import net.runelite.client.task.Scheduler;
 import net.runelite.client.util.DeferredEventBus;
 import net.runelite.client.util.ExecutorServiceExceptionLogger;
 import net.runelite.http.api.RuneLiteAPI;
-import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RuneLiteModule extends AbstractModule
 {
-	private static final int MAX_OKHTTP_CACHE_SIZE = 20 * 1024 * 1024; // 20mb
-
-	private final Supplier<Applet> clientLoader;
+	private final ClientUpdateCheckMode updateCheckMode;
 	private final boolean developerMode;
 
-	public RuneLiteModule(final Supplier<Applet> clientLoader, boolean developerMode)
+	public RuneLiteModule(final ClientUpdateCheckMode updateCheckMode, final boolean developerMode)
 	{
-		this.clientLoader = clientLoader;
+		this.updateCheckMode = updateCheckMode;
 		this.developerMode = developerMode;
 	}
 
 	@Override
 	protected void configure()
 	{
+		bindConstant().annotatedWith(Names.named("updateCheckMode")).to(updateCheckMode);
 		bindConstant().annotatedWith(Names.named("developerMode")).to(developerMode);
 		bind(ScheduledExecutorService.class).toInstance(new ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor()));
-		bind(OkHttpClient.class).toInstance(RuneLiteAPI.CLIENT.newBuilder()
-			.cache(new Cache(new File(RuneLite.CACHE_DIR, "okhttp"), MAX_OKHTTP_CACHE_SIZE))
-			.build());
+		bind(OkHttpClient.class).toInstance(RuneLiteAPI.CLIENT);
 		bind(MenuManager.class);
 		bind(ChatMessageManager.class);
 		bind(ItemManager.class);
@@ -100,9 +96,9 @@ public class RuneLiteModule extends AbstractModule
 
 	@Provides
 	@Singleton
-	Applet provideApplet()
+	Applet provideApplet(ClientLoader clientLoader)
 	{
-		return clientLoader.get();
+		return clientLoader.load();
 	}
 
 	@Provides
@@ -121,9 +117,9 @@ public class RuneLiteModule extends AbstractModule
 
 	@Provides
 	@Singleton
-	OpenOSRSConfig providePlusConfig(ConfigManager configManager)
+	RuneLitePlusConfig providePlusConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(OpenOSRSConfig.class);
+		return configManager.getConfig(RuneLitePlusConfig.class);
 	}
 
 	@Provides

@@ -1,4 +1,6 @@
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -6,33 +8,32 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
-import net.runelite.rs.ScriptOpcodes;
 
-@ObfuscatedName("ff")
+@ObfuscatedName("fu")
 @Implements("TaskHandler")
 public class TaskHandler implements Runnable {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@Export("javaVendor")
 	public static String javaVendor;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@Export("javaVersion")
 	public static String javaVersion;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "Lfw;"
+		signature = "Lft;"
 	)
 	@Export("current")
 	Task current;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "Lfw;"
+		signature = "Lft;"
 	)
 	@Export("task")
 	Task task;
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@Export("thread")
 	Thread thread;
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@Export("isClosed")
 	boolean isClosed;
 
@@ -56,10 +57,10 @@ public class TaskHandler implements Runnable {
 		this.thread.start();
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "6934376"
+		garbageValue = "1887947364"
 	)
 	@Export("close")
 	public final void close() {
@@ -75,10 +76,10 @@ public class TaskHandler implements Runnable {
 
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(IIILjava/lang/Object;I)Lfw;",
-		garbageValue = "635480058"
+		signature = "(IIILjava/lang/Object;I)Lft;",
+		garbageValue = "1177256583"
 	)
 	@Export("newTask")
 	final Task newTask(int var1, int var2, int var3, Object var4) {
@@ -99,20 +100,20 @@ public class TaskHandler implements Runnable {
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;II)Lfw;",
-		garbageValue = "540532004"
+		signature = "(Ljava/lang/String;IB)Lft;",
+		garbageValue = "-49"
 	)
 	@Export("newSocketTask")
 	public final Task newSocketTask(String var1, int var2) {
 		return this.newTask(1, var2, 0, var1);
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/Runnable;II)Lfw;",
-		garbageValue = "129890916"
+		signature = "(Ljava/lang/Runnable;IB)Lft;",
+		garbageValue = "1"
 	)
 	@Export("newThreadTask")
 	public final Task newThreadTask(Runnable var1, int var2) {
@@ -167,183 +168,64 @@ public class TaskHandler implements Runnable {
 		}
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(Lhq;Lhq;Lhq;B)V",
-		garbageValue = "48"
+		signature = "(Ljava/lang/CharSequence;I)Z",
+		garbageValue = "-641292083"
 	)
-	public static void method3622(AbstractArchive var0, AbstractArchive var1, AbstractArchive var2) {
-		HitSplatDefinition.HitSplatDefinition_archive = var0;
-		HitSplatDefinition.field3316 = var1;
-		class2.HitSplatDefinition_fontsArchive = var2;
+	@Export("isNumber")
+	public static boolean isNumber(CharSequence var0) {
+		return class219.method4022(var0, 10, true);
 	}
 
-	@ObfuscatedName("c")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(ILcj;ZI)I",
-		garbageValue = "-1691185784"
+		signature = "(Ljava/lang/String;Ljava/lang/String;ZI)Lmm;",
+		garbageValue = "929231118"
 	)
-	static int method3605(int var0, Script var1, boolean var2) {
-		Widget var3;
-		if (var0 >= 2000) {
-			var0 -= 1000;
-			var3 = PacketBufferNode.getWidget(Interpreter.Interpreter_intStack[--Interpreter.Interpreter_intStackSize]);
-		} else {
-			var3 = var2 ? class96.field1301 : ReflectionCheck.field1310;
+	@Export("getPreferencesFile")
+	public static AccessFile getPreferencesFile(String var0, String var1, boolean var2) {
+		File var3 = new File(JagexCache.cacheDir, "preferences" + var0 + ".dat");
+		if (var3.exists()) {
+			try {
+				AccessFile var10 = new AccessFile(var3, "rw", 10000L);
+				return var10;
+			} catch (IOException var9) {
+			}
 		}
 
-		GrandExchangeOfferAgeComparator.invalidateWidget(var3);
-		if (var0 != ScriptOpcodes.CC_SETOBJECT && var0 != ScriptOpcodes.CC_SETOBJECT_NONUM && var0 != ScriptOpcodes.CC_SETOBJECT_ALWAYS_NUM) {
-			if (var0 == ScriptOpcodes.CC_SETNPCHEAD) {
-				var3.modelType = 2;
-				var3.modelId = Interpreter.Interpreter_intStack[--Interpreter.Interpreter_intStackSize];
-				return 1;
-			} else if (var0 == ScriptOpcodes.CC_SETPLAYERHEAD_SELF) {
-				var3.modelType = 3;
-				var3.modelId = class215.localPlayer.appearance.getChatHeadId();
-				return 1;
-			} else {
-				return 2;
-			}
-		} else {
-			Interpreter.Interpreter_intStackSize -= 2;
-			int var4 = Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize];
-			int var5 = Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize + 1];
-			var3.itemId = var4;
-			var3.itemQuantity = var5;
-			ItemDefinition var6 = class222.ItemDefinition_get(var4);
-			var3.modelAngleX = var6.xan2d;
-			var3.modelAngleY = var6.yan2d;
-			var3.modelAngleZ = var6.zan2d;
-			var3.modelOffsetX = var6.offsetX2d;
-			var3.modelOffsetY = var6.offsetY2d;
-			var3.modelZoom = var6.zoom2d;
-			if (var0 == ScriptOpcodes.CC_SETOBJECT_NONUM) {
-				var3.itemQuantityMode = 0;
-			} else if (var0 == ScriptOpcodes.CC_SETOBJECT_ALWAYS_NUM | var6.isStackable == 1) {
-				var3.itemQuantityMode = 1;
-			} else {
-				var3.itemQuantityMode = 2;
-			}
+		String var4 = "";
+		if (InterfaceParent.cacheGamebuild == 33) {
+			var4 = "_rc";
+		} else if (InterfaceParent.cacheGamebuild == 34) {
+			var4 = "_wip";
+		}
 
-			if (var3.field2577 > 0) {
-				var3.modelZoom = var3.modelZoom * 32 / var3.field2577;
-			} else if (var3.rawWidth > 0) {
-				var3.modelZoom = var3.modelZoom * 32 / var3.rawWidth;
+		File var5 = new File(FontName.userHomeDirectory, "jagex_" + var1 + "_preferences" + var0 + var4 + ".dat");
+		AccessFile var6;
+		if (!var2 && var5.exists()) {
+			try {
+				var6 = new AccessFile(var5, "rw", 10000L);
+				return var6;
+			} catch (IOException var8) {
 			}
+		}
 
-			return 1;
+		try {
+			var6 = new AccessFile(var3, "rw", 10000L);
+			return var6;
+		} catch (IOException var7) {
+			throw new RuntimeException();
 		}
 	}
 
-	@ObfuscatedName("iv")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(Lit;IIII)V",
-		garbageValue = "890434158"
+		signature = "(IIB)I",
+		garbageValue = "-6"
 	)
-	@Export("addNpcToMenu")
-	static final void addNpcToMenu(NPCDefinition var0, int var1, int var2, int var3) {
-		if (Client.menuOptionsCount < 400) {
-			if (var0.transforms != null) {
-				var0 = var0.transform();
-			}
-
-			if (var0 != null) {
-				if (var0.isInteractable) {
-					if (!var0.isFollower || Client.followerIndex == var1) {
-						String var4 = var0.name;
-						if (var0.combatLevel != 0) {
-							var4 = var4 + GrandExchangeOffer.method159(var0.combatLevel, class215.localPlayer.combatLevel) + " " + " (" + "level-" + var0.combatLevel + ")";
-						}
-
-						if (var0.isFollower && Client.followerOpsLowPriority) {
-							GameObject.insertMenuItemNoShift("Examine", AbstractArchive.colorStartTag(16776960) + var4, 1003, var1, var2, var3);
-						}
-
-						if (Client.isItemSelected == 1) {
-							GameObject.insertMenuItemNoShift("Use", Client.selectedItemName + " " + "->" + " " + AbstractArchive.colorStartTag(16776960) + var4, 7, var1, var2, var3);
-						} else if (Client.isSpellSelected) {
-							if ((class81.selectedSpellFlags & 2) == 2) {
-								GameObject.insertMenuItemNoShift(Client.selectedSpellActionName, Client.selectedSpellName + " " + "->" + " " + AbstractArchive.colorStartTag(16776960) + var4, 8, var1, var2, var3);
-							}
-						} else {
-							int var5 = var0.isFollower && Client.followerOpsLowPriority ? 2000 : 0;
-							String[] var6 = var0.actions;
-							int var7;
-							int var8;
-							if (var6 != null) {
-								for (var7 = 4; var7 >= 0; --var7) {
-									if (var6[var7] != null && !var6[var7].equalsIgnoreCase("Attack")) {
-										var8 = 0;
-										if (var7 == 0) {
-											var8 = var5 + 9;
-										}
-
-										if (var7 == 1) {
-											var8 = var5 + 10;
-										}
-
-										if (var7 == 2) {
-											var8 = var5 + 11;
-										}
-
-										if (var7 == 3) {
-											var8 = var5 + 12;
-										}
-
-										if (var7 == 4) {
-											var8 = var5 + 13;
-										}
-
-										GameObject.insertMenuItemNoShift(var6[var7], AbstractArchive.colorStartTag(16776960) + var4, var8, var1, var2, var3);
-									}
-								}
-							}
-
-							if (var6 != null) {
-								for (var7 = 4; var7 >= 0; --var7) {
-									if (var6[var7] != null && var6[var7].equalsIgnoreCase("Attack")) {
-										short var9 = 0;
-										if (AttackOption.AttackOption_hidden != Client.npcAttackOption) {
-											if (AttackOption.AttackOption_alwaysRightClick == Client.npcAttackOption || Client.npcAttackOption == AttackOption.AttackOption_dependsOnCombatLevels && var0.combatLevel > class215.localPlayer.combatLevel) {
-												var9 = 2000;
-											}
-
-											var8 = 0;
-											if (var7 == 0) {
-												var8 = var9 + 9;
-											}
-
-											if (var7 == 1) {
-												var8 = var9 + 10;
-											}
-
-											if (var7 == 2) {
-												var8 = var9 + 11;
-											}
-
-											if (var7 == 3) {
-												var8 = var9 + 12;
-											}
-
-											if (var7 == 4) {
-												var8 = var9 + 13;
-											}
-
-											GameObject.insertMenuItemNoShift(var6[var7], AbstractArchive.colorStartTag(16776960) + var4, var8, var1, var2, var3);
-										}
-									}
-								}
-							}
-
-							if (!var0.isFollower || !Client.followerOpsLowPriority) {
-								GameObject.insertMenuItemNoShift("Examine", AbstractArchive.colorStartTag(16776960) + var4, 1003, var1, var2, var3);
-							}
-						}
-
-					}
-				}
-			}
-		}
+	public static int method3411(int var0, int var1) {
+		int var2 = var0 >>> 31;
+		return (var0 + var2) / var1 - var2;
 	}
 }

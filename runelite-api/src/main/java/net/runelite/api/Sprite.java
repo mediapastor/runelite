@@ -92,20 +92,4 @@ public interface Sprite
 	 * @param color target color
 	 */
 	void toBufferedOutline(BufferedImage img, int color);
-
-	int getMaxWidth();
-
-	void setMaxWidth(int maxWidth);
-
-	int getMaxHeight();
-
-	void setMaxHeight(int maxHeight);
-
-	int getOffsetX();
-
-	void setOffsetX(int offsetX);
-
-	int getOffsetY();
-
-	void setOffsetY(int offsetY);
 }

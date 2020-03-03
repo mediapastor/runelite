@@ -48,16 +48,11 @@ public class MultipleOfItemRequirement implements ItemRequirement
 	@Override
 	public boolean fulfilledBy(Item[] items)
 	{
-		int quantityFound = 0;
 		for (Item item : items)
 		{
-			if (item.getId() == itemId)
+			if (item.getId() == itemId && item.getQuantity() >= quantity)
 			{
-				quantityFound += item.getQuantity();
-				if (quantityFound >= quantity)
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 

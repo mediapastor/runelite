@@ -261,32 +261,23 @@ public class XpGlobesOverlay extends Overlay
 		{
 			XpActionType xpActionType = xpTrackerService.getActionType(mouseOverSkill.getSkill());
 
-			if (plugin.isShowActionsLeft())
+			int actionsLeft = xpTrackerService.getActionsLeft(mouseOverSkill.getSkill());
+			if (actionsLeft != Integer.MAX_VALUE)
 			{
-				int actionsLeft = xpTrackerService.getActionsLeft(mouseOverSkill.getSkill());
-				if (actionsLeft != Integer.MAX_VALUE)
-				{
 				String actionsLeftString = decimalFormat.format(actionsLeft);
 
 				tableComponent.addRow(ColorUtil.prependColorTag(xpActionType.getLabel() + " left:", Color.ORANGE), actionsLeftString);
-				}
 			}
 
-			if (plugin.isShowXpLeft())
-			{
-				int xpLeft = goalXp - mouseOverSkill.getCurrentXp();
-				String skillXpToLvl = decimalFormat.format(xpLeft);
+			int xpLeft = goalXp - mouseOverSkill.getCurrentXp();
+			String skillXpToLvl = decimalFormat.format(xpLeft);
 			tableComponent.addRow(ColorUtil.prependColorTag("XP left:", Color.ORANGE), skillXpToLvl);
-			}
 
-			if (plugin.isShowXpHour())
+			int xpHr = xpTrackerService.getXpHr(mouseOverSkill.getSkill());
+			if (xpHr != 0)
 			{
-				int xpHr = xpTrackerService.getXpHr(mouseOverSkill.getSkill());
-				if (xpHr != 0)
-				{
-					String xpHrString = decimalFormat.format(xpHr);
+				String xpHrString = decimalFormat.format(xpHr);
 				tableComponent.addRow(ColorUtil.prependColorTag("XP per hour:", Color.ORANGE), xpHrString);
-				}
 			}
 			
 			if (plugin.isEnableTimeToLevel())

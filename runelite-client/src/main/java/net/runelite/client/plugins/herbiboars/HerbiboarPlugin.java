@@ -50,6 +50,7 @@ import net.runelite.api.TileObject;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameObjectChanged;
 import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
@@ -59,8 +60,7 @@ import net.runelite.api.events.GroundObjectDespawned;
 import net.runelite.api.events.GroundObjectSpawned;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -114,6 +114,9 @@ public class HerbiboarPlugin extends Plugin
 
 	@Inject
 	private HerbiboarConfig config;
+
+	@Inject
+	private EventBus eventBus;
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean inHerbiboarArea;
@@ -191,6 +194,7 @@ public class HerbiboarPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(overlay);
 		overlayManager.add(minimapOverlay);
@@ -200,11 +204,27 @@ public class HerbiboarPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 		overlayManager.remove(minimapOverlay);
 	}
 
-private void updateTrailData()
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+		eventBus.subscribe(AnimationChanged.class, this, this::onAnimationChanged);
+		eventBus.subscribe(GameObjectSpawned.class, this, this::onGameObjectSpawned);
+		eventBus.subscribe(GameObjectChanged.class, this, this::onGameObjectChanged);
+		eventBus.subscribe(GameObjectDespawned.class, this, this::onGameObjectDespawned);
+		eventBus.subscribe(GroundObjectSpawned.class, this, this::onGroundObjectSpawned);
+		eventBus.subscribe(GroundObjectChanged.class, this, this::onGroundObjectChanged);
+		eventBus.subscribe(GroundObjectDespawned.class, this, this::onGroundObjectDespawned);
+	}
+
+	private void updateTrailData()
 	{
 		currentTrail = null;
 		currentPath = -1;
@@ -298,7 +318,6 @@ private void updateTrailData()
 		tunnels.clear();
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		switch (event.getGameState())
@@ -316,7 +335,6 @@ private void updateTrailData()
 		}
 	}
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged event)
 	{
 		if (isInHerbiboarArea())
@@ -325,13 +343,11 @@ private void updateTrailData()
 		}
 	}
 
-	@Subscribe
 	private void onGameObjectSpawned(GameObjectSpawned event)
 	{
 		onGameObject(event.getTile(), null, event.getGameObject());
 	}
 
-	@Subscribe
 	public void onAnimationChanged(AnimationChanged event)
 	{
 		if (!(event.getActor() instanceof NPC))
@@ -357,31 +373,26 @@ private void updateTrailData()
 		}
 	}
 
-	@Subscribe
 	private void onGameObjectChanged(GameObjectChanged event)
 	{
 		onGameObject(event.getTile(), event.getPrevious(), event.getGameObject());
 	}
 
-	@Subscribe
 	private void onGameObjectDespawned(GameObjectDespawned event)
 	{
 		onGameObject(event.getTile(), event.getGameObject(), null);
 	}
 
-	@Subscribe
 	private void onGroundObjectSpawned(GroundObjectSpawned event)
 	{
-		onGroundObject(null, event.getGroundObject());
+		onGroundObject( null, event.getGroundObject());
 	}
 
-	@Subscribe
 	private void onGroundObjectChanged(GroundObjectChanged event)
 	{
 		onGroundObject(event.getPrevious(), event.getGroundObject());
 	}
 
-	@Subscribe
 	private void onGroundObjectDespawned(GroundObjectDespawned event)
 	{
 		onGroundObject(event.getGroundObject(), null);
@@ -465,7 +476,6 @@ private void updateTrailData()
 		return END_LOCATIONS;
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("herbiboar"))

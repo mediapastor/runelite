@@ -1,17 +1,14 @@
 package net.runelite.mixins;
 
-import java.awt.Shape;
+import net.runelite.api.Entity;
 import net.runelite.api.Model;
 import net.runelite.api.Perspective;
-import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.geometry.Shapes;
+import java.awt.geom.Area;
 import net.runelite.api.mixins.Inject;
 import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Shadow;
 import net.runelite.rs.api.RSBoundaryObject;
 import net.runelite.rs.api.RSClient;
-import net.runelite.rs.api.RSEntity;
-import net.runelite.rs.api.RSModel;
 
 @Mixin(RSBoundaryObject.class)
 public abstract class RSBoundaryObjectMixin implements RSBoundaryObject
@@ -37,9 +34,9 @@ public abstract class RSBoundaryObjectMixin implements RSBoundaryObject
 	}
 
 	@Inject
-	public RSModel getModelA()
+	public Model getModelA()
 	{
-		RSEntity entity = getEntity1();
+		Entity entity = getEntity1();
 		if (entity == null)
 		{
 			return null;
@@ -47,7 +44,7 @@ public abstract class RSBoundaryObjectMixin implements RSBoundaryObject
 
 		if (entity instanceof Model)
 		{
-			return (RSModel) entity;
+			return (Model) entity;
 		}
 		else
 		{
@@ -56,9 +53,9 @@ public abstract class RSBoundaryObjectMixin implements RSBoundaryObject
 	}
 
 	@Inject
-	public RSModel getModelB()
+	public Model getModelB()
 	{
-		RSEntity entity = getEntity2();
+		Entity entity = getEntity2();
 		if (entity == null)
 		{
 			return null;
@@ -66,7 +63,7 @@ public abstract class RSBoundaryObjectMixin implements RSBoundaryObject
 
 		if (entity instanceof Model)
 		{
-			return (RSModel) entity;
+			return (Model) entity;
 		}
 		else
 		{
@@ -76,58 +73,28 @@ public abstract class RSBoundaryObjectMixin implements RSBoundaryObject
 
 	@Inject
 	@Override
-	public Shape getClickbox()
+	public Area getClickbox()
 	{
-		Shape clickboxA = Perspective.getClickbox(client, getModelA(), 0, getLocalLocation());
-		Shape clickboxB = Perspective.getClickbox(client, getModelB(), 0, getLocalLocation());
+		Area clickbox = new Area();
+
+		Area clickboxA = Perspective.getClickbox(client, getModelA(), 0, getLocalLocation());
+		Area clickboxB = Perspective.getClickbox(client, getModelB(), 0, getLocalLocation());
 
 		if (clickboxA == null && clickboxB == null)
 		{
 			return null;
 		}
 
-		if (clickboxA != null && clickboxB != null)
-		{
-			return new Shapes(new Shape[]{clickboxA, clickboxB});
-		}
-
 		if (clickboxA != null)
 		{
-			return clickboxA;
+			clickbox.add(clickboxA);
 		}
 
-		return clickboxB;
-	}
-
-	@Inject
-	@Override
-	public Shape getConvexHull()
-	{
-		RSModel model = getModelA();
-
-		if (model == null)
+		if (clickboxB != null)
 		{
-			return null;
+			clickbox.add(clickboxB);
 		}
 
-		int tileHeight = Perspective.getTileHeight(client, new LocalPoint(getX(), getY()), client.getPlane());
-
-		return model.getConvexHull(getX(), getY(), 0, tileHeight);
-	}
-
-	@Inject
-	@Override
-	public Shape getConvexHull2()
-	{
-		RSModel model = getModelB();
-
-		if (model == null)
-		{
-			return null;
-		}
-
-		int tileHeight = Perspective.getTileHeight(client, new LocalPoint(getX(), getY()), client.getPlane());
-
-		return model.getConvexHull(getX(), getY(), 0, tileHeight);
+		return clickbox;
 	}
 }

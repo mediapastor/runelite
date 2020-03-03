@@ -25,15 +25,14 @@ import net.runelite.api.Friend;
 import net.runelite.api.Ignore;
 import net.runelite.api.MenuOpcode;
 import net.runelite.api.Nameable;
-import net.runelite.api.events.FriendRemoved;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NameableNameChanged;
+import net.runelite.api.events.FriendRemoved;
 import net.runelite.api.events.WidgetMenuOptionClicked;
-import net.runelite.api.util.Text;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.game.chatbox.ChatboxTextInput;
 import net.runelite.client.menus.MenuManager;
@@ -41,6 +40,7 @@ import net.runelite.client.menus.WidgetMenuOption;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
+import net.runelite.api.util.Text;
 import org.apache.commons.lang3.ArrayUtils;
 
 @Slf4j
@@ -82,9 +82,13 @@ public class FriendTaggingPlugin extends Plugin
 	@Inject
 	private ChatboxPanelManager chatboxPanelManager;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Override
 	protected void startUp() throws Exception
 	{
+		addSubscriptions();
 
 		menuManager.addManagedCustomMenu(friendsTabMenuOption);
 		menuManager.addManagedCustomMenu(ignoreTabMenuOption);
@@ -96,16 +100,26 @@ public class FriendTaggingPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		menuManager.removeManagedCustomMenu(friendsTabMenuOption);
 		menuManager.removeManagedCustomMenu(ignoreTabMenuOption);
 		menuManager.removeManagedCustomMenu(friendTabResizableOption);
 		menuManager.removeManagedCustomMenu(ignoreTabResizableOption);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(FriendRemoved.class, this, this::onFriendRemoved);
+		eventBus.subscribe(NameableNameChanged.class, this, this::onNameableNameChanged);
+		eventBus.subscribe(WidgetMenuOptionClicked.class, this, this::onWidgetMenuOptionClicked);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+	}
+
 	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		final int groupId = WidgetInfo.TO_GROUP(event.getParam1());
+		final int groupId = WidgetInfo.TO_GROUP(event.getActionParam1());
 
 		if (groupId == WidgetInfo.FRIENDS_LIST.getGroupId() && event.getOption().equals("Message"))
 		{
@@ -118,8 +132,8 @@ public class FriendTaggingPlugin extends Plugin
 				event.getTarget(),
 				MenuOpcode.RUNELITE.getId(),
 				0,
-				event.getParam0(),
-				event.getParam1(),
+				event.getActionParam0(),
+				event.getActionParam1(),
 				false
 			);
 			// Add menu entry
@@ -127,14 +141,12 @@ public class FriendTaggingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onFriendRemoved(FriendRemoved event)
 	{
 		final String displayName = event.getName().trim().toLowerCase();
 		deleteTag(displayName);
 	}
 
-	@Subscribe
 	private void onNameableNameChanged(NameableNameChanged event)
 	{
 		final Nameable nameable = event.getNameable();
@@ -150,7 +162,6 @@ public class FriendTaggingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWidgetMenuOptionClicked(WidgetMenuOptionClicked event)
 	{
 		if (event.getWidget().getId() == WidgetInfo.FIXED_VIEWPORT_FRIENDS_TAB.getId() &&
@@ -160,10 +171,9 @@ public class FriendTaggingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (WidgetInfo.TO_GROUP(event.getParam1()) == WidgetInfo.FRIENDS_LIST.getGroupId())
+		if (WidgetInfo.TO_GROUP(event.getActionParam1()) == WidgetInfo.FRIENDS_LIST.getGroupId())
 		{
 			if (Strings.isNullOrEmpty(event.getTarget()))
 			{

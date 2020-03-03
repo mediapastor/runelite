@@ -28,7 +28,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
-import java.io.InputStream;
 import javax.swing.text.StyleContext;
 
 public class FontManager
@@ -43,42 +42,31 @@ public class FontManager
 
 		try
 		{
-			Font font;
-
-			try (InputStream runescapeIn = FontManager.class.getResourceAsStream("runescape.ttf"))
-			{
-				font = Font.createFont(Font.TRUETYPE_FONT,
-					runescapeIn)
-					.deriveFont(Font.PLAIN, 16);
-				ge.registerFont(font);
-			}
+			Font font = Font.createFont(Font.TRUETYPE_FONT,
+				FontManager.class.getResourceAsStream("runescape.ttf"))
+				.deriveFont(Font.PLAIN, 16);
+			ge.registerFont(font);
 
 			runescapeFont = StyleContext.getDefaultStyleContext()
 				.getFont(font.getName(), Font.PLAIN, 16);
 			ge.registerFont(runescapeFont);
 
-			try (InputStream smallIn = FontManager.class.getResourceAsStream("runescape_small.ttf"))
-			{
-				font = Font.createFont(Font.TRUETYPE_FONT,
-					smallIn)
-					.deriveFont(Font.PLAIN, 16);
-				ge.registerFont(font);
-			}
+			Font smallFont = Font.createFont(Font.TRUETYPE_FONT,
+				FontManager.class.getResourceAsStream("runescape_small.ttf"))
+				.deriveFont(Font.PLAIN, 16);
+			ge.registerFont(smallFont);
 
 			runescapeSmallFont = StyleContext.getDefaultStyleContext()
-				.getFont(font.getName(), Font.PLAIN, 16);
+				.getFont(smallFont.getName(), Font.PLAIN, 16);
 			ge.registerFont(runescapeSmallFont);
 
-			try (InputStream boldIn = FontManager.class.getResourceAsStream("runescape_bold.ttf"))
-			{
-				font = Font.createFont(Font.TRUETYPE_FONT,
-					boldIn)
-					.deriveFont(Font.PLAIN, 16);
-				ge.registerFont(font);
-			}
+			Font boldFont = Font.createFont(Font.TRUETYPE_FONT,
+				FontManager.class.getResourceAsStream("runescape_bold.ttf"))
+				.deriveFont(Font.PLAIN, 16);
+			ge.registerFont(boldFont);
 
 			runescapeBoldFont = StyleContext.getDefaultStyleContext()
-				.getFont(font.getName(), Font.PLAIN, 16);
+				.getFont(boldFont.getName(), Font.PLAIN, 16);
 			ge.registerFont(runescapeBoldFont);
 		}
 		catch (FontFormatException ex)

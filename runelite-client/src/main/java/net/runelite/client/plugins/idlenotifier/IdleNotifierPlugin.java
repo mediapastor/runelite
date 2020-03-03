@@ -57,22 +57,22 @@ import net.runelite.api.Skill;
 import net.runelite.api.SkullIcon;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
-import net.runelite.api.WallObject;
 import net.runelite.api.WorldType;
+import net.runelite.api.WallObject;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.PlayerSpawned;
-import net.runelite.api.events.SpotAnimationChanged;
 import net.runelite.api.events.WallObjectSpawned;
+import net.runelite.api.events.SpotAnimationChanged;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.Sound;
 import net.runelite.client.game.SoundManager;
 import net.runelite.client.plugins.Plugin;
@@ -240,6 +240,9 @@ public class IdleNotifierPlugin extends Plugin
 	@Inject
 	private IdleNotifierConfig config;
 
+	@Inject
+	private EventBus eventBus;
+
 	private Instant lastAnimating;
 	private int lastAnimation = AnimationID.IDLE;
 	private Instant lastInteracting;
@@ -302,7 +305,6 @@ public class IdleNotifierPlugin extends Plugin
 		return configManager.getConfig(IdleNotifierConfig.class);
 	}
 
-	@Subscribe
 	void onAnimationChanged(AnimationChanged event)
 	{
 		if (client.getGameState() != GameState.LOGGED_IN)
@@ -341,7 +343,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onPlayerSpawned(PlayerSpawned event)
 	{
 		final Player p = event.getPlayer();
@@ -356,7 +357,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWallObjectSpawned(WallObjectSpawned event)
 	{
 		WallObject wall = event.getWallObject();
@@ -370,7 +370,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemContainerChanged(ItemContainerChanged event)
 	{
 		ItemContainer itemContainer = event.getItemContainer();
@@ -448,7 +447,6 @@ public class IdleNotifierPlugin extends Plugin
 		itemQuantitiesPrevious = itemQuantities;
 	}
 
-	@Subscribe
 	void onInteractingChanged(InteractingChanged event)
 	{
 		final Actor source = event.getSource();
@@ -499,7 +497,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
 		lastInteracting = null;
@@ -533,7 +530,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	void onHitsplatApplied(HitsplatApplied event)
 	{
 		if (event.getActor() != client.getLocalPlayer())
@@ -550,7 +546,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onSpotAnimationChanged(SpotAnimationChanged event)
 	{
 		Actor actor = event.getActor();
@@ -566,7 +561,6 @@ public class IdleNotifierPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	void onGameTick(GameTick event)
 	{
 		skullNotifier();
@@ -956,7 +950,7 @@ public class IdleNotifierPlugin extends Plugin
 		final Player local = client.getLocalPlayer();
 		SkullIcon currentTickSkull = local.getSkullIcon();
 		EnumSet worldTypes = client.getWorldType();
-		if (!(worldTypes.contains(WorldType.DEADMAN)))
+		if (!(worldTypes.contains(WorldType.DEADMAN) || worldTypes.contains(WorldType.SEASONAL_DEADMAN)))
 		{
 			if (!isFirstTick)
 			{
@@ -983,7 +977,7 @@ public class IdleNotifierPlugin extends Plugin
 		return ArrayUtils.contains(client.getMapRegions(), RESOURCE_AREA_REGION);
 	}
 
-	private void notifyWith(Player local, String message)
+	private void notifyWith(Player local, String message) 
 	{
 		notifier.notify("[" + local.getName() + "] " + message);
 	}
@@ -992,14 +986,29 @@ public class IdleNotifierPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		}
+		eventBus.unregister(this);
+	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(AnimationChanged.class, this, this::onAnimationChanged);
+		eventBus.subscribe(PlayerSpawned.class, this, this::onPlayerSpawned);
+		eventBus.subscribe(WallObjectSpawned.class, this, this::onWallObjectSpawned);
+		eventBus.subscribe(ItemContainerChanged.class, this, this::onItemContainerChanged);
+		eventBus.subscribe(InteractingChanged.class, this, this::onInteractingChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(HitsplatApplied.class, this, this::onHitsplatApplied);
+		eventBus.subscribe(SpotAnimationChanged.class, this, this::onSpotAnimationChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("idlenotifier"))

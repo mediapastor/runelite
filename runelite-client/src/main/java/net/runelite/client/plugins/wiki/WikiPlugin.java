@@ -25,14 +25,13 @@
 package net.runelite.client.plugins.wiki;
 
 import com.google.common.primitives.Ints;
-import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.MenuEntry;
 import net.runelite.api.MenuOpcode;
 import net.runelite.api.NPC;
 import net.runelite.api.NPCDefinition;
@@ -41,7 +40,6 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.WidgetLoaded;
-import net.runelite.api.util.Text;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetConfig;
@@ -50,13 +48,14 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.LinkBrowser;
+import net.runelite.api.util.Text;
 import okhttp3.HttpUrl;
 
 @Slf4j
@@ -83,6 +82,9 @@ public class WikiPlugin extends Plugin
 	private static final String MENUOP_QUICKGUIDE = "Quick Guide";
 	private static final String MENUOP_WIKI = "Wiki";
 
+	private static final Pattern SKILL_REGEX = Pattern.compile("([A-Za-z]+) guide");
+	private static final Pattern DIARY_REGEX = Pattern.compile("([A-Za-z &]+) Journal");
+
 	@Inject
 	private SpriteManager spriteManager;
 
@@ -101,6 +103,9 @@ public class WikiPlugin extends Plugin
 	@Inject
 	private Provider<WikiSearchChatboxTextInput> wikiSearchChatboxTextInputProvider;
 
+	@Inject
+	private EventBus eventBus;
+
 	private Widget icon;
 
 	private boolean wikiSelected = false;
@@ -108,6 +113,7 @@ public class WikiPlugin extends Plugin
 	@Override
 	public void startUp()
 	{
+		addSubscriptions();
 
 		spriteManager.addSpriteOverrides(WikiSprite.values());
 		clientThread.invokeLater(this::addWidgets);
@@ -116,6 +122,8 @@ public class WikiPlugin extends Plugin
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
+
 		spriteManager.removeSpriteOverrides(WikiSprite.values());
 		clientThread.invokeLater(() ->
 		{
@@ -136,7 +144,13 @@ public class WikiPlugin extends Plugin
 		});
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+	}
+
 	private void onWidgetLoaded(WidgetLoaded l)
 	{
 		if (l.getGroupId() == WidgetID.MINIMAP_GROUP_ID)
@@ -163,14 +177,12 @@ public class WikiPlugin extends Plugin
 		icon.setOriginalHeight(16);
 		icon.setTargetVerb("Lookup");
 		icon.setName("Wiki");
-		icon.setClickMask(WidgetConfig.USE_GROUND_ITEM | WidgetConfig.USE_ITEM | WidgetConfig.USE_NPC
-			| WidgetConfig.USE_OBJECT | WidgetConfig.USE_WIDGET);
+		icon.setClickMask(WidgetConfig.USE_GROUND_ITEM | WidgetConfig.USE_ITEM | WidgetConfig.USE_NPC | WidgetConfig.USE_OBJECT);
 		icon.setNoClickThrough(true);
 		icon.setOnTargetEnterListener((JavaScriptCallback) ev ->
 		{
 			wikiSelected = true;
 			icon.setSpriteId(WikiSprite.WIKI_SELECTED_ICON.getSpriteId());
-			client.setAllWidgetsAreOpTargetable(true);
 		});
 		icon.setAction(5, "Search"); // Start at option 5 so the target op is ontop
 		icon.setOnOpListener((JavaScriptCallback) ev ->
@@ -187,8 +199,6 @@ public class WikiPlugin extends Plugin
 
 	private void onDeselect()
 	{
-		client.setAllWidgetsAreOpTargetable(false);
-
 		wikiSelected = false;
 		if (icon != null)
 		{
@@ -196,10 +206,8 @@ public class WikiPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked ev)
 	{
-		optarget:
 		if (wikiSelected)
 		{
 			onDeselect();
@@ -213,9 +221,6 @@ public class WikiPlugin extends Plugin
 
 			switch (ev.getMenuOpcode())
 			{
-				case RUNELITE:
-					// This is a quest widget op
-					break optarget;
 				case CANCEL:
 					return;
 				case ITEM_USE_ON_WIDGET:
@@ -247,21 +252,9 @@ public class WikiPlugin extends Plugin
 					}
 					id = lc.getId();
 					name = lc.getName();
-					location = WorldPoint.fromScene(client, ev.getParam0(), ev.getParam1(), client.getPlane());
+					location = WorldPoint.fromScene(client, ev.getActionParam0(), ev.getActionParam1(), client.getPlane());
 					break;
 				}
-				case SPELL_CAST_ON_WIDGET:
-					Widget w = getWidget(ev.getParam1(), ev.getParam0());
-
-					if (w.getType() == WidgetType.GRAPHIC && w.getItemId() != -1)
-					{
-						type = "item";
-						id = itemManager.canonicalize(w.getItemId());
-						name = itemManager.getItemDefinition(id).getName();
-						location = null;
-						break;
-					}
-					// fallthrough
 				default:
 					log.info("Unknown menu option: {} {} {}", ev, ev.getMenuOpcode(), ev.getMenuOpcode() == MenuOpcode.CANCEL);
 					return;
@@ -310,11 +303,25 @@ public class WikiPlugin extends Plugin
 					LinkBrowser.browse(ub.build().toString());
 					break;
 				case MENUOP_WIKI:
-					LinkBrowser.browse(WIKI_BASE.newBuilder()
-						.addPathSegment("w")
-						.addPathSegment(Text.removeTags(ev.getTarget()))
-						.addQueryParameter(UTM_SOURCE_KEY, UTM_SOURCE_VALUE)
-						.build().toString());
+					Matcher skillRegex = WikiPlugin.SKILL_REGEX.matcher(Text.removeTags(ev.getTarget()));
+					Matcher diaryRegex = WikiPlugin.DIARY_REGEX.matcher(Text.removeTags(ev.getTarget()));
+
+					if (skillRegex.find())
+					{
+						LinkBrowser.browse(WIKI_BASE.newBuilder()
+							.addPathSegment("w")
+							.addPathSegment(skillRegex.group(1))
+							.addQueryParameter(UTM_SOURCE_KEY, UTM_SOURCE_VALUE)
+							.build().toString());
+					}
+					else if (diaryRegex.find())
+					{
+						LinkBrowser.browse(WIKI_BASE.newBuilder()
+							.addPathSegment("w")
+							.addPathSegment(diaryRegex.group(1) + " Diary")
+							.addQueryParameter(UTM_SOURCE_KEY, UTM_SOURCE_VALUE)
+							.build().toString());
+					}
 			}
 		}
 	}
@@ -325,50 +332,16 @@ public class WikiPlugin extends Plugin
 			.build();
 	}
 
-	private Widget getWidget(int wid, int index)
-	{
-		Widget w = client.getWidget(WidgetInfo.TO_GROUP(wid), WidgetInfo.TO_CHILD(wid));
-		if (index != -1)
-		{
-			w = w.getChild(index);
-		}
-		return w;
-	}
-
-	@Subscribe
 	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		int widgetIndex = event.getParam0();
-		int widgetID = event.getParam1();
-		MenuEntry[] menuEntries = client.getMenuEntries();
+		int widgetIndex = event.getActionParam0();
+		int widgetID = event.getActionParam1();
 
-		if (wikiSelected && event.getOpcode() == MenuOpcode.SPELL_CAST_ON_WIDGET.getId())
+		if (Ints.contains(QUESTLIST_WIDGET_IDS, widgetID) && "Read Journal:".equals(event.getOption()))
 		{
-			Widget w = getWidget(widgetID, widgetIndex);
-			if (!(w.getType() == WidgetType.GRAPHIC && w.getItemId() != -1))
-			{
-				// we don't support this widget
-				// remove the last SPELL_CAST_ON_WIDGET; we can't blindly remove the top action because some other
-				// plugin might have added something on this same event, and we probably shouldn't remove that instead
-				MenuEntry[] oldEntries = menuEntries;
-				menuEntries = Arrays.copyOf(menuEntries, menuEntries.length - 1);
-				for (int ourEntry = oldEntries.length - 1; ourEntry >= 2 && oldEntries[oldEntries.length - 1].getOpcode() != MenuOpcode.SPELL_CAST_ON_WIDGET.getId(); ourEntry--)
-				{
-					menuEntries[ourEntry - 1] = oldEntries[ourEntry];
-				}
-				client.setMenuEntries(menuEntries);
-			}
-		}
-
-		if (Ints.contains(QUESTLIST_WIDGET_IDS, widgetID)
-			&& ((wikiSelected && widgetIndex != -1) || "Read Journal:".equals(event.getOption())))
-		{
-			Widget w = getWidget(widgetID, widgetIndex);
-			String target = w.getName();
-
 			client.insertMenuItem(
 				MENUOP_QUICKGUIDE,
-				target,
+				event.getTarget(),
 				MenuOpcode.RUNELITE.getId(),
 				0,
 				widgetIndex,
@@ -378,7 +351,7 @@ public class WikiPlugin extends Plugin
 
 			client.insertMenuItem(
 				MENUOP_GUIDE,
-				target,
+				event.getTarget(),
 				MenuOpcode.RUNELITE.getId(),
 				0,
 				widgetIndex,
@@ -387,56 +360,14 @@ public class WikiPlugin extends Plugin
 			);
 		}
 
-		if (widgetID == WidgetInfo.ACHIEVEMENT_DIARY_CONTAINER.getId()
-			&& event.getOption().contains("Open"))
+		if ((WidgetInfo.TO_GROUP(widgetID) == WidgetID.SKILLS_GROUP_ID && event.getOption().startsWith("View"))
+			|| (WidgetInfo.TO_GROUP(widgetID) == WidgetID.DIARY_GROUP_ID && event.getOption().startsWith("Open")))
 		{
-			Widget w = getWidget(widgetID, widgetIndex);
-			if (w.getActions() == null)
-			{
-				return;
-			}
-
-			String action = Stream.of(w.getActions())
-				.filter(s -> s != null && !s.isEmpty())
-				.findFirst().orElse(null);
-			if (action == null)
-			{
-				return;
-			}
-
 			client.insertMenuItem(
 				MENUOP_WIKI,
-				action.replace("Open ", "").replace("Journal", "Diary"),
+				event.getOption().replace("View ", "").replace("Open ", ""),
 				MenuOpcode.RUNELITE.getId(),
-				0,
-				widgetIndex,
-				widgetID,
-				false
-			);
-		}
-
-		if (WidgetInfo.TO_GROUP(widgetID) == WidgetInfo.SKILLS_CONTAINER.getGroupId()
-			&& event.getOption().contains("View"))
-		{
-			Widget w = getWidget(widgetID, widgetIndex);
-			if (w.getParentId() != WidgetInfo.SKILLS_CONTAINER.getId())
-			{
-				return;
-			}
-
-			String action = Stream.of(w.getActions())
-				.filter(s -> s != null && !s.isEmpty())
-				.findFirst().orElse(null);
-			if (action == null)
-			{
-				return;
-			}
-
-			client.insertMenuItem(
-				MENUOP_WIKI,
-				action.replace("View ", "").replace("Guide ", ""),
-				MenuOpcode.RUNELITE.getId(),
-				0,
+				event.getIdentifier(),
 				widgetIndex,
 				widgetID,
 				false

@@ -34,16 +34,15 @@ import net.runelite.api.Client;
 import net.runelite.api.MessageNode;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.config.ChatColorConfig;
-import net.runelite.client.config.OpenOSRSConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Matchers.eq;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChatMessageManagerTest
@@ -55,10 +54,6 @@ public class ChatMessageManagerTest
 	@Mock
 	@Bind
 	private ChatColorConfig chatColorConfig;
-
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
 
 	@Inject
 	private ChatMessageManager chatMessageManager;

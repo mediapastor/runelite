@@ -27,7 +27,7 @@ package net.runelite.client.plugins.pyramidplunder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Shape;
+import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -119,7 +119,7 @@ public class PyramidPlunderOverlay extends Overlay
 					objectID = impostor.getId();
 				}
 
-				Shape objectClickbox = object.getClickbox();
+				Area objectClickbox = object.getClickbox();
 				if (objectClickbox != null)
 				{
 					Color configColor = Color.GREEN;

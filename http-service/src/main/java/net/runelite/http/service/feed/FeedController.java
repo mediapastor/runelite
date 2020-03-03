@@ -24,9 +24,6 @@
  */
 package net.runelite.http.service.feed;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hasher;
-import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,26 +51,7 @@ public class FeedController
 	private final TwitterService twitterService;
 	private final OSRSNewsService osrsNewsService;
 
-	private static class MemoizedFeed
-	{
-		final FeedResult feedResult;
-		final String hash;
-
-		MemoizedFeed(FeedResult feedResult)
-		{
-			this.feedResult = feedResult;
-
-			Hasher hasher = Hashing.sha256().newHasher();
-			for (FeedItem itemPrice : feedResult.getItems())
-			{
-				hasher.putBytes(itemPrice.getTitle().getBytes()).putBytes(itemPrice.getContent().getBytes());
-			}
-			HashCode code = hasher.hash();
-			hash = code.toString();
-		}
-	}
-
-	private MemoizedFeed memoizedFeed;
+	private FeedResult feedResult;
 
 	@Autowired
 	public FeedController(BlogService blogService, TwitterService twitterService, OSRSNewsService osrsNewsService)
@@ -115,21 +93,20 @@ public class FeedController
 			log.warn(e.getMessage());
 		}
 
-		memoizedFeed = new MemoizedFeed(new FeedResult(items));
+		feedResult = new FeedResult(items);
 	}
 
 	@GetMapping
 	public ResponseEntity<FeedResult> getFeed()
 	{
-		if (memoizedFeed == null)
+		if (feedResult == null)
 		{
 			return ResponseEntity.notFound()
 				.build();
 		}
 
 		return ResponseEntity.ok()
-			.eTag(memoizedFeed.hash)
 			.cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).cachePublic())
-			.body(memoizedFeed.feedResult);
+			.body(feedResult);
 	}
 }

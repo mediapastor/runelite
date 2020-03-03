@@ -8,5 +8,5 @@ public enum PluginType
 	UTILITY,
 	GENERAL_USE,
 	EXTERNAL,
-	IMPORTANT
+	PLUGIN_ORGANIZER
 }

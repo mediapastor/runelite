@@ -43,6 +43,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.SwingUtilities;
@@ -55,17 +56,17 @@ import net.runelite.api.ClanMember;
 import net.runelite.api.Client;
 import net.runelite.api.Friend;
 import net.runelite.api.GameState;
-import net.runelite.api.MenuEntry;
 import net.runelite.api.MenuOpcode;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.PlayerMenuOptionClicked;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WorldListLoad;
-import net.runelite.api.util.Text;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
@@ -73,8 +74,7 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -83,7 +83,7 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ExecutorServiceExceptionLogger;
 import net.runelite.client.util.HotkeyListener;
-import net.runelite.client.util.ImageUtil;
+import net.runelite.api.util.Text;
 import net.runelite.client.util.WorldUtil;
 import net.runelite.client.util.ping.Ping;
 import net.runelite.http.api.worlds.World;
@@ -133,13 +133,13 @@ public class WorldHopperPlugin extends Plugin
 	private WorldHopperConfig config;
 
 	@Inject
+	private EventBus eventBus;
+
+	@Inject
 	private OverlayManager overlayManager;
 
 	@Inject
 	private WorldHopperPingOverlay worldHopperOverlay;
-
-	@Inject
-	private WorldClient worldClient;
 
 	private ScheduledExecutorService hopperExecutorService;
 
@@ -202,7 +202,8 @@ public class WorldHopperPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
-
+		addSubscriptions();
+		
 		firstRun = true;
 		currentPing = -1;
 
@@ -211,7 +212,11 @@ public class WorldHopperPlugin extends Plugin
 
 		panel = new WorldSwitcherPanel(this);
 
-		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(WorldHopperPlugin.class, "icon.png");
+		final BufferedImage icon;
+		synchronized (ImageIO.class)
+		{
+			icon = ImageIO.read(getClass().getResourceAsStream("icon.png"));
+		}
 
 		navButton = NavigationButton.builder()
 			.tooltip("World Switcher")
@@ -242,6 +247,8 @@ public class WorldHopperPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		pingFuture.cancel(true);
 		pingFuture = null;
 
@@ -264,13 +271,24 @@ public class WorldHopperPlugin extends Plugin
 		hopperExecutorService = null;
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(PlayerMenuOptionClicked.class, this, this::onPlayerMenuOptionClicked);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(WorldListLoad.class, this, this::onWorldListLoad);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+	}
+
 	private void onConfigChanged(final ConfigChanged event)
 	{
 		if (event.getGroup().equals(WorldHopperConfig.GROUP))
 		{
 			updateConfig();
-
+			
 			switch (event.getKey())
 			{
 				case "showSidebar":
@@ -348,7 +366,6 @@ public class WorldHopperPlugin extends Plugin
 		panel.updateFavoriteMenu(world.getId(), false);
 	}
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged varbitChanged)
 	{
 		int old1 = favoriteWorld1;
@@ -363,7 +380,6 @@ public class WorldHopperPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
 		if (!this.menuOption)
@@ -371,7 +387,7 @@ public class WorldHopperPlugin extends Plugin
 			return;
 		}
 
-		int groupId = WidgetInfo.TO_GROUP(event.getParam1());
+		int groupId = WidgetInfo.TO_GROUP(event.getActionParam1());
 		String option = event.getOption();
 
 		if (groupId == WidgetInfo.FRIENDS_LIST.getGroupId() || groupId == WidgetInfo.CLAN_CHAT.getGroupId())
@@ -414,8 +430,8 @@ public class WorldHopperPlugin extends Plugin
 			hopTo.setOption(HOP_TO);
 			hopTo.setTarget(event.getTarget());
 			hopTo.setOpcode(MenuOpcode.RUNELITE.getId());
-			hopTo.setParam0(event.getParam0());
-			hopTo.setParam1(event.getParam1());
+			hopTo.setParam0(event.getActionParam0());
+			hopTo.setParam1(event.getActionParam1());
 
 			insertMenuEntry(hopTo, client.getMenuEntries(), after);
 		}
@@ -434,7 +450,6 @@ public class WorldHopperPlugin extends Plugin
 		client.setMenuEntries(newMenu);
 	}
 
-	@Subscribe
 	private void onPlayerMenuOptionClicked(PlayerMenuOptionClicked event)
 	{
 		if (!event.getMenuOption().equals(HOP_TO))
@@ -450,7 +465,6 @@ public class WorldHopperPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
 		// If the player has disabled the side bar plugin panel, do not update the UI
@@ -465,7 +479,6 @@ public class WorldHopperPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWorldListLoad(WorldListLoad worldListLoad)
 	{
 		if (!this.showSidebar)
@@ -520,7 +533,7 @@ public class WorldHopperPlugin extends Plugin
 	{
 		log.debug("Fetching worlds");
 
-		worldClient.lookupWorlds()
+		new WorldClient().lookupWorlds()
 			.subscribeOn(Schedulers.io())
 			.take(1)
 			.subscribe(
@@ -702,7 +715,6 @@ public class WorldHopperPlugin extends Plugin
 		displaySwitcherAttempts = 0;
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (quickHopTargetWorld == null)
@@ -741,7 +753,6 @@ public class WorldHopperPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
@@ -818,7 +829,7 @@ public class WorldHopperPlugin extends Plugin
 
 		log.debug("Done pinging worlds in {}", stopwatch.elapsed());
 	}
-
+	
 	private void updateConfig()
 	{
 		this.previousKey = config.previousKey();

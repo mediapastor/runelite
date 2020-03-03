@@ -36,15 +36,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.api.GameState;
 import net.runelite.api.NPC;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDefinitionChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
-import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -86,31 +85,31 @@ public class ImplingsPlugin extends Plugin
 	private ImplingsConfig config;
 
 	@Inject
-	private Notifier notifier;
+	private EventBus eventBus;
 
-	private ImplingsConfig.ImplingMode showBaby;
+	private boolean showBaby;
 	private Color getBabyColor;
-	private ImplingsConfig.ImplingMode showYoung;
+	private boolean showYoung;
 	private Color getYoungColor;
-	private ImplingsConfig.ImplingMode showGourmet;
+	private boolean showGourmet;
 	private Color getGourmetColor;
-	private ImplingsConfig.ImplingMode showEarth;
+	private boolean showEarth;
 	private Color getEarthColor;
-	private ImplingsConfig.ImplingMode showEssence;
+	private boolean showEssence;
 	private Color getEssenceColor;
-	private ImplingsConfig.ImplingMode showEclectic;
+	private boolean showEclectic;
 	private Color getEclecticColor;
-	private ImplingsConfig.ImplingMode showNature;
+	private boolean showNature;
 	private Color getNatureColor;
-	private ImplingsConfig.ImplingMode showMagpie;
+	private boolean showMagpie;
 	private Color getMagpieColor;
-	private ImplingsConfig.ImplingMode showNinja;
+	private boolean showNinja;
 	private Color getNinjaColor;
-	private ImplingsConfig.ImplingMode showCrystal;
+	private boolean showCrystal;
 	private Color getCrystalColor;
-	private ImplingsConfig.ImplingMode showDragon;
+	private boolean showDragon;
 	private Color getDragonColor;
-	private ImplingsConfig.ImplingMode showLucky;
+	private boolean showLucky;
 	private Color getLuckyColor;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean showSpawn;
@@ -131,6 +130,7 @@ public class ImplingsPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 
 		dynamicSpawns.put(DYNAMIC_SPAWN_NATURE_DRAGON, "T3 Nature-Lucky Dynamic");
 		dynamicSpawns.put(DYNAMIC_SPAWN_ECLECTIC, "T2 Eclectic Dynamic");
@@ -144,13 +144,24 @@ public class ImplingsPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
+
 		implings.clear();
 		overlayManager.remove(overlay);
 		overlayManager.remove(minimapOverlay);
 		overlayManager.remove(implingCounterOverlay);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(NpcSpawned.class, this, this::onNpcSpawned);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+		eventBus.subscribe(NpcDefinitionChanged.class, this, this::onNpcDefinitionChanged);
+	}
+
 	private void onGameTick(GameTick event)
 	{
 		implingCounterMap.clear();
@@ -175,7 +186,6 @@ public class ImplingsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcSpawned(NpcSpawned npcSpawned)
 	{
 		NPC npc = npcSpawned.getNpc();
@@ -183,16 +193,10 @@ public class ImplingsPlugin extends Plugin
 
 		if (impling != null)
 		{
-			if (showImplingType(impling.getImplingType()) == ImplingsConfig.ImplingMode.NOTIFY)
-			{
-				notifier.notify(impling.getImplingType().getName() + " impling is in the area");
-			}
-
 			implings.add(npc);
 		}
 	}
 
-	@Subscribe
 	private void onNpcDefinitionChanged(NpcDefinitionChanged npcCompositionChanged)
 	{
 		NPC npc = npcCompositionChanged.getNpc();
@@ -200,16 +204,10 @@ public class ImplingsPlugin extends Plugin
 
 		if (impling != null && !implings.contains(npc))
 		{
-			if (showImplingType(impling.getImplingType()) == ImplingsConfig.ImplingMode.NOTIFY)
-			{
-				notifier.notify(impling.getImplingType().getName() + " impling is in the area");
-			}
-
 			implings.add(npc);
 		}
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() == GameState.LOGIN_SCREEN || event.getGameState() == GameState.HOPPING)
@@ -219,7 +217,6 @@ public class ImplingsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcDespawned(NpcDespawned npcDespawned)
 	{
 		if (implings.isEmpty())
@@ -240,11 +237,10 @@ public class ImplingsPlugin extends Plugin
 			return true;
 		}
 
-		ImplingsConfig.ImplingMode impMode = showImplingType(impling.getImplingType());
-		return impMode == ImplingsConfig.ImplingMode.HIGHLIGHT || impMode == ImplingsConfig.ImplingMode.NOTIFY;
+		return !showImplingType(impling.getImplingType());
 	}
 
-	ImplingsConfig.ImplingMode showImplingType(ImplingType implingType)
+	boolean showImplingType(ImplingType implingType)
 	{
 		switch (implingType)
 		{
@@ -273,7 +269,7 @@ public class ImplingsPlugin extends Plugin
 			case LUCKY:
 				return this.showLucky;
 			default:
-				return ImplingsConfig.ImplingMode.NONE;
+				return false;
 		}
 	}
 
@@ -323,7 +319,6 @@ public class ImplingsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("implings"))

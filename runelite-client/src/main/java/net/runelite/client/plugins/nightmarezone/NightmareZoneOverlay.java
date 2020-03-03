@@ -45,7 +45,7 @@ import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.table.TableAlignment;
 import net.runelite.client.ui.overlay.components.table.TableComponent;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 
 @Singleton
 class NightmareZoneOverlay extends Overlay
@@ -109,12 +109,12 @@ class NightmareZoneOverlay extends Overlay
 
 		TableComponent tableComponent = new TableComponent();
 		tableComponent.setColumnAlignments(TableAlignment.LEFT, TableAlignment.RIGHT);
-		tableComponent.addRow("Points:", QuantityFormatter.formatNumber(currentPoints));
-		tableComponent.addRow("Points/Hour:", QuantityFormatter.formatNumber(plugin.getPointsPerHour()));
+		tableComponent.addRow("Points:", StackFormatter.formatNumber(currentPoints));
+		tableComponent.addRow("Points/Hour:", StackFormatter.formatNumber(plugin.getPointsPerHour()));
 		
 		if (plugin.isShowtotalpoints())
 		{
-			tableComponent.addRow("Total:", QuantityFormatter.formatNumber(totalPoints));
+			tableComponent.addRow("Total:", StackFormatter.formatNumber(totalPoints));
 		}
 		
 		panelComponent.getChildren().add(tableComponent);

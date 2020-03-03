@@ -38,22 +38,19 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GraphicID;
 import net.runelite.api.ItemID;
-import net.runelite.api.MenuOpcode;
 import net.runelite.api.Player;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.SpotAnimationChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.events.OverlayMenuClicked;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.xptracker.XpTrackerPlugin;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.client.ui.overlay.OverlayMenuEntry;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 
 @PluginDescriptor(
@@ -83,6 +80,9 @@ public class CookingPlugin extends Plugin
 	@Inject
 	private ItemManager itemManager;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Getter(AccessLevel.PACKAGE)
 	private CookingSession session;
 
@@ -100,6 +100,7 @@ public class CookingPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		session = null;
 		overlayManager.add(overlay);
@@ -108,24 +109,21 @@ public class CookingPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		infoBoxManager.removeIf(FermentTimer.class::isInstance);
 		overlayManager.remove(overlay);
 		session = null;
 	}
 
-	@Subscribe
-	private void onOverlayMenuClicked(OverlayMenuClicked overlayMenuClicked)
+	private void addSubscriptions()
 	{
-		OverlayMenuEntry overlayMenuEntry = overlayMenuClicked.getEntry();
-		if (overlayMenuEntry.getMenuOpcode() == MenuOpcode.RUNELITE_OVERLAY
-			&& overlayMenuClicked.getEntry().getOption().equals(CookingOverlay.COOKING_RESET)
-			&& overlayMenuClicked.getOverlay() == overlay)
-		{
-			session = null;
-		}
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(SpotAnimationChanged.class, this, this::onSpotAnimationChanged);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
 		if (session == null || this.statTimeout == 0)
@@ -142,7 +140,6 @@ public class CookingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	void onSpotAnimationChanged(SpotAnimationChanged graphicChanged)
 	{
 		Player player = client.getLocalPlayer();
@@ -172,7 +169,6 @@ public class CookingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	void onChatMessage(ChatMessage event)
 	{
 		if (event.getType() != ChatMessageType.SPAM)
@@ -210,7 +206,6 @@ public class CookingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged configChanged)
 	{
 		if (configChanged.getGroup().equals("cooking"))

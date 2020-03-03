@@ -28,7 +28,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Shape;
+import java.awt.geom.Area;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.runelite.api.Client;
@@ -74,7 +74,7 @@ public class RoguesDenOverlay extends Overlay
 		{
 			if (tile.getPlane() == client.getPlane())
 			{
-				final Shape clickBox = obstacle.getClickbox();
+				final Area clickBox = obstacle.getClickbox();
 				if (clickBox != null)
 				{
 					final Point mouse = client.getMouseCanvasPosition();
@@ -93,7 +93,7 @@ public class RoguesDenOverlay extends Overlay
 				}
 				else
 				{
-					Shape p;
+					Polygon p;
 					if (obstacle instanceof GameObject)
 					{
 						p = ((GameObject) obstacle).getConvexHull();
@@ -106,7 +106,7 @@ public class RoguesDenOverlay extends Overlay
 					if (p != null)
 					{
 						graphics.setColor(OBJECT_COLOR);
-						graphics.draw(p);
+						graphics.drawPolygon(p);
 					}
 				}
 			}

@@ -24,6 +24,8 @@
  */
 package net.runelite.asm.signature;
 
+import net.runelite.asm.Type;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +33,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.runelite.asm.Type;
 
 public class Signature
 {

@@ -31,6 +31,8 @@ public class HiscorePanelTest
 	@Test
 	public void testConstructor()
 	{
-		new HiscorePanel(new HiscorePlugin() {});
+		new HiscorePanel(new HiscorePlugin()
+		{
+		});
 	}
 }

@@ -9,10 +9,6 @@ public interface RSItemDefinition extends ItemDefinition
 	@Override
 	String getName();
 
-	@Import("name")
-	@Override
-	void setName(String name);
-
 	@Import("id")
 	@Override
 	int getId();
@@ -45,10 +41,6 @@ public interface RSItemDefinition extends ItemDefinition
 	@Override
 	boolean isTradeable();
 
-	@Import("isTradable")
-	@Override
-	void setTradeable(boolean yes);
-
 	/**
 	 * You probably want {@link #isStackable}
 	 * <p>
@@ -68,7 +60,4 @@ public interface RSItemDefinition extends ItemDefinition
 	@Import("getShiftClickIndex")
 	@Override
 	int getShiftClickActionIndex();
-
-	@Import("getModel")
-	RSModel getModel(int quantity);
 }

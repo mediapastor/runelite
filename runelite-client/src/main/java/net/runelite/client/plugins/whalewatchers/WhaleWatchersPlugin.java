@@ -1,12 +1,12 @@
 
 /*
  * ******************************************************************************
- *  * Copyright (c) 2019 openosrs
+ *  * Copyright (c) 2019 RuneLitePlus
  *  *  Redistributions and modifications of this software are permitted as long as this notice remains in its original unmodified state at the top of this file.
  *  *  If there are any questions comments, or feedback about this software, please direct all inquiries directly to the file authors:
  *  *  ST0NEWALL#9112
- *  *   openosrs Discord: https://discord.gg/Q7wFtCe
- *  *   openosrs website: https://openosrs.com
+ *  *   RuneLitePlus Discord: https://discord.gg/Q7wFtCe
+ *  *   RuneLitePlus website: https://runelitepl.us
  *  *****************************************************************************
  */
 
@@ -31,6 +31,7 @@ import net.runelite.api.Varbits;
 import net.runelite.api.WorldType;
 import static net.runelite.api.WorldType.isPvpWorld;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.ItemContainerChanged;
@@ -38,8 +39,7 @@ import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.events.OverlayMenuClicked;
 import net.runelite.client.game.Sound;
 import net.runelite.client.game.SoundManager;
@@ -81,6 +81,8 @@ public class WhaleWatchersPlugin extends Plugin
 	private OverlayManager overlayManager;
 	@Inject
 	private SoundManager soundManager;
+	@Inject
+	private EventBus eventBus;
 	private int tickCountdown = 0;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean displaySmiteOverlay;
@@ -88,8 +90,6 @@ public class WhaleWatchersPlugin extends Plugin
 	private boolean displayGloryOverlay;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean protectItemWarning;
-	@Getter(AccessLevel.PACKAGE)
-	private boolean lessObnoxiousProtWarning;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean showDamageCounter;
 	private boolean smiteableWarning;
@@ -102,7 +102,6 @@ public class WhaleWatchersPlugin extends Plugin
 		return configManager.getConfig(WhaleWatchersConfig.class);
 	}
 
-	@Subscribe
 	private void onOverlayMenuClicked(OverlayMenuClicked event)
 	{
 		if (event.getOverlay().equals(overlay) && event.getEntry().getOption().equals("Reset"))
@@ -115,6 +114,7 @@ public class WhaleWatchersPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(overlay);
 		overlayManager.add(whaleWatchersProtOverlay);
@@ -125,6 +125,7 @@ public class WhaleWatchersPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
 		overlayManager.remove(overlay);
 		overlayManager.remove(whaleWatchersProtOverlay);
 		overlayManager.remove(whaleWatchersSmiteableOverlay);
@@ -132,7 +133,18 @@ public class WhaleWatchersPlugin extends Plugin
 		resetDamageCounter();
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(OverlayMenuClicked.class, this, this::onOverlayMenuClicked);
+		eventBus.subscribe(HitsplatApplied.class, this, this::onHitsplatApplied);
+		eventBus.subscribe(ItemContainerChanged.class, this, this::onItemContainerChanged);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("WhaleWatchers"))
@@ -156,7 +168,6 @@ public class WhaleWatchersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (this.pneckBreak && event.getType() == ChatMessageType.GAMEMESSAGE && event.getMessage().equals(BROKEN_PNECK_MESSAGE))
@@ -165,7 +176,6 @@ public class WhaleWatchersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onHitsplatApplied(HitsplatApplied event)
 	{
 		if (this.showDamageCounter)
@@ -190,7 +200,6 @@ public class WhaleWatchersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemContainerChanged(ItemContainerChanged event)
 	{
 		if (this.gloryWarning && event.getItemContainer() == client.getItemContainer(InventoryID.EQUIPMENT))
@@ -205,7 +214,6 @@ public class WhaleWatchersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if (this.showDamageCounter && event.getMenuOpcode().equals(MenuOpcode.SPELL_CAST_ON_PLAYER))
@@ -214,13 +222,12 @@ public class WhaleWatchersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged event)
 	{
 		if (this.showDamageCounter && client.getVar(VarPlayer.ATTACKING_PLAYER) == -1 && inCombat)
-		{
-			tickCountdown = 10;
-		}
+			{
+				tickCountdown = 10;
+			}
 
 		if (this.protectItemWarning)
 		{
@@ -255,7 +262,6 @@ public class WhaleWatchersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (this.showDamageCounter && tickCountdown > 0 && tickCountdown < 11)
@@ -307,11 +313,10 @@ public class WhaleWatchersPlugin extends Plugin
 		damageTaken = 0;
 		damageDone = 0;
 	}
-
+	
 	private void updateConfig()
 	{
 		this.protectItemWarning = config.protectItemWarning();
-		this.lessObnoxiousProtWarning = config.lessObnoxiousProtWarning();
 		this.showDamageCounter = config.showDamageCounter();
 		this.smiteableWarning = config.smiteableWarning();
 		this.gloryWarning = config.gloryWarning();

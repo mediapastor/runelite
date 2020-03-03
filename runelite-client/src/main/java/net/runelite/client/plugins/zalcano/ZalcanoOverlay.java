@@ -30,9 +30,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Shape;
 import java.util.List;
-import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.AnimationID;
 import net.runelite.api.Client;
@@ -41,6 +39,8 @@ import net.runelite.api.GraphicsObject;
 import net.runelite.api.Perspective;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+
+import javax.inject.Inject;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -174,7 +174,7 @@ public class ZalcanoOverlay extends Overlay
 	{
 		if (plugin.getGolem() != null)
 		{
-			Shape hull = plugin.getGolem().getConvexHull();
+			Polygon hull = plugin.getGolem().getConvexHull();
 			if (hull != null)
 			{
 				OverlayUtil.renderPolygon(graphics, hull, new Color(206, 41, 231));
@@ -187,7 +187,7 @@ public class ZalcanoOverlay extends Overlay
 	{
 		if (plugin.getZalcano() != null)
 		{
-			Shape hull = plugin.getZalcano().getConvexHull();
+			Polygon hull = plugin.getZalcano().getConvexHull();
 			if (hull != null)
 			{
 				OverlayUtil.renderPolygon(graphics, hull, config.zalcanoHullColor());

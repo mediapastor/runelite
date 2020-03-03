@@ -26,26 +26,19 @@
  */
 package net.runelite.client.plugins.thieving;
 
-import com.google.inject.Provides;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
+import com.google.inject.Provides;
 import net.runelite.api.ChatMessageType;
-import net.runelite.api.Client;
-import net.runelite.api.GameObject;
-import net.runelite.api.GameState;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.GameObjectDespawned;
-import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -53,7 +46,8 @@ import net.runelite.client.plugins.PluginType;
 import net.runelite.client.plugins.xptracker.XpTrackerPlugin;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-@PluginDescriptor(
+@PluginDescriptor
+(
 	name = "Thieving",
 	description = "Show thieving overlay",
 	tags = {"overlay", "skilling", "thieving", "pickpocketing"},
@@ -65,28 +59,21 @@ import net.runelite.client.ui.overlay.OverlayManager;
 public class ThievingPlugin extends Plugin
 {
 	@Inject
-	private Client client;
-
-	@Inject
 	private ThievingConfig config;
 
 	@Inject
 	private ThievingOverlay overlay;
 
 	@Inject
-	private ChestOverlay chestOverlay;
+	private OverlayManager overlayManager;
 
 	@Inject
-	private OverlayManager overlayManager;
+	private EventBus eventBus;
 
 	@Getter(AccessLevel.PACKAGE)
 	private ThievingSession session;
 
-	@Getter(AccessLevel.PACKAGE)
-	private final List<ChestRespawn> respawns = new ArrayList<>();
-
 	private int statTimeout;
-	private boolean recentlyLoggedIn = false;
 
 	@Provides
 	ThievingConfig getConfig(ConfigManager configManager)
@@ -97,41 +84,32 @@ public class ThievingPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
+		addSubscriptions();
 
 		this.statTimeout = config.statTimeout();
 
-		chestOverlay.setPieFillColor(config.respawnColor());
-		chestOverlay.setPieBorderColor(config.respawnColor().darker());
-		chestOverlay.setRespawnPieInverted(config.respawnPieInverted());
-		chestOverlay.setRespawnPieDiameter(config.respawnPieDiameter());
-
 		session = null;
 		overlayManager.add(overlay);
-		overlayManager.add(chestOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
-		overlayManager.remove(chestOverlay);
 		session = null;
 	}
 
-	@Subscribe
-	private void onGameStateChanged(GameStateChanged event)
+	private void addSubscriptions()
 	{
-		if (event.getGameState() == GameState.LOGGED_IN)
-		{
-			recentlyLoggedIn = true;
-		}
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
-		recentlyLoggedIn = false;
-
 		if (session == null || this.statTimeout == 0)
 		{
 			return;
@@ -146,7 +124,6 @@ public class ThievingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (event.getType() != ChatMessageType.SPAM)
@@ -165,8 +142,9 @@ public class ThievingPlugin extends Plugin
 
 			session.updateLastThevingAction();
 			session.hasSucceeded();
+
 		}
-		else if (message.startsWith("You fail to pick") || message.startsWith("You fail to steal"))
+		else if (message.startsWith("You fail to pickpocket") || message.startsWith("You fail to pick-pocket") || message.startsWith("You fail to steal"))
 		{
 			if (session == null)
 			{
@@ -178,25 +156,6 @@ public class ThievingPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	private void onGameObjectDespawned(GameObjectDespawned event)
-	{
-		if (client.getGameState() != GameState.LOGGED_IN || recentlyLoggedIn)
-		{
-			return;
-		}
-
-		final GameObject object = event.getGameObject();
-
-		Chest chest = Chest.of(object.getId());
-		if (chest != null)
-		{
-			ChestRespawn chestRespawn = new ChestRespawn(chest, object.getWorldLocation(), Instant.now().plus(chest.getRespawnTime()), client.getWorld());
-			respawns.add(chestRespawn);
-		}
-	}
-
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!"thieving".equals(event.getGroup()))
@@ -205,10 +164,6 @@ public class ThievingPlugin extends Plugin
 		}
 
 		this.statTimeout = config.statTimeout();
-		chestOverlay.setPieFillColor(config.respawnColor());
-		chestOverlay.setPieBorderColor(config.respawnColor().darker());
-		chestOverlay.setRespawnPieInverted(config.respawnPieInverted());
-		chestOverlay.setRespawnPieDiameter(config.respawnPieDiameter());
 	}
 }
 

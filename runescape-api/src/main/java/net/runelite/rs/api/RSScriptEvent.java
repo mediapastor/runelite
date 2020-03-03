@@ -20,7 +20,4 @@ public interface RSScriptEvent extends ScriptEvent
 
 	@Import("targetName")
 	String getOpbase();
-
-	@Import("mouseX")
-	int getMouseX();
 }

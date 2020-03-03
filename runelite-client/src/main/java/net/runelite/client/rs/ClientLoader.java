@@ -32,44 +32,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.function.Supplier;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.RuneLite;
 import net.runelite.client.ui.RuneLiteSplashScreen;
 
 @Slf4j
-public class ClientLoader implements Supplier<Applet>
+@Singleton
+public class ClientLoader
 {
-	private ClientUpdateCheckMode updateCheckMode;
-	private Object client = null;
+	private final ClientUpdateCheckMode updateCheckMode;
 
-	public ClientLoader(ClientUpdateCheckMode updateCheckMode)
+	@Inject
+	private ClientLoader(
+		@Named("updateCheckMode") final ClientUpdateCheckMode updateCheckMode)
 	{
 		this.updateCheckMode = updateCheckMode;
 	}
 
-	@Override
-	public synchronized Applet get()
-	{
-		if (client == null)
-		{
-			client = doLoad();
-		}
-
-		if (client instanceof Throwable)
-		{
-			throw new RuntimeException((Throwable) client);
-		}
-		return (Applet) client;
-	}
-
-	private Object doLoad()
+	public Applet load()
 	{
 		try
 		{
 			RuneLiteSplashScreen.stage(.2, "Fetching applet viewer config");
-
-			final RSConfig config = ClientConfigLoader.fetch().blockingGet();
+			final RSConfig config = ClientConfigLoader.fetch();
 
 			switch (updateCheckMode)
 			{
@@ -93,7 +81,7 @@ public class ClientLoader implements Supplier<Applet>
 		catch (ClassNotFoundException e)
 		{
 			RuneLiteSplashScreen.setError("Unable to load client", "Class not found. This means you"
-				+ " are not running OpenOSRS with Gradle as the injected client"
+				+ " are not running RuneLitePlus with Gradle as the injected client"
 				+ " is not in your classpath.");
 
 			log.error("Error loading RS!", e);
@@ -104,7 +92,7 @@ public class ClientLoader implements Supplier<Applet>
 	private static Applet loadRLPlus(final RSConfig config)
 	throws ClassNotFoundException, InstantiationException, IllegalAccessException
 	{
-		RuneLiteSplashScreen.stage(.465, "Starting Open Old School RuneScape");
+		RuneLiteSplashScreen.stage(.465, "Starting Old School RuneScape");
 
 		ClassLoader rsClassLoader = new ClassLoader(ClientLoader.class.getClassLoader())
 		{
@@ -138,7 +126,7 @@ public class ClientLoader implements Supplier<Applet>
 	private static Applet loadVanilla(final RSConfig config)
 	throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException
 	{
-		RuneLiteSplashScreen.stage(.465, "Starting Vanilla Old School RuneScape");
+		RuneLiteSplashScreen.stage(.465, "Starting Old School RuneScape");
 
 		final String codebase = config.getCodeBase();
 		final String initialJar = config.getInitialJar();

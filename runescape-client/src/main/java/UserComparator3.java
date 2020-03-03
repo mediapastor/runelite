@@ -3,13 +3,16 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("fe")
+@ObfuscatedName("fd")
 @Implements("UserComparator3")
 public class UserComparator3 extends AbstractUserComparator {
-	@ObfuscatedName("gf")
-	@Export("regionMapArchives")
-	static byte[][] regionMapArchives;
-	@ObfuscatedName("a")
+	@ObfuscatedName("gp")
+	@ObfuscatedSignature(
+		signature = "Lls;"
+	)
+	@Export("redHintArrowSprite")
+	static Sprite redHintArrowSprite;
+	@ObfuscatedName("s")
 	@Export("reversed")
 	final boolean reversed;
 
@@ -17,10 +20,10 @@ public class UserComparator3 extends AbstractUserComparator {
 		this.reversed = var1;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Ljx;Ljx;B)I",
-		garbageValue = "8"
+		signature = "(Ljt;Ljt;I)I",
+		garbageValue = "-1087585771"
 	)
 	@Export("compareBuddy")
 	int compareBuddy(Buddy var1, Buddy var2) {
@@ -35,49 +38,44 @@ public class UserComparator3 extends AbstractUserComparator {
 		return this.compareBuddy((Buddy)var1, (Buddy)var2);
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(III)I",
-		garbageValue = "-673755666"
+		signature = "(I)I",
+		garbageValue = "1811114805"
 	)
-	public static int method3565(int var0, int var1) {
-		int var2;
-		for (var2 = 0; var1 > 0; --var1) {
-			var2 = var2 << 1 | var0 & 1;
-			var0 >>>= 1;
-		}
-
-		return var2;
+	public static int method3371() {
+		return ++MouseHandler.MouseHandler_idleCycles - 1;
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("fj")
 	@ObfuscatedSignature(
-		signature = "(ZB)V",
-		garbageValue = "-86"
+		signature = "(B)V",
+		garbageValue = "35"
 	)
-	@Export("Login_promptCredentials")
-	static void Login_promptCredentials(boolean var0) {
-		Login.Login_response1 = "";
-		Login.Login_response2 = "Enter your username/email & password.";
-		Login.Login_response3 = "";
-		Login.loginIndex = 2;
-		if (var0) {
-			Login.Login_password = "";
-		}
+	@Export("processOverheadText")
+	static final void processOverheadText() {
+		int[] var0 = Players.Players_indices;
 
-		if (Login.Login_username == null || Login.Login_username.length() <= 0) {
-			if (ScriptEvent.clientPreferences.rememberedUsername != null) {
-				Login.Login_username = ScriptEvent.clientPreferences.rememberedUsername;
-				Client.Login_isUsernameRemembered = true;
-			} else {
-				Client.Login_isUsernameRemembered = false;
+		int var1;
+		for (var1 = 0; var1 < Players.Players_count; ++var1) {
+			Player var2 = Client.players[var0[var1]];
+			if (var2 != null && var2.overheadTextCyclesRemaining > 0) {
+				--var2.overheadTextCyclesRemaining;
+				if (var2.overheadTextCyclesRemaining == 0) {
+					var2.overheadText = null;
+				}
 			}
 		}
 
-		if (Client.Login_isUsernameRemembered && Login.Login_username != null && Login.Login_username.length() > 0) {
-			Login.currentLoginField = 1;
-		} else {
-			Login.currentLoginField = 0;
+		for (var1 = 0; var1 < Client.npcCount; ++var1) {
+			int var4 = Client.npcIndices[var1];
+			NPC var3 = Client.npcs[var4];
+			if (var3 != null && var3.overheadTextCyclesRemaining > 0) {
+				--var3.overheadTextCyclesRemaining;
+				if (var3.overheadTextCyclesRemaining == 0) {
+					var3.overheadText = null;
+				}
+			}
 		}
 
 	}

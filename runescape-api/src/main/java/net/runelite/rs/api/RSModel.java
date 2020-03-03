@@ -24,8 +24,8 @@
  */
 package net.runelite.rs.api;
 
-import java.awt.Shape;
 import net.runelite.api.Model;
+import java.awt.Polygon;
 import net.runelite.mapping.Import;
 
 public interface RSModel extends RSEntity, Model
@@ -163,7 +163,7 @@ public interface RSModel extends RSEntity, Model
 	/**
 	 * Compute the convex hull of this model
 	 */
-	Shape getConvexHull(int localX, int localY, int orientation, int tileHeight);
+	Polygon getConvexHull(int localX, int localY, int orientation, int tileHeight);
 
 	float[][] getFaceTextureUCoordinates();
 	void setFaceTextureUCoordinates(float[][] rl$faceTextureUCoordinates);

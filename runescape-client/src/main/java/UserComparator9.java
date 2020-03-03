@@ -3,16 +3,10 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ey")
+@ObfuscatedName("eu")
 @Implements("UserComparator9")
 public class UserComparator9 extends AbstractUserComparator {
-	@ObfuscatedName("l")
-	@ObfuscatedSignature(
-		signature = "Llw;"
-	)
-	@Export("titlebuttonSprite")
-	static IndexedSprite titlebuttonSprite;
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@Export("reversed")
 	final boolean reversed;
 
@@ -20,10 +14,10 @@ public class UserComparator9 extends AbstractUserComparator {
 		this.reversed = var1;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Ljx;Ljx;B)I",
-		garbageValue = "-80"
+		signature = "(Ljt;Ljt;B)I",
+		garbageValue = "-36"
 	)
 	@Export("compareBuddy")
 	int compareBuddy(Buddy var1, Buddy var2) {
@@ -38,47 +32,25 @@ public class UserComparator9 extends AbstractUserComparator {
 		return this.compareBuddy((Buddy)var1, (Buddy)var2);
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(II)I",
-		garbageValue = "-728098315"
+		signature = "(Lkx;I)I",
+		garbageValue = "555200658"
 	)
-	@Export("getVarbit")
-	public static int getVarbit(int var0) {
-		VarbitDefinition var2 = (VarbitDefinition)VarbitDefinition.VarbitDefinition_cached.get((long)var0);
-		VarbitDefinition var1;
-		if (var2 != null) {
-			var1 = var2;
+	@Export("decode")
+	static int decode(PacketBuffer var0) {
+		int var1 = var0.readBits(2);
+		int var2;
+		if (var1 == 0) {
+			var2 = 0;
+		} else if (var1 == 1) {
+			var2 = var0.readBits(5);
+		} else if (var1 == 2) {
+			var2 = var0.readBits(8);
 		} else {
-			byte[] var7 = VarbitDefinition.VarbitDefinition_archive.takeFile(14, var0);
-			var2 = new VarbitDefinition();
-			if (var7 != null) {
-				var2.decode(new Buffer(var7));
-			}
-
-			VarbitDefinition.VarbitDefinition_cached.put(var2, (long)var0);
-			var1 = var2;
+			var2 = var0.readBits(11);
 		}
 
-		int var3 = var1.baseVar;
-		int var4 = var1.startBit;
-		int var5 = var1.endBit;
-		int var6 = Varps.Varps_masks[var5 - var4];
-		return Varps.Varps_main[var3] >> var4 & var6;
-	}
-
-	@ObfuscatedName("lc")
-	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;S)V",
-		garbageValue = "11607"
-	)
-	@Export("clanKickUser")
-	static final void clanKickUser(String var0) {
-		if (class4.clanChat != null) {
-			PacketBufferNode var1 = SoundSystem.getPacketBufferNode(ClientPacket.field2195, Client.packetWriter.isaacCipher);
-			var1.packetBuffer.writeByte(UserComparator6.stringCp1252NullTerminatedByteSize(var0));
-			var1.packetBuffer.writeStringCp1252NullTerminated(var0);
-			Client.packetWriter.addNode(var1);
-		}
+		return var2;
 	}
 }

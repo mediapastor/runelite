@@ -107,15 +107,15 @@ class FishingSpotOverlay extends Overlay
 			Color color;
 			if (npc.getSpotAnimation() == GraphicID.FLYING_FISH)
 			{
-				color = plugin.getMinnowsOverlayColor();
+				color = Color.RED;
 			}
 			else if (spot == FishingSpot.COMMON_TENCH && npc.getWorldLocation().distanceTo2D(client.getLocalPlayer().getWorldLocation()) <= ONE_TICK_AERIAL_FISHING)
 			{
-				color = plugin.getAerialOverlayColor();
+				color = Color.GREEN;
 			}
 			else
 			{
-				color = plugin.getOverlayColor();
+				color = Color.CYAN;
 			}
 
 			if (spot == FishingSpot.MINNOW && plugin.isShowMinnowOverlay())
@@ -161,7 +161,7 @@ class FishingSpotOverlay extends Overlay
 				if (spot == FishingSpot.COMMON_TENCH
 					&& npc.getWorldLocation().distanceTo2D(client.getLocalPlayer().getWorldLocation()) <= ONE_TICK_AERIAL_FISHING)
 				{
-					fishImage = ImageUtil.outlineImage(itemManager.getImage(spot.getFishSpriteId()), color);
+					fishImage = ImageUtil.outlineImage(itemManager.getImage(spot.getFishSpriteId()), Color.GREEN);
 				}
 
 				if (fishImage != null)

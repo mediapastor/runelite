@@ -29,6 +29,8 @@ package net.runelite.client.plugins.experiencedrop;
 import com.google.inject.Provides;
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,45 +45,52 @@ import net.runelite.api.Skill;
 import net.runelite.api.SpriteID;
 import net.runelite.api.Varbits;
 import net.runelite.api.WorldType;
-import net.runelite.api.events.FakeXpDrop;
+import net.runelite.api.events.ConfigChanged;
+import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.events.WidgetHiddenChanged;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.NPCManager;
-import net.runelite.client.game.XpDropEvent;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ColorUtil;
 
 @PluginDescriptor(
 	name = "XP Drop",
 	description = "Enable customization of the way XP drops are displayed",
-	tags = {"experience", "levels", "tick"})
+	tags = {"experience", "levels", "tick"}
+)
 @Singleton
 public class XpDropPlugin extends Plugin
 {
 	private static final int XPDROP_PADDING = 2; // space between xp drop icons
 	private static final double HITPOINT_RATIO = 1.33; // Base rate of hp xp per point damage
 	private static final double DMM_MULTIPLIER_RATIO = 10;
-	private static final double TL_MULTIPLIER_RATIO = 5;
-	private static final int TWISTED_LEAGUE_WAY_OF_THE_WARRIOR = 3;
-	private static final int TWISTED_LEAGUE_XERICS_WISDOM = 3;
+
 	@Inject
 	private Client client;
+
 	@Inject
 	private XpDropConfig config;
+
 	@Inject
 	private NPCManager npcManager;
+
 	@Inject
 	private OverlayManager overlayManager;
+
 	@Inject
 	private XpDropOverlay overlay;
+
+	@Inject
+	private EventBus eventBus;
 
 	@Getter(AccessLevel.PACKAGE)
 	private int damage = 0;
@@ -97,15 +106,16 @@ public class XpDropPlugin extends Plugin
 	private boolean hasDropped = false;
 	private boolean correctPrayer;
 	private Skill lastSkill = null;
+	private final Map<Skill, Integer> previousSkillExpTable = new EnumMap<>(Skill.class);
 	private PrayerType currentTickPrayer;
 	private XpDropConfig.DamageMode damageMode;
+
 	private boolean hideSkillIcons;
 	private Color getMeleePrayerColor;
 	private Color getRangePrayerColor;
 	private Color getMagePrayerColor;
 	private int fakeXpDropDelay;
 	private XpDropConfig.DamageMode showdamagedrops;
-
 	@Getter(AccessLevel.PACKAGE)
 	private Color damageColor;
 
@@ -119,6 +129,7 @@ public class XpDropPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		damageMode = config.showdamagedrops();
 
@@ -131,18 +142,21 @@ public class XpDropPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 	}
 
-	@Subscribe
-	private void onXpDropEvent(XpDropEvent event)
+	private void addSubscriptions()
 	{
-		previousExpGained = event.getExp();
-		lastSkill = event.getSkill();
-		hasDropped = true;
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(WidgetHiddenChanged.class, this, this::onWidgetHiddenChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(ExperienceChanged.class, this, this::onExperienceChanged);
+		eventBus.subscribe(ScriptCallbackEvent.class, this, this::onScriptCallbackEvent);
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("xpdrop"))
@@ -172,14 +186,12 @@ public class XpDropPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
-		tickShow = 0;
 		damage = 0;
+		tickShow = 0;
 	}
 
-	@Subscribe
 	private void onWidgetHiddenChanged(WidgetHiddenChanged event)
 	{
 		Widget widget = event.getWidget();
@@ -257,12 +269,9 @@ public class XpDropPlugin extends Plugin
 			switch (prayer)
 			{
 				case MELEE:
-					if (spriteIDs.anyMatch(
-						id ->
-							id == SpriteID.SKILL_ATTACK
-								|| id == SpriteID.SKILL_STRENGTH
-								|| id == SpriteID.SKILL_DEFENCE
-								|| correctPrayer))
+					if (spriteIDs.anyMatch(id ->
+						id == SpriteID.SKILL_ATTACK || id == SpriteID.SKILL_STRENGTH || id == SpriteID.SKILL_DEFENCE
+							|| correctPrayer))
 					{
 						color = this.getMeleePrayerColor.getRGB();
 						correctPrayer = true;
@@ -307,7 +316,6 @@ public class XpDropPlugin extends Plugin
 		return null;
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick tick)
 	{
 		lastOpponent = client.getLocalPlayer().getInteracting();
@@ -343,44 +351,87 @@ public class XpDropPlugin extends Plugin
 		client.runScript(XPDROP_DISABLED, lastSkill.ordinal(), previousExpGained);
 	}
 
-	@Subscribe
-	private void onFakeXpDrop(FakeXpDrop fakeXpDrop)
+	private void onExperienceChanged(ExperienceChanged event)
 	{
-		if (fakeXpDrop.getSkill() == Skill.HITPOINTS)
+		final Skill skill = event.getSkill();
+		final int xp = client.getSkillExperience(skill);
+
+		lastSkill = skill;
+
+		Integer previous = previousSkillExpTable.put(skill, xp);
+		if (previous != null)
 		{
-			calculateDamageDealt(fakeXpDrop.getXp());
+			previousExpGained = xp - previous;
+			hasDropped = true;
+		}
+	}
+
+	private void onScriptCallbackEvent(ScriptCallbackEvent e)
+	{
+		if (this.showdamagedrops == XpDropConfig.DamageMode.NONE)
+		{
+			return;
+		}
+
+		final String eventName = e.getEventName();
+
+		if (eventName.equals("newXpDrop"))
+		{
+			damage = 0;
+		}
+		// Handles Fake XP drops (Ironman, DMM Cap, 200m xp, etc)
+		else if (eventName.equals("fakeXpDrop"))
+		{
+			final int[] intStack = client.getIntStack();
+			final int intStackSize = client.getIntStackSize();
+
+			final int skillId = intStack[intStackSize - 2];
+			final Skill skill = Skill.values()[skillId];
+
+			if (skill.equals(Skill.HITPOINTS))
+			{
+				final int exp = intStack[intStackSize - 1];
+				calculateDamageDealt(exp);
+			}
+
+			client.setIntStackSize(intStackSize - 2);
+		}
+		else if (eventName.equals("hpXpGained"))
+		{
+			final int[] intStack = client.getIntStack();
+			final int intStackSize = client.getIntStackSize();
+
+			final int exp = intStack[intStackSize - 1];
+			calculateDamageDealt(exp);
+		}
+		else if (eventName.equals("xpDropAddDamage") &&
+			damageMode == XpDropConfig.DamageMode.IN_XP_DROP &&
+			damage > 0)
+		{
+			final String[] stringStack = client.getStringStack();
+			final int stringStackSize = client.getStringStackSize();
+
+			String builder = stringStack[stringStackSize - 1] +
+				ColorUtil.colorTag(this.damageColor) +
+				" (" + damage + ")";
+			stringStack[stringStackSize - 1] = builder;
 		}
 	}
 
 	private void calculateDamageDealt(int diff)
 	{
 		double damageDealt = diff / HITPOINT_RATIO;
-		
-		// DeadMan mode has an XP modifier of 10x, Twisted League mode has an XP modifier of 5x
+		// DeadMan mode has an XP modifier
 		if (client.getWorldType().contains(WorldType.DEADMAN))
 		{
 			damageDealt = damageDealt / DMM_MULTIPLIER_RATIO;
 		}
-		if (client.getWorldType().contains(WorldType.LEAGUE))
-		{
-			damageDealt = damageDealt / TL_MULTIPLIER_RATIO;
-			
-			if (client.getVar(Varbits.TWISTED_LEAGUE_RELIC_3) == TWISTED_LEAGUE_WAY_OF_THE_WARRIOR)
-			{
-				damageDealt = damageDealt / 2;
-			}
-			if (client.getVar(Varbits.TWISTED_LEAGUE_RELIC_5) == TWISTED_LEAGUE_XERICS_WISDOM)
-			{
-				damageDealt = damageDealt / 2;
-			}
-		}
-		
+
 		// Some NPCs have an XP modifier, account for it here.
 		Actor a = client.getLocalPlayer().getInteracting();
 		if (!(a instanceof NPC) && !(a instanceof Player))
 		{
-			// If we are interacting with nothing we may have clicked away at the perfect time fall back
-			// to last tick
+			// If we are interacting with nothing we may have clicked away at the perfect time fall back to last tick
 			if (!(lastOpponent instanceof NPC) && !(lastOpponent instanceof Player))
 			{
 				damage = (int) Math.rint(damageDealt);

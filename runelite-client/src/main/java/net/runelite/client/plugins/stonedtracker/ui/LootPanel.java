@@ -181,10 +181,6 @@ class LootPanel extends JPanel
 
 		switch (name)
 		{
-			case "master farmer":
-				currentText = "Current pick-pocket count:";
-				loggedText = "Pickpockets logged:";
-				break;
 			case "Wintertodt":
 				currentText = "Current Killcount:";
 				loggedText = "Crates logged:";

@@ -37,8 +37,7 @@ public interface TileIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "highlightDestinationColor",
 		name = "Color of current destination highlighting",
-		description = "Configures the highlight color of current destination",
-		position = 0
+		description = "Configures the highlight color of current destination"
 	)
 	default Color highlightDestinationColor()
 	{
@@ -48,31 +47,18 @@ public interface TileIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "highlightDestinationTile",
 		name = "Highlight destination tile",
-		description = "Highlights tile player is walking to",
-		position = 1
+		description = "Highlights tile player is walking to"
 	)
 	default boolean highlightDestinationTile()
 	{
 		return true;
 	}
 
-	@ConfigItem(
-		keyName = "thinDestinationTile",
-		name = "Thin destination tile",
-		description = "Renders the tile border as 1 pixel wide instead of 2",
-		position = 2
-	)
-	default boolean thinDestinationTile()
-	{
-		return false;
-	}
-
 	@Alpha
 	@ConfigItem(
 		keyName = "highlightCurrentColor",
 		name = "Color of current tile highlighting",
-		description = "Configures the highlight color of current tile position",
-		position = 3
+		description = "Configures the highlight color of current tile position"
 	)
 	default Color highlightCurrentColor()
 	{
@@ -82,21 +68,9 @@ public interface TileIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "highlightCurrentTile",
 		name = "Highlight current tile",
-		description = "Highlights tile player is on",
-		position = 4
+		description = "Highlights tile player is on"
 	)
 	default boolean highlightCurrentTile()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-		keyName = "thinCurrentTile",
-		name = "Thin current tile",
-		description = "Renders the tile border as 1 pixel wide instead of 2",
-		position = 5
-	)
-	default boolean thinCurrentTile()
 	{
 		return false;
 	}
@@ -105,8 +79,7 @@ public interface TileIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "highlightHoveredColor",
 		name = "Color of current hovered highlighting",
-		description = "Configures the highlight color of hovered tile",
-		position = 6
+		description = "Configures the highlight color of hovered tile"
 	)
 	default Color highlightHoveredColor()
 	{
@@ -116,21 +89,9 @@ public interface TileIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "highlightHoveredTile",
 		name = "Highlight hovered tile",
-		description = "Highlights tile player is hovering with mouse",
-		position = 7
+		description = "Highlights tile player is hovering with mouse"
 	)
 	default boolean highlightHoveredTile()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-		keyName = "thinHoveredTile",
-		name = "Thin hovered tile",
-		description = "Renders the tile border as 1 pixel wide instead of 2",
-		position = 8
-	)
-	default boolean thinHoveredTile()
 	{
 		return false;
 	}

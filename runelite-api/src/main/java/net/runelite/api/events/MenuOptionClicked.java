@@ -25,8 +25,9 @@
 package net.runelite.api.events;
 
 import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.Data;
 import lombok.Setter;
+import net.runelite.api.MenuOpcode;
 import net.runelite.api.MenuEntry;
 
 /**
@@ -40,20 +41,86 @@ import net.runelite.api.MenuEntry;
  * By default, when there is no action performed when left-clicking,
  * it seems that this event still triggers with the "Cancel" action.
  */
-@Getter
-public class MenuOptionClicked extends MenuEntry implements Event
+@Data
+public class MenuOptionClicked implements Event
 {
-	public MenuOptionClicked(String option, String target, int identifier, int opcode, int param0, int param1, boolean forceLeftClick)
+	public MenuOptionClicked(MenuEntry entry)
 	{
-		super(option, target, identifier, opcode, param0, param1, forceLeftClick);
+		menuEntry = entry;
 		authentic = true;
 	}
 
-	public MenuOptionClicked(String option, String target, int identifier, int opcode, int param0, int param1, boolean forceLeftClick, boolean authentic, int mouseButton)
+	public MenuOptionClicked(MenuEntry entry, boolean authentic, int mouseButton)
 	{
-		super(option, target, identifier, opcode, param0, param1, forceLeftClick);
+		menuEntry = entry;
 		this.authentic = authentic;
 		this.mouseButton = mouseButton;
+	}
+
+	/**
+	 * The actual MenuEntry object representing what was clicked
+	 */
+	private MenuEntry menuEntry;
+
+	/**
+	 * The option text added to the menu.
+	 */
+	public String getOption()
+	{
+		return menuEntry.getOption();
+	}
+
+	/**
+	 * The target of the action.
+	 */
+	public String getTarget()
+	{
+		return menuEntry.getTarget();
+	}
+
+	/**
+	 * MenuOpcode but int-ish
+	 */
+	public int getOpcode()
+	{
+		return menuEntry.getOpcode();
+	}
+
+	/**
+	 * The ID of the object, actor, or item that the interaction targets.
+	 */
+	public int getIdentifier()
+	{
+		return menuEntry.getIdentifier();
+	}
+
+	/**
+	 * The action parameter used in the click.
+	 */
+	public int getActionParam0()
+	{
+		return menuEntry.getParam0();
+	}
+
+	/**
+	 * shit docs
+	 */
+	public int getActionParam1()
+	{
+		return menuEntry.getParam1();
+	}
+
+	public boolean isForceLeftClick()
+	{
+		return menuEntry.isForceLeftClick();
+	}
+
+	/**
+	 * The action performed.
+	 */
+	public MenuOpcode getMenuOpcode()
+	{
+		return MenuOpcode.of(getOpcode());
 	}
 
 	/**
@@ -81,17 +148,6 @@ public class MenuOptionClicked extends MenuEntry implements Event
 	/**
 	 * Whether or not the event is authentic.
 	 */
-	@Setter(AccessLevel.NONE)
-	private final boolean authentic;
-
-	public void setMenuEntry(MenuEntry e)
-	{
-		setOption(e.getOption());
-		setTarget(e.getTarget());
-		setIdentifier(e.getIdentifier());
-		setOpcode(e.getOpcode());
-		setParam0(e.getParam0());
-		setParam1(e.getParam1());
-		setForceLeftClick(e.isForceLeftClick());
-	}
+	@Setter(AccessLevel.PRIVATE)
+	private boolean authentic;
 }

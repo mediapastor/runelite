@@ -50,14 +50,13 @@ import static net.runelite.api.MenuOpcode.*;
 import net.runelite.api.Player;
 import net.runelite.api.events.ClanMemberJoined;
 import net.runelite.api.events.ClanMemberLeft;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.PlayerSpawned;
 import net.runelite.api.util.Text;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ClanManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -79,14 +78,7 @@ import net.runelite.http.api.hiscore.HiscoreResult;
 public class PlayerIndicatorsPlugin extends Plugin
 {
 	private static final HiscoreClient HISCORE_CLIENT = new HiscoreClient();
-	private final List<String> callers = new ArrayList<>();
-	private final Map<Player, PlayerRelation> colorizedMenus = new ConcurrentHashMap<>();
-	private final Map<PlayerRelation, Color> relationColorHashMap = new ConcurrentHashMap<>();
-	private final Map<PlayerRelation, Object[]> locationHashMap = new ConcurrentHashMap<>();
-	private final Map<String, Actor> callerPiles = new ConcurrentHashMap<>();
-	@Getter(AccessLevel.PACKAGE)
-	private final Map<String, HiscoreResult> resultCache = new HashMap<>();
-	private final ExecutorService executorService = Executors.newFixedThreadPool(100);
+
 	@Inject
 	@Getter(AccessLevel.NONE)
 	private OverlayManager overlayManager;
@@ -108,7 +100,16 @@ public class PlayerIndicatorsPlugin extends Plugin
 	@Inject
 	@Getter(AccessLevel.NONE)
 	private EventBus eventBus;
+
 	private ClanMemberRank callerRank;
+	private final List<String> callers = new ArrayList<>();
+	private final Map<Player, PlayerRelation> colorizedMenus = new ConcurrentHashMap<>();
+	private final Map<PlayerRelation, Color> relationColorHashMap = new ConcurrentHashMap<>();
+	private final Map<PlayerRelation, Object[]> locationHashMap = new ConcurrentHashMap<>();
+	private final Map<String, Actor> callerPiles = new ConcurrentHashMap<>();
+	@Getter(AccessLevel.PACKAGE)
+	private final Map<String, HiscoreResult> resultCache = new HashMap<>();
+	private final ExecutorService executorService = Executors.newFixedThreadPool(100);
 	private PlayerIndicatorsPlugin.AgilityFormats agilityFormat;
 	private PlayerIndicatorsPlugin.MinimapSkullLocations skullLocation;
 	private String configCallers;
@@ -140,6 +141,7 @@ public class PlayerIndicatorsPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 		resultCache.clear();
 		overlayManager.add(playerIndicatorsOverlay);
 		overlayManager.add(playerIndicatorsMinimapOverlay);
@@ -149,12 +151,22 @@ public class PlayerIndicatorsPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
 		overlayManager.remove(playerIndicatorsOverlay);
 		overlayManager.remove(playerIndicatorsMinimapOverlay);
 		resultCache.clear();
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ClanMemberJoined.class, this, this::onClanMemberJoined);
+		eventBus.subscribe(ClanMemberLeft.class, this, this::onClanMemberLeft);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(InteractingChanged.class, this, this::onInteractingChanged);
+		eventBus.subscribe(PlayerSpawned.class, this, this::onPlayerSpawned);
+	}
+
 	private void onInteractingChanged(InteractingChanged event)
 	{
 		if (!this.highlightCallerTargets || event.getSource() == null || callers.isEmpty() || !isCaller(event.getSource()))
@@ -176,15 +188,9 @@ public class PlayerIndicatorsPlugin extends Plugin
 			return;
 		}
 
-		if (event.getTarget() == null)
-		{
-			return;
-		}
-
 		callerPiles.put(caller.getName(), event.getTarget());
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("playerindicators"))
@@ -195,19 +201,16 @@ public class PlayerIndicatorsPlugin extends Plugin
 		updateConfig();
 	}
 
-	@Subscribe
 	private void onClanMemberJoined(ClanMemberJoined event)
 	{
 		getCallerList();
 	}
 
-	@Subscribe
 	private void onClanMemberLeft(ClanMemberLeft event)
 	{
 		getCallerList();
 	}
 
-	@Subscribe
 	private void onPlayerSpawned(PlayerSpawned event)
 	{
 		final Player player = event.getPlayer();
@@ -245,10 +248,9 @@ public class PlayerIndicatorsPlugin extends Plugin
 		});
 	}
 
-	@Subscribe
 	private void onMenuEntryAdded(MenuEntryAdded menuEntryAdded)
 	{
-		int type = menuEntryAdded.getOpcode();
+		int type = menuEntryAdded.getType();
 
 		if (type >= 2000)
 		{
@@ -286,21 +288,7 @@ public class PlayerIndicatorsPlugin extends Plugin
 			int image2 = -1;
 			Color color = null;
 
-			if (this.highlightCallers && isCaller(player))
-			{
-				if (Arrays.asList(this.locationHashMap.get(PlayerRelation.CALLER)).contains(PlayerIndicationLocation.MENU))
-				{
-					color = relationColorHashMap.get(PlayerRelation.CALLER);
-				}
-			}
-			else if (this.highlightCallerTargets && isPile(player))
-			{
-				if (Arrays.asList(this.locationHashMap.get(PlayerRelation.CALLER_TARGET)).contains(PlayerIndicationLocation.MENU))
-				{
-					color = relationColorHashMap.get(PlayerRelation.CALLER_TARGET);
-				}
-			}
-			else if (this.highlightFriends && client.isFriended(player.getName(), false))
+			if (this.highlightFriends && client.isFriended(player.getName(), false))
 			{
 				if (Arrays.asList(this.locationHashMap.get(PlayerRelation.FRIEND)).contains(PlayerIndicationLocation.MENU))
 				{
@@ -342,7 +330,20 @@ public class PlayerIndicatorsPlugin extends Plugin
 					color = relationColorHashMap.get(PlayerRelation.TARGET);
 				}
 			}
-
+			else if (this.highlightCallers && isCaller(player))
+			{
+				if (Arrays.asList(this.locationHashMap.get(PlayerRelation.CALLER)).contains(PlayerIndicationLocation.MENU))
+				{
+					color = relationColorHashMap.get(PlayerRelation.CALLER);
+				}
+			}
+			else if (this.highlightCallerTargets && isPile(player))
+			{
+				if (Arrays.asList(this.locationHashMap.get(PlayerRelation.CALLER_TARGET)).contains(PlayerIndicationLocation.MENU))
+				{
+					color = relationColorHashMap.get(PlayerRelation.CALLER_TARGET);
+				}
+			}
 
 			if (this.playerSkull && !player.isClanMember() && player.getSkullIcon() != null)
 			{
@@ -367,10 +368,6 @@ public class PlayerIndicatorsPlugin extends Plugin
 
 					lastEntry.setTarget(ColorUtil.prependColorTag(target, color));
 				}
-				if (image != -1)
-				{
-					lastEntry.setTarget("<img=" + image + ">" + lastEntry.getTarget());
-				}
 
 				if (image2 != -1 && this.playerSkull)
 				{
@@ -381,7 +378,6 @@ public class PlayerIndicatorsPlugin extends Plugin
 			}
 		}
 	}
-
 
 	private void getCallerList()
 	{
@@ -449,15 +445,9 @@ public class PlayerIndicatorsPlugin extends Plugin
 	 * @param actor The player to check
 	 * @return true if they are a target, false otherwise
 	 */
-	public boolean isPile(Actor actor)
+	private boolean isPile(Actor actor)
 	{
-		/**
-		 if (!(actor instanceof Player))
-		 {
-		 return false;
-		 }
-		 **/
-		if (actor == null)
+		if (!(actor instanceof Player))
 		{
 			return false;
 		}

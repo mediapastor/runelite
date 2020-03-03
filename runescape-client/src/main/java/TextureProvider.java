@@ -4,63 +4,51 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("dp")
+@ObfuscatedName("dt")
 @Implements("TextureProvider")
 public class TextureProvider implements TextureLoader {
-	@ObfuscatedName("gl")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "[Llx;"
-	)
-	@Export("crossSprites")
-	static Sprite[] crossSprites;
-	@ObfuscatedName("kt")
-	@ObfuscatedGetter(
-		intValue = 831989681
-	)
-	@Export("menuY")
-	static int menuY;
-	@ObfuscatedName("a")
-	@ObfuscatedSignature(
-		signature = "[Ldt;"
+		signature = "[Ldk;"
 	)
 	@Export("textures")
 	Texture[] textures;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Ljb;"
+		signature = "Ljc;"
 	)
 	@Export("deque")
 	NodeDeque deque;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = -1515025837
+		intValue = -428424459
 	)
 	@Export("capacity")
 	int capacity;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedGetter(
-		intValue = -684430177
+		intValue = 280831487
 	)
 	@Export("remaining")
 	int remaining;
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@Export("brightness")
 	double brightness;
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -113629701
+		intValue = 97407855
 	)
 	@Export("textureSize")
 	int textureSize;
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lhz;"
 	)
 	@Export("archive")
 	AbstractArchive archive;
 
 	@ObfuscatedSignature(
-		signature = "(Lhq;Lhq;IDI)V"
+		signature = "(Lhz;Lhz;IDI)V"
 	)
 	public TextureProvider(AbstractArchive var1, AbstractArchive var2, int var3, double var4, int var6) {
 		this.deque = new NodeDeque();
@@ -83,10 +71,10 @@ public class TextureProvider implements TextureLoader {
 
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
 		signature = "(I)I",
-		garbageValue = "-723881921"
+		garbageValue = "-1619815981"
 	)
 	@Export("getLoadedPercentage")
 	public int getLoadedPercentage() {
@@ -102,7 +90,7 @@ public class TextureProvider implements TextureLoader {
 
 				for (int var7 = 0; var7 < var6.length; ++var7) {
 					int var8 = var6[var7];
-					if (this.archive.method4327(var8)) {
+					if (this.archive.method4066(var8)) {
 						++var2;
 					}
 				}
@@ -116,17 +104,17 @@ public class TextureProvider implements TextureLoader {
 		}
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@Export("setBrightness")
 	public void setBrightness(double var1) {
 		this.brightness = var1;
 		this.clear();
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
 		signature = "(II)[I",
-		garbageValue = "-1956127937"
+		garbageValue = "-414302740"
 	)
 	@Export("getTexturePixels")
 	public int[] getTexturePixels(int var1) {
@@ -156,39 +144,39 @@ public class TextureProvider implements TextureLoader {
 		return null;
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
 		signature = "(IB)I",
-		garbageValue = "-57"
+		garbageValue = "87"
 	)
 	@Export("getAverageTextureRGB")
 	public int getAverageTextureRGB(int var1) {
 		return this.textures[var1] != null ? this.textures[var1].averageRGB : 0;
 	}
 
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
 		signature = "(II)Z",
-		garbageValue = "1875777180"
+		garbageValue = "-39304153"
 	)
-	public boolean vmethod3403(int var1) {
-		return this.textures[var1].field1593;
+	public boolean vmethod3229(int var1) {
+		return this.textures[var1].field1604;
 	}
 
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(II)Z",
-		garbageValue = "-1105399782"
+		signature = "(IS)Z",
+		garbageValue = "17414"
 	)
 	@Export("isLowDetail")
 	public boolean isLowDetail(int var1) {
 		return this.textureSize == 64;
 	}
 
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "-519543522"
+		garbageValue = "222022788"
 	)
 	@Export("clear")
 	public void clear() {
@@ -202,10 +190,10 @@ public class TextureProvider implements TextureLoader {
 		this.remaining = this.capacity;
 	}
 
-	@ObfuscatedName("o")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
 		signature = "(II)V",
-		garbageValue = "456735268"
+		garbageValue = "162917811"
 	)
 	@Export("animate")
 	public void animate(int var1) {
@@ -217,79 +205,5 @@ public class TextureProvider implements TextureLoader {
 			}
 		}
 
-	}
-
-	@ObfuscatedName("n")
-	@ObfuscatedSignature(
-		signature = "(II)Z",
-		garbageValue = "1911421748"
-	)
-	public static boolean method2931(int var0) {
-		return (var0 >> 20 & 1) != 0;
-	}
-
-	@ObfuscatedName("q")
-	@ObfuscatedSignature(
-		signature = "(II)Z",
-		garbageValue = "828807862"
-	)
-	@Export("loadInterface")
-	public static boolean loadInterface(int var0) {
-		if (class215.Widget_loadedInterfaces[var0]) {
-			return true;
-		} else if (!Coord.Widget_archive.tryLoadGroup(var0)) {
-			return false;
-		} else {
-			int var1 = Coord.Widget_archive.getGroupFileCount(var0);
-			if (var1 == 0) {
-				class215.Widget_loadedInterfaces[var0] = true;
-				return true;
-			} else {
-				if (Widget.Widget_interfaceComponents[var0] == null) {
-					Widget.Widget_interfaceComponents[var0] = new Widget[var1];
-				}
-
-				for (int var2 = 0; var2 < var1; ++var2) {
-					if (Widget.Widget_interfaceComponents[var0][var2] == null) {
-						byte[] var3 = Coord.Widget_archive.takeFile(var0, var2);
-						if (var3 != null) {
-							Widget.Widget_interfaceComponents[var0][var2] = new Widget();
-							Widget.Widget_interfaceComponents[var0][var2].id = var2 + (var0 << 16);
-							if (var3[0] == -1) {
-								Widget.Widget_interfaceComponents[var0][var2].decode(new Buffer(var3));
-							} else {
-								Widget.Widget_interfaceComponents[var0][var2].decodeLegacy(new Buffer(var3));
-							}
-						}
-					}
-				}
-
-				class215.Widget_loadedInterfaces[var0] = true;
-				return true;
-			}
-		}
-	}
-
-	@ObfuscatedName("lh")
-	@ObfuscatedSignature(
-		signature = "(Lhi;B)Lhi;",
-		garbageValue = "7"
-	)
-	static Widget method2909(Widget var0) {
-		int var2 = class195.getWidgetClickMask(var0);
-		int var1 = var2 >> 17 & 7;
-		int var3 = var1;
-		if (var1 == 0) {
-			return null;
-		} else {
-			for (int var4 = 0; var4 < var3; ++var4) {
-				var0 = PacketBufferNode.getWidget(var0.parentId);
-				if (var0 == null) {
-					return null;
-				}
-			}
-
-			return var0;
-		}
 	}
 }

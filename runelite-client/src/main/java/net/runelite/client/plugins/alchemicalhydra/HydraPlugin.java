@@ -24,7 +24,6 @@
  */
 package net.runelite.client.plugins.alchemicalhydra;
 
-import com.google.inject.Provides;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,13 +45,9 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.ProjectileMoved;
-import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
@@ -76,15 +71,6 @@ public class HydraPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private Hydra hydra;
 
-	@Getter(AccessLevel.PACKAGE)
-	private boolean counting;
-
-	@Getter(AccessLevel.PACKAGE)
-	private boolean fountain;
-
-	@Getter(AccessLevel.PACKAGE)
-	private boolean stun;
-
 	private boolean inHydraInstance;
 	private int lastAttackTick;
 
@@ -92,37 +78,26 @@ public class HydraPlugin extends Plugin
 		5279, 5280,
 		5535, 5536
 	};
-	private static final int STUN_LENGTH = 7;
 
 	@Inject
 	private Client client;
 
 	@Inject
-	private EventBus eventBus;
-
-	@Inject
-	private HydraConfig config;
+	private OverlayManager overlayManager;
 
 	@Inject
 	private HydraOverlay overlay;
 
 	@Inject
-	private HydraSceneOverlay sceneOverlay;
+	private HydraSceneOverlay poisonOverlay;
 
 	@Inject
-	private OverlayManager overlayManager;
-
-	@Provides
-	HydraConfig provideConfig(ConfigManager configManager)
-	{
-		return configManager.getConfig(HydraConfig.class);
-	}
+	private EventBus eventBus;
 
 	@Override
 	protected void startUp()
 	{
-		initConfig();
-
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
 		inHydraInstance = checkArea();
 		lastAttackTick = -1;
 		poisonProjectiles.clear();
@@ -131,6 +106,7 @@ public class HydraPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
 		eventBus.unregister("fight");
 		eventBus.unregister("npcSpawned");
 
@@ -141,20 +117,6 @@ public class HydraPlugin extends Plugin
 		lastAttackTick = -1;
 	}
 
-	private void initConfig()
-	{
-		this.counting = config.counting();
-		this.fountain = config.fountain();
-		this.stun = config.stun();
-		this.overlay.setSafeCol(config.safeCol());
-		this.overlay.setMedCol(config.medCol());
-		this.overlay.setBadCol(config.badCol());
-		this.sceneOverlay.setPoisonBorder(config.poisonBorderCol());
-		this.sceneOverlay.setPoisonFill(config.poisonCol());
-		this.sceneOverlay.setBadFountain(config.fountainColA());
-		this.sceneOverlay.setGoodFountain(config.fountainColB());
-	}
-
 	private void addFightSubscriptions()
 	{
 		eventBus.subscribe(AnimationChanged.class, "fight", this::onAnimationChanged);
@@ -162,50 +124,6 @@ public class HydraPlugin extends Plugin
 		eventBus.subscribe(ChatMessage.class, "fight", this::onChatMessage);
 	}
 
-	@Subscribe
-	private void onConfigChanged(ConfigChanged event)
-	{
-		if (!event.getGroup().equals("betterHydra"))
-		{
-			return;
-		}
-
-		switch (event.getKey())
-		{
-			case "counting":
-				this.counting = config.counting();
-				break;
-			case "fountain":
-				this.fountain = config.fountain();
-				break;
-			case "stun":
-				this.stun = config.stun();
-				break;
-			case "safeCol":
-				overlay.setSafeCol(config.safeCol());
-				return;
-			case "medCol":
-				overlay.setMedCol(config.medCol());
-				return;
-			case "badCol":
-				overlay.setBadCol(config.badCol());
-				return;
-			case "poisonBorderCol":
-				sceneOverlay.setPoisonBorder(config.poisonBorderCol());
-				break;
-			case "poisonCol":
-				sceneOverlay.setPoisonFill(config.poisonCol());
-				break;
-			case "fountainColA":
-				sceneOverlay.setBadFountain(config.fountainColA());
-				break;
-			case "fountainColB":
-				sceneOverlay.setGoodFountain(config.fountainColB());
-				break;
-		}
-	}
-
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged state)
 	{
 		if (state.getGameState() != GameState.LOGGED_IN)
@@ -352,27 +270,12 @@ public class HydraPlugin extends Plugin
 
 	private void onChatMessage(ChatMessage event)
 	{
-		if (event.getMessage().equals("The chemicals neutralise the Alchemical Hydra's defences!"))
+		if (!event.getMessage().equals("The chemicals neutralise the Alchemical Hydra's defences!"))
 		{
-			hydra.setWeakened(true);
+			return;
 		}
-		else if (event.getMessage().equals("The Alchemical Hydra temporarily stuns you."))
-		{
-			if (isStun())
-			{
-				overlay.setStunTicks(STUN_LENGTH);
-				eventBus.subscribe(GameTick.class, "hydraStun", this::onGameTick);
-			}
-		}
-	}
 
-	private void onGameTick(GameTick tick)
-	{
-		if (overlay.onGameTick())
-		{
-			// unregister self when 7 ticks have passed
-			eventBus.unregister("hydraStun");
-		}
+		hydra.setWeakened(true);
 	}
 
 	private boolean checkArea()
@@ -382,20 +285,13 @@ public class HydraPlugin extends Plugin
 
 	private void addOverlays()
 	{
-		if (counting || stun)
-		{
-			overlayManager.add(overlay);
-		}
-
-		if (counting || fountain)
-		{
-			overlayManager.add(sceneOverlay);
-		}
+		overlayManager.add(overlay);
+		overlayManager.add(poisonOverlay);
 	}
 
 	private void removeOverlays()
 	{
 		overlayManager.remove(overlay);
-		overlayManager.remove(sceneOverlay);
+		overlayManager.remove(poisonOverlay);
 	}
 }

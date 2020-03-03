@@ -46,13 +46,13 @@ import net.runelite.api.GameState;
 import net.runelite.api.NPC;
 import net.runelite.api.NpcID;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.NPCManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -130,6 +130,8 @@ public class FightCavePlugin extends Plugin
 	private FightCaveOverlay fightCaveOverlay;
 	@Inject
 	private FightCaveConfig config;
+	@Inject
+	private EventBus eventBus;
 	@Getter(AccessLevel.PACKAGE)
 	private Set<FightCaveContainer> fightCaveContainer = new HashSet<>();
 	@Getter(AccessLevel.PACKAGE)
@@ -170,6 +172,7 @@ public class FightCavePlugin extends Plugin
 	public void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 
 		if (client.getGameState() == GameState.LOGGED_IN && regionCheck())
 		{
@@ -182,12 +185,23 @@ public class FightCavePlugin extends Plugin
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(waveOverlay);
 		overlayManager.remove(fightCaveOverlay);
 		currentWave = -1;
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(NpcSpawned.class, this, this::onNpcSpawned);
+		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("fightcave"))
@@ -198,7 +212,6 @@ public class FightCavePlugin extends Plugin
 		updateConfig();
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (!validRegion)
@@ -216,7 +229,6 @@ public class FightCavePlugin extends Plugin
 		currentWave = Integer.parseInt(waveMatcher.group(1));
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() != GameState.LOGGED_IN)
@@ -240,7 +252,6 @@ public class FightCavePlugin extends Plugin
 		fightCaveContainer.clear();
 	}
 
-	@Subscribe
 	private void onNpcSpawned(NpcSpawned event)
 	{
 		if (!validRegion)
@@ -265,7 +276,6 @@ public class FightCavePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcDespawned(NpcDespawned event)
 	{
 		if (!validRegion)
@@ -290,7 +300,6 @@ public class FightCavePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick Event)
 	{
 		if (!validRegion)

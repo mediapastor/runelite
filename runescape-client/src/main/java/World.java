@@ -1,69 +1,75 @@
-import java.awt.Image;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("bk")
+@ObfuscatedName("bl")
 @Implements("World")
 public class World {
+	@ObfuscatedName("sd")
+	@ObfuscatedSignature(
+		signature = "Llx;"
+	)
+	@Export("platformInfo")
+	static PlatformInfo platformInfo;
 	@ObfuscatedName("n")
-	@Export("Interpreter_intLocals")
-	static int[] Interpreter_intLocals;
-	@ObfuscatedName("l")
 	@ObfuscatedGetter(
-		intValue = 494221483
+		intValue = -1559226187
 	)
 	@Export("World_count")
 	static int World_count;
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = -1998589339
+		intValue = 315503089
 	)
 	@Export("World_listCount")
 	static int World_listCount;
-	@ObfuscatedName("o")
+	@ObfuscatedName("q")
 	@Export("World_sortOption2")
 	static int[] World_sortOption2;
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@Export("World_sortOption1")
 	static int[] World_sortOption1;
-	@ObfuscatedName("am")
-	static Image field996;
-	@ObfuscatedName("m")
+	@ObfuscatedName("ka")
 	@ObfuscatedGetter(
-		intValue = -962932589
+		intValue = 1149397885
+	)
+	@Export("menuWidth")
+	static int menuWidth;
+	@ObfuscatedName("f")
+	@ObfuscatedGetter(
+		intValue = 1230812985
 	)
 	@Export("id")
 	int id;
-	@ObfuscatedName("p")
+	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		intValue = -932185849
+		intValue = -1926875123
 	)
 	@Export("properties")
 	int properties;
-	@ObfuscatedName("h")
+	@ObfuscatedName("r")
 	@ObfuscatedGetter(
-		intValue = -148659453
+		intValue = -999023629
 	)
 	@Export("population")
 	int population;
-	@ObfuscatedName("k")
+	@ObfuscatedName("y")
 	@Export("host")
 	String host;
-	@ObfuscatedName("x")
+	@ObfuscatedName("p")
 	@Export("activity")
 	String activity;
-	@ObfuscatedName("j")
+	@ObfuscatedName("b")
 	@ObfuscatedGetter(
-		intValue = -1478384809
+		intValue = -307094013
 	)
 	@Export("location")
 	int location;
-	@ObfuscatedName("r")
+	@ObfuscatedName("g")
 	@ObfuscatedGetter(
-		intValue = -556966481
+		intValue = 392698997
 	)
 	@Export("index")
 	int index;
@@ -78,10 +84,10 @@ public class World {
 	World() {
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@ObfuscatedSignature(
 		signature = "(I)Z",
-		garbageValue = "1210336025"
+		garbageValue = "1463155043"
 	)
 	@Export("isMembersOnly")
 	boolean isMembersOnly() {
@@ -91,45 +97,45 @@ public class World {
 	@ObfuscatedName("d")
 	@ObfuscatedSignature(
 		signature = "(I)Z",
-		garbageValue = "-293217805"
+		garbageValue = "1651148983"
 	)
-	boolean method1917() {
+	boolean method1687() {
 		return (2 & this.properties) != 0;
 	}
 
-	@ObfuscatedName("m")
+	@ObfuscatedName("f")
 	@ObfuscatedSignature(
 		signature = "(I)Z",
-		garbageValue = "726558642"
+		garbageValue = "-2074539917"
 	)
 	@Export("isPvp")
 	boolean isPvp() {
 		return (4 & this.properties) != 0;
 	}
 
-	@ObfuscatedName("p")
+	@ObfuscatedName("c")
 	@ObfuscatedSignature(
-		signature = "(I)Z",
-		garbageValue = "526640456"
+		signature = "(S)Z",
+		garbageValue = "128"
 	)
-	boolean method1885() {
+	boolean method1689() {
 		return (8 & this.properties) != 0;
 	}
 
-	@ObfuscatedName("h")
+	@ObfuscatedName("r")
 	@ObfuscatedSignature(
 		signature = "(I)Z",
-		garbageValue = "-771328937"
+		garbageValue = "-1238207705"
 	)
 	@Export("isDeadman")
 	boolean isDeadman() {
 		return (536870912 & this.properties) != 0;
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("y")
 	@ObfuscatedSignature(
 		signature = "(I)Z",
-		garbageValue = "-188040655"
+		garbageValue = "877895545"
 	)
 	@Export("isBeta")
 	boolean isBeta() {
@@ -138,20 +144,17 @@ public class World {
 
 	@ObfuscatedName("x")
 	@ObfuscatedSignature(
-		signature = "(I)Z",
-		garbageValue = "-320413166"
+		signature = "(Lhz;IIB)Z",
+		garbageValue = "-20"
 	)
-	boolean method1887() {
-		return (1073741824 & this.properties) != 0;
-	}
-
-	@ObfuscatedName("n")
-	@ObfuscatedSignature(
-		signature = "(IB)[B",
-		garbageValue = "-113"
-	)
-	@Export("ByteArrayPool_getArray")
-	public static synchronized byte[] ByteArrayPool_getArray(int var0) {
-		return ByteArrayPool.ByteArrayPool_getArrayBool(var0, false);
+	@Export("SpriteBuffer_bufferFile")
+	public static boolean SpriteBuffer_bufferFile(AbstractArchive var0, int var1, int var2) {
+		byte[] var3 = var0.takeFile(var1, var2);
+		if (var3 == null) {
+			return false;
+		} else {
+			Player.SpriteBuffer_decode(var3);
+			return true;
+		}
 	}
 }

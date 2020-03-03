@@ -24,11 +24,12 @@
  */
 package net.runelite.cache.definitions.loaders;
 
-import java.util.HashMap;
 import net.runelite.cache.definitions.NpcDefinition;
 import net.runelite.cache.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 public class NpcLoader
 {
@@ -66,6 +67,7 @@ public class NpcLoader
 			{
 				def.models[index] = stream.readUnsignedShort();
 			}
+
 		}
 		else if (opcode == 2)
 		{
@@ -73,37 +75,37 @@ public class NpcLoader
 		}
 		else if (opcode == 12)
 		{
-			def.size = stream.readUnsignedByte();
+			def.tileSpacesOccupied = stream.readUnsignedByte();
 		}
 		else if (opcode == 13)
 		{
-			def.standingAnimation = stream.readUnsignedShort();
+			def.stanceAnimation = stream.readUnsignedShort();
 		}
 		else if (opcode == 14)
 		{
-			def.walkingAnimation = stream.readUnsignedShort();
+			def.walkAnimation = stream.readUnsignedShort();
 		}
 		else if (opcode == 15)
 		{
-			def.rotateLeftAnimation = stream.readUnsignedShort();
+			def.anInt2165 = stream.readUnsignedShort();
 		}
 		else if (opcode == 16)
 		{
-			def.rotateRightAnimation = stream.readUnsignedShort();
+			def.anInt2189 = stream.readUnsignedShort();
 		}
 		else if (opcode == 17)
 		{
-			def.walkingAnimation = stream.readUnsignedShort();
+			def.walkAnimation = stream.readUnsignedShort();
 			def.rotate180Animation = stream.readUnsignedShort();
 			def.rotate90RightAnimation = stream.readUnsignedShort();
 			def.rotate90LeftAnimation = stream.readUnsignedShort();
 		}
 		else if (opcode >= 30 && opcode < 35)
 		{
-			def.actions[opcode - 30] = stream.readString();
-			if (def.actions[opcode - 30].equalsIgnoreCase("Hidden"))
+			def.options[opcode - 30] = stream.readString();
+			if (def.options[opcode - 30].equalsIgnoreCase("Hidden"))
 			{
-				def.actions[opcode - 30] = null;
+				def.options[opcode - 30] = null;
 			}
 		}
 		else if (opcode == 40)
@@ -135,17 +137,17 @@ public class NpcLoader
 		else if (opcode == 60)
 		{
 			length = stream.readUnsignedByte();
-			def.chatheadModels = new int[length];
+			def.models_2 = new int[length];
 
 			for (index = 0; index < length; ++index)
 			{
-				def.chatheadModels[index] = stream.readUnsignedShort();
+				def.models_2[index] = stream.readUnsignedShort();
 			}
 
 		}
 		else if (opcode == 93)
 		{
-			def.isMinimapVisible = false;
+			def.renderOnMinimap = false;
 		}
 		else if (opcode == 95)
 		{
@@ -153,11 +155,11 @@ public class NpcLoader
 		}
 		else if (opcode == 97)
 		{
-			def.widthScale = stream.readUnsignedShort();
+			def.resizeX = stream.readUnsignedShort();
 		}
 		else if (opcode == 98)
 		{
-			def.heightScale = stream.readUnsignedShort();
+			def.resizeY = stream.readUnsignedShort();
 		}
 		else if (opcode == 99)
 		{
@@ -177,18 +179,18 @@ public class NpcLoader
 		}
 		else if (opcode == 103)
 		{
-			def.rotationSpeed = stream.readUnsignedShort();
+			def.rotation = stream.readUnsignedShort();
 		}
 		else if (opcode == 106)
 		{
-			def.varbitId = stream.readUnsignedShort();
-			if (def.varbitId == 65535)
+			def.varbitIndex = stream.readUnsignedShort();
+			if ('\uffff' == def.varbitIndex)
 			{
-				def.varbitId = -1;
+				def.varbitIndex = -1;
 			}
 
 			def.varpIndex = stream.readUnsignedShort();
-			if (def.varpIndex == 65535)
+			if ('\uffff' == def.varpIndex)
 			{
 				def.varpIndex = -1;
 			}
@@ -210,26 +212,26 @@ public class NpcLoader
 		}
 		else if (opcode == 107)
 		{
-			def.isInteractable = false;
+			def.isClickable = false;
 		}
 		else if (opcode == 109)
 		{
-			def.rotationFlag = false;
+			def.aBool2170 = false;
 		}
 		else if (opcode == 111)
 		{
-			def.isPet = true;
+			def.aBool2190 = true;
 		}
 		else if (opcode == 118)
 		{
-			def.varbitId = stream.readUnsignedShort();
-			if (def.varbitId == 65535)
+			def.varbitIndex = stream.readUnsignedShort();
+			if ('\uffff' == def.varbitIndex)
 			{
-				def.varbitId = -1;
+				def.varbitIndex = -1;
 			}
 
 			def.varpIndex = stream.readUnsignedShort();
-			if (def.varpIndex == 65535)
+			if ('\uffff' == def.varpIndex)
 			{
 				def.varpIndex = -1;
 			}

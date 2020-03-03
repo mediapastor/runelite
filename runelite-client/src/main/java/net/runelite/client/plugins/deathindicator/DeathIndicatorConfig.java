@@ -152,14 +152,4 @@ public interface DeathIndicatorConfig extends Config
 		description = ""
 	)
 	void timeOfDeath(Instant timeOfDeath);
-
-	@ConfigItem(
-		keyName = "permaBones",
-		name = "Permanent bones",
-		description = "Show right clickable bones with the name of who died permanently, after seeing someone die"
-	)
-	default boolean permaBones()
-	{
-		return false;
-	}
 }

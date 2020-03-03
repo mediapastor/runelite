@@ -1,39 +1,64 @@
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
+import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
-import net.runelite.rs.ScriptOpcodes;
 
-@ObfuscatedName("dm")
+@ObfuscatedName("dh")
 @Implements("SoundCache")
 public class SoundCache {
-	@ObfuscatedName("a")
+	@ObfuscatedName("qo")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Ldd;"
+	)
+	@Export("pcmPlayer1")
+	static PcmPlayer pcmPlayer1;
+	@ObfuscatedName("d")
+	public static short[][] field1418;
+	@ObfuscatedName("f")
+	@ObfuscatedGetter(
+		intValue = -1949899187
+	)
+	static int field1424;
+	@ObfuscatedName("bv")
+	@ObfuscatedSignature(
+		signature = "[Lls;"
+	)
+	@Export("worldSelectBackSprites")
+	static Sprite[] worldSelectBackSprites;
+	@ObfuscatedName("df")
+	@ObfuscatedSignature(
+		signature = "Lid;"
+	)
+	@Export("archive19")
+	static Archive archive19;
+	@ObfuscatedName("s")
+	@ObfuscatedSignature(
+		signature = "Lhz;"
 	)
 	@Export("soundEffectIndex")
 	AbstractArchive soundEffectIndex;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lhz;"
 	)
 	@Export("musicSampleIndex")
 	AbstractArchive musicSampleIndex;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "Llh;"
+		signature = "Llm;"
 	)
 	@Export("musicSamples")
 	NodeHashTable musicSamples;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "Llh;"
+		signature = "Llm;"
 	)
 	@Export("rawSounds")
 	NodeHashTable rawSounds;
 
 	@ObfuscatedSignature(
-		signature = "(Lhq;Lhq;)V"
+		signature = "(Lhz;Lhz;)V"
 	)
 	public SoundCache(AbstractArchive var1, AbstractArchive var2) {
 		this.musicSamples = new NodeHashTable(256);
@@ -42,10 +67,10 @@ public class SoundCache {
 		this.musicSampleIndex = var2;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(II[II)Lca;",
-		garbageValue = "-33690704"
+		signature = "(II[II)Lco;",
+		garbageValue = "2104823387"
 	)
 	@Export("getSoundEffect0")
 	RawSound getSoundEffect0(int var1, int var2, int[] var3) {
@@ -73,10 +98,10 @@ public class SoundCache {
 		}
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(II[II)Lca;",
-		garbageValue = "393198324"
+		signature = "(II[II)Lco;",
+		garbageValue = "-1528849608"
 	)
 	@Export("getMusicSample0")
 	RawSound getMusicSample0(int var1, int var2, int[] var3) {
@@ -110,10 +135,10 @@ public class SoundCache {
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(I[II)Lca;",
-		garbageValue = "-1954377322"
+		signature = "(I[II)Lco;",
+		garbageValue = "-743934209"
 	)
 	@Export("getSoundEffect")
 	public RawSound getSoundEffect(int var1, int[] var2) {
@@ -126,10 +151,10 @@ public class SoundCache {
 		}
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(I[II)Lca;",
-		garbageValue = "-1912109066"
+		signature = "(I[IB)Lco;",
+		garbageValue = "-113"
 	)
 	@Export("getMusicSample")
 	public RawSound getMusicSample(int var1, int[] var2) {
@@ -142,51 +167,39 @@ public class SoundCache {
 		}
 	}
 
-	@ObfuscatedName("w")
+	@ObfuscatedName("ft")
 	@ObfuscatedSignature(
-		signature = "(ILcj;ZI)I",
-		garbageValue = "-1732258105"
+		signature = "(II)V",
+		garbageValue = "954967907"
 	)
-	static int method2673(int var0, Script var1, boolean var2) {
-		Widget var3 = PacketBufferNode.getWidget(Interpreter.Interpreter_intStack[--Interpreter.Interpreter_intStackSize]);
-		if (var0 == ScriptOpcodes.IF_GETTARGETMASK) {
-			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = UserComparator5.method3551(class195.getWidgetClickMask(var3));
-			return 1;
-		} else if (var0 != ScriptOpcodes.IF_GETOP) {
-			if (var0 == ScriptOpcodes.IF_GETOPBASE) {
-				if (var3.dataText == null) {
-					Interpreter.Interpreter_stringStack[++WorldMapDecoration.Interpreter_stringStackSize - 1] = "";
-				} else {
-					Interpreter.Interpreter_stringStack[++WorldMapDecoration.Interpreter_stringStackSize - 1] = var3.dataText;
-				}
-
-				return 1;
-			} else {
-				return 2;
-			}
-		} else {
-			int var4 = Interpreter.Interpreter_intStack[--Interpreter.Interpreter_intStackSize];
-			--var4;
-			if (var3.actions != null && var4 < var3.actions.length && var3.actions[var4] != null) {
-				Interpreter.Interpreter_stringStack[++WorldMapDecoration.Interpreter_stringStackSize - 1] = var3.actions[var4];
-			} else {
-				Interpreter.Interpreter_stringStack[++WorldMapDecoration.Interpreter_stringStackSize - 1] = "";
-			}
-
-			return 1;
+	@Export("playSong")
+	static void playSong(int var0) {
+		if (var0 == -1 && !Client.field858) {
+			class197.midiPcmStream.clear();
+			class197.field2378 = 1;
+			WorldMapDecoration.musicTrackArchive = null;
+		} else if (var0 != -1 && var0 != Client.field857 && Client.field856 != 0 && !Client.field858) {
+			Projectile.method2040(2, GrandExchangeEvent.archive6, var0, 0, Client.field856, false);
 		}
+
+		Client.field857 = var0;
 	}
 
-	@ObfuscatedName("lv")
+	@ObfuscatedName("kt")
 	@ObfuscatedSignature(
-		signature = "(Lhi;B)Ljava/lang/String;",
-		garbageValue = "1"
+		signature = "(Lhp;IIII)V",
+		garbageValue = "-1061413321"
 	)
-	static String method2666(Widget var0) {
-		if (UserComparator5.method3551(class195.getWidgetClickMask(var0)) == 0) {
-			return null;
-		} else {
-			return var0.spellActionName != null && var0.spellActionName.trim().length() != 0 ? var0.spellActionName : null;
+	@Export("drawCompass")
+	static final void drawCompass(Widget var0, int var1, int var2, int var3) {
+		SpriteMask var4 = var0.getSpriteMask(false);
+		if (var4 != null) {
+			if (Client.minimapState < 3) {
+				class32.compass.drawRotatedMaskedCenteredAround(var1, var2, var4.width, var4.height, 25, 25, Client.camAngleY, 256, var4.xStarts, var4.xWidths);
+			} else {
+				Rasterizer2D.Rasterizer2D_fillMaskedRectangle(var1, var2, 0, var4.xStarts, var4.xWidths);
+			}
+
 		}
 	}
 }

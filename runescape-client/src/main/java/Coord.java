@@ -4,42 +4,44 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("hf")
+@ObfuscatedName("hd")
 @Implements("Coord")
 public class Coord {
-	@ObfuscatedName("i")
-	@ObfuscatedSignature(
-		signature = "Lhq;"
-	)
-	@Export("Widget_archive")
-	static AbstractArchive Widget_archive;
-	@ObfuscatedName("dv")
-	@ObfuscatedSignature(
-		signature = "Lij;"
-	)
-	@Export("archive15")
-	static Archive archive15;
-	@ObfuscatedName("a")
+	@ObfuscatedName("m")
+	@Export("BZip2Decompressor_block")
+	static int[] BZip2Decompressor_block;
+	@ObfuscatedName("dc")
 	@ObfuscatedGetter(
-		intValue = 440805047
+		longValue = 8705560174832439427L
+	)
+	static long field2511;
+	@ObfuscatedName("hp")
+	@ObfuscatedGetter(
+		intValue = -312378443
+	)
+	@Export("cameraY")
+	static int cameraY;
+	@ObfuscatedName("s")
+	@ObfuscatedGetter(
+		intValue = -22513413
 	)
 	@Export("plane")
 	public int plane;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedGetter(
-		intValue = 649013739
+		intValue = -611305657
 	)
 	@Export("x")
 	public int x;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = 1217821847
+		intValue = -2088749017
 	)
 	@Export("y")
 	public int y;
 
 	@ObfuscatedSignature(
-		signature = "(Lhf;)V"
+		signature = "(Lhd;)V"
 	)
 	public Coord(Coord var1) {
 		this.plane = var1.plane;
@@ -64,20 +66,20 @@ public class Coord {
 
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "-1545441296"
+		signature = "(B)I",
+		garbageValue = "2"
 	)
 	@Export("packed")
 	public int packed() {
 		return this.plane << 28 | this.x << 14 | this.y;
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(Lhf;I)Z",
-		garbageValue = "472807046"
+		signature = "(Lhd;B)Z",
+		garbageValue = "-61"
 	)
 	@Export("equalsCoord")
 	boolean equalsCoord(Coord var1) {
@@ -90,14 +92,18 @@ public class Coord {
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
 		signature = "(Ljava/lang/String;I)Ljava/lang/String;",
-		garbageValue = "-1765692684"
+		garbageValue = "-1334181457"
 	)
 	@Export("toString")
 	String toString(String var1) {
 		return this.plane + var1 + (this.x >> 6) + var1 + (this.y >> 6) + var1 + (this.x & 63) + var1 + (this.y & 63);
+	}
+
+	public String toString() {
+		return this.toString(",");
 	}
 
 	public boolean equals(Object var1) {
@@ -112,57 +118,11 @@ public class Coord {
 		return this.packed();
 	}
 
-	public String toString() {
+	public String abd() {
 		return this.toString(",");
 	}
 
-	@ObfuscatedName("t")
-	@ObfuscatedSignature(
-		signature = "(IB)Lih;",
-		garbageValue = "-87"
-	)
-	@Export("getEnum")
-	public static EnumDefinition getEnum(int var0) {
-		EnumDefinition var1 = (EnumDefinition)EnumDefinition.EnumDefinition_cached.get((long)var0);
-		if (var1 != null) {
-			return var1;
-		} else {
-			byte[] var2 = EnumDefinition.EnumDefinition_archive.takeFile(8, var0);
-			var1 = new EnumDefinition();
-			if (var2 != null) {
-				var1.decode(new Buffer(var2));
-			}
-
-			EnumDefinition.EnumDefinition_cached.put(var1, (long)var0);
-			return var1;
-		}
-	}
-
-	@ObfuscatedName("v")
-	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "-1708484762"
-	)
-	static void method4144() {
-		if (Login.field1188) {
-			NPC.titleboxSprite = null;
-			UserComparator9.titlebuttonSprite = null;
-			class208.runesSprite = null;
-			Login.leftTitleSprite = null;
-			FontName.rightTitleSprite = null;
-			Tiles.logoSprite = null;
-			Decimator.title_muteSprite = null;
-			UserComparator8.options_buttons_0Sprite = null;
-			Login.options_buttons_2Sprite = null;
-			GrandExchangeEvent.worldSelectBackSprites = null;
-			JagexCache.worldSelectFlagSprites = null;
-			StudioGame.worldSelectArrows = null;
-			Interpreter.worldSelectStars = null;
-			Message.field587 = null;
-			Login.loginScreenRunesAnimation.method1955();
-			class80.method2194(2);
-			UrlRequester.method3428(true);
-			Login.field1188 = false;
-		}
+	public String abb() {
+		return this.toString(",");
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019, jkybtw <https://github.com/jkybtw>
- * Copyright (c) 2019, openosrs <https://openosrs.com>
+ * Copyright (c) 2019, RuneLitePlus <https://runelitepl.us>
  * Copyright (c) 2019, kyle <https://github.com/Kyleeld>
  * All rights reserved.
  *
@@ -28,24 +28,25 @@ package net.runelite.client.plugins.reminders;
 import com.google.inject.Provides;
 import static java.lang.Math.floor;
 import static java.time.Duration.between;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
+import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.task.Schedule;
+import javax.inject.Inject;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @PluginDescriptor(
 	name = "Reminders",
@@ -58,6 +59,12 @@ import net.runelite.client.task.Schedule;
 @Slf4j
 public class RemindersPlugin extends Plugin
 {
+
+	@Inject
+	private Client client;
+
+	@Inject
+	private EventBus eventBus;
 
 	@Inject
 	private RemindersConfig config;
@@ -86,6 +93,7 @@ public class RemindersPlugin extends Plugin
 	private int personalReminderTime3;
 
 
+
 	@Provides
 	RemindersConfig provideConfig(ConfigManager configManager)
 	{
@@ -95,16 +103,23 @@ public class RemindersPlugin extends Plugin
 	@Override
 	public void startUp()
 	{
+		addSubscriptions();
 		updateConfig();
 	}
 
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
 		loginTime = null;
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+	}
+
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		final GameState state = event.getGameState();
@@ -127,7 +142,6 @@ public class RemindersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("Reminders"))

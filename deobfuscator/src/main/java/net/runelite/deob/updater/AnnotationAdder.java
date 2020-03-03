@@ -8,7 +8,6 @@ import net.runelite.asm.Method;
 import net.runelite.asm.attributes.Annotations;
 import net.runelite.asm.attributes.annotation.Annotation;
 import net.runelite.asm.attributes.annotation.Element;
-import net.runelite.asm.attributes.annotation.SimpleElement;
 import net.runelite.deob.Deob;
 import net.runelite.deob.DeobAnnotations;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ public class AnnotationAdder
 	private final ClassGroup group;
 	private final Logger log = LoggerFactory.getLogger(AnnotationAdder.class);
 
-	@SuppressWarnings("unchecked")
 	public void run()
 	{
 		int impl = 0;
@@ -52,9 +50,12 @@ public class AnnotationAdder
 				{
 					Annotations an = c.getAnnotations();
 
-					Annotation implAn = new Annotation(DeobAnnotations.IMPLEMENTS);
+					Annotation implAn = new Annotation(an);
+					implAn.setType(DeobAnnotations.IMPLEMENTS);
 
-					Element value = new SimpleElement(c.getClassName());
+					Element value = new Element(implAn);
+					value.setValue(c.getClassName());
+					value.setName("value");
 
 					implAn.addElement(value);
 					an.addAnnotation(implAn);
@@ -80,9 +81,12 @@ public class AnnotationAdder
 					Annotation a = an.find(DeobAnnotations.EXPORT);
 					if (a == null)
 					{
-						a = new Annotation(DeobAnnotations.EXPORT);
+						a = new Annotation(an);
+						a.setType(DeobAnnotations.EXPORT);
 
-						Element value = new SimpleElement(fieldName);
+						Element value = new Element(a);
+						value.setValue(fieldName);
+						value.setName("value");
 						a.addElement(value);
 						an.addAnnotation(a);
 
@@ -110,9 +114,12 @@ public class AnnotationAdder
 					Annotation a = an.find(DeobAnnotations.EXPORT);
 					if (a == null)
 					{
-						a = new Annotation(DeobAnnotations.EXPORT);
+						a = new Annotation(an);
+						a.setType(DeobAnnotations.EXPORT);
 
-						Element value = new SimpleElement(methodName);
+						Element value = new Element(a);
+						value.setValue(methodName);
+						value.setName("value");
 						a.addElement(value);
 						an.addAnnotation(a);
 

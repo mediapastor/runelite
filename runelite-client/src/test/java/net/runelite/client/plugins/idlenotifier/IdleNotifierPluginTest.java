@@ -29,7 +29,6 @@ import com.google.inject.Inject;
 import com.google.inject.testing.fieldbinder.Bind;
 import com.google.inject.testing.fieldbinder.BoundFieldModule;
 import java.util.EnumSet;
-import net.runelite.api.Actor;
 import net.runelite.api.AnimationID;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -46,7 +45,6 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.InteractingChanged;
 import net.runelite.client.Notifier;
-import net.runelite.client.config.OpenOSRSConfig;
 import net.runelite.client.game.SoundManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,10 +79,6 @@ public class IdleNotifierPluginTest
 	@Mock
 	@Bind
 	private Notifier notifier;
-
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
 
 	@Inject
 	private IdleNotifierPlugin plugin;
@@ -208,7 +202,7 @@ public class IdleNotifierPluginTest
 	@Test
 	public void checkCombatReset()
 	{
-		when(player.getInteracting()).thenReturn(mock(Actor.class));
+		when(player.getInteracting()).thenReturn(monster);
 		plugin.onInteractingChanged(new InteractingChanged(player, monster));
 		plugin.onGameTick(GameTick.INSTANCE);
 		plugin.onInteractingChanged(new InteractingChanged(player, randomEvent));
@@ -222,7 +216,7 @@ public class IdleNotifierPluginTest
 	public void checkCombatLogout()
 	{
 		plugin.onInteractingChanged(new InteractingChanged(player, monster));
-		when(player.getInteracting()).thenReturn(mock(Actor.class));
+		when(player.getInteracting()).thenReturn(monster);
 		plugin.onGameTick(GameTick.INSTANCE);
 
 		// Logout

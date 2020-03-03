@@ -2,46 +2,66 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
-import net.runelite.rs.ScriptOpcodes;
 
-@ObfuscatedName("r")
+@ObfuscatedName("g")
 public class class16 {
-	@ObfuscatedName("hi")
+	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = -71438851
+		intValue = -2115324593
 	)
-	@Export("cameraY")
-	static int cameraY;
+	public static int field98;
+	@ObfuscatedName("fk")
+	@ObfuscatedGetter(
+		intValue = -713701469
+	)
+	static int field101;
 
-	@ObfuscatedName("ad")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(ILcj;ZI)I",
-		garbageValue = "2052755977"
+		signature = "(I)[Lge;",
+		garbageValue = "1297368600"
 	)
-	static int method224(int var0, Script var1, boolean var2) {
-		if (var0 == ScriptOpcodes.SOUND_SYNTH) {
-			Interpreter.Interpreter_intStackSize -= 3;
-			class185.queueSoundEffect(Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize], Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize + 1], Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize + 2]);
-			return 1;
-		} else if (var0 == ScriptOpcodes.SOUND_SONG) {
-			AbstractWorldMapIcon.playSong(Interpreter.Interpreter_intStack[--Interpreter.Interpreter_intStackSize]);
-			return 1;
-		} else if (var0 == ScriptOpcodes.SOUND_JINGLE) {
-			Interpreter.Interpreter_intStackSize -= 2;
-			WorldMapEvent.playSoundJingle(Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize], Interpreter.Interpreter_intStack[Interpreter.Interpreter_intStackSize + 1]);
-			return 1;
-		} else {
-			return 2;
-		}
+	static LoginPacket[] method183() {
+		return new LoginPacket[]{LoginPacket.field2291, LoginPacket.field2292, LoginPacket.field2289, LoginPacket.field2295, LoginPacket.field2293};
 	}
 
-	@ObfuscatedName("iw")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(B)I",
-		garbageValue = "1"
+		signature = "(Lls;IIII)V",
+		garbageValue = "-1463584611"
 	)
-	@Export("getNewestMenuIdx")
-	static final int getNewestMenuIdx() {
-		return Client.menuOptionsCount - 1;
+	static void method181(Sprite var0, int var1, int var2, int var3) {
+		WorldMapRegion.WorldMapRegion_cachedSprites.put(var0, ClientPacket.getWorldMapSpriteHash(var1, var2, var3), var0.pixels.length * 4);
+	}
+
+	@ObfuscatedName("j")
+	@ObfuscatedSignature(
+		signature = "(II)Ljava/lang/String;",
+		garbageValue = "-1438659033"
+	)
+	@Export("colorStartTag")
+	static String colorStartTag(int var0) {
+		return "<col=" + Integer.toHexString(var0) + ">";
+	}
+
+	@ObfuscatedName("j")
+	@ObfuscatedSignature(
+		signature = "(IB)Lin;",
+		garbageValue = "91"
+	)
+	public static VarpDefinition method180(int var0) {
+		VarpDefinition var1 = (VarpDefinition)VarpDefinition.VarpDefinition_cached.get((long)var0);
+		if (var1 != null) {
+			return var1;
+		} else {
+			byte[] var2 = VarpDefinition.VarpDefinition_archive.takeFile(16, var0);
+			var1 = new VarpDefinition();
+			if (var2 != null) {
+				var1.decode(new Buffer(var2));
+			}
+
+			VarpDefinition.VarpDefinition_cached.put(var1, (long)var0);
+			return var1;
+		}
 	}
 }

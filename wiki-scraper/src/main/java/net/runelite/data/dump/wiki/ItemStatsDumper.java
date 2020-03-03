@@ -48,9 +48,11 @@ public class ItemStatsDumper
 {
 	private final static Integer MAX_ITEMS_ON_PAGE = 50;
 
-	public static void dump(final Store store, final MediaWiki wiki, final File path) throws IOException
+	public static void dump(final Store store, final MediaWiki wiki) throws IOException
 	{
-		log.info("Dumping item stats to {}", path);
+		final File out = new File("../runelite-client/src/main/resources/");
+
+		log.info("Dumping item stats to {}", out);
 
 		final ItemManager itemManager = new ItemManager(store);
 		itemManager.load();
@@ -180,7 +182,7 @@ public class ItemStatsDumper
 			log.debug("Dumped item stat for {} {}", item.id, name);
 		});
 
-		try (FileWriter fw = new FileWriter(new File(path, "item_stats.json")))
+		try (FileWriter fw = new FileWriter(new File(out, "item_stats.json")))
 		{
 			fw.write(App.GSON.toJson(itemStats));
 		}

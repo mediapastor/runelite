@@ -25,9 +25,9 @@
 package net.runelite.http.api;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,6 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,40 +52,39 @@ import java.util.concurrent.TimeUnit;
 
 public class RuneLiteAPI
 {
-	private static final Logger logger = LoggerFactory.getLogger(RuneLiteAPI.class);
-
-	public static final String RUNELITE_AUTH = "RUNELITE-AUTH";
-
-	public static final OkHttpClient CLIENT;
-	public static final Gson GSON = new Gson();
-	public static final MediaType JSON = MediaType.parse("application/json");
-	public static String userAgent;
-
-	private static final String BASE = "https://api.runelite.net";
-	private static final String WSBASE = "https://api.runelite.net/ws";
-	private static final String STATICBASE = "https://static.runelite.net";
-
-	private static final String OPENOSRS_BASE = /*"https://api.openosrs.com*/ "https://api.runelitepl.us";
-	private static final String OPENOSRS_SESSION = "https://session.openosrs.com";
-	private static final String MAVEN_METADATA = "http://repo.runelite.net/net/runelite/runelite-parent/maven-metadata.xml";
-
-	private static final Properties properties = new Properties();
 	private static String version;
 	private static String upstreamVersion;
 	private static int rsVersion;
 
+	public static final String RUNELITE_AUTH = "RUNELITE-AUTH";
+	public static final OkHttpClient CLIENT;
+	public static final OkHttpClient RLP_CLIENT;
+	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	private static final Logger logger = LoggerFactory.getLogger(RuneLiteAPI.class);
+	private static final String BASE = "https://api.runelite.net";
+	private static final String RLPLUS_BASE = "https://api.runelitepl.us";
+	private static final String RLPLUS_SESSION = "https://session.runelitepl.us";
+	private static final String WSBASE = "https://api.runelite.net/ws";
+	private static final String STATICBASE = "https://static.runelite.net";
+	private static final String MAVEN_METADATA =
+		"http://repo.runelite.net/net/runelite/runelite-parent/maven-metadata.xml";
+	private static final Properties properties = new Properties();
+	private static String rlUserAgent;
+	private static String rlpUserAgent;
+
 	static
 	{
-		try (InputStream in = RuneLiteAPI.class.getResourceAsStream("/runelite.properties"))
+		try
 		{
+			InputStream in = RuneLiteAPI.class.getResourceAsStream("/runelite.properties");
 			properties.load(in);
 
 			version = properties.getProperty("runelite.version");
-			String commit = properties.getProperty("runelite.commit");
+			String rlpCommit = properties.getProperty("runelite.commit");
 			boolean dirty = Boolean.parseBoolean(properties.getProperty("runelite.dirty"));
 
-			userAgent = "OpenOSRS/" + version + "-" + commit + (dirty ? "+" : "");
-
+			rlpUserAgent = "RuneLitePlus/" + version + "-" + rlpCommit + (dirty ? "+" : "");
+			rlUserAgent = "RuneLitePlus/" + version;
 			rsVersion = Integer.parseInt(properties.getProperty("rs.version"));
 
 			parseMavenVersion();
@@ -101,6 +101,8 @@ public class RuneLiteAPI
 
 		CLIENT = new OkHttpClient.Builder()
 			.pingInterval(30, TimeUnit.SECONDS)
+			.connectTimeout(8655, TimeUnit.MILLISECONDS)
+			.writeTimeout(8655, TimeUnit.MILLISECONDS)
 			.addNetworkInterceptor(new Interceptor()
 			{
 				@Override
@@ -108,7 +110,25 @@ public class RuneLiteAPI
 				{
 					Request userAgentRequest = chain.request()
 						.newBuilder()
-						.header("User-Agent", userAgent)
+						.header("User-Agent", rlUserAgent)
+						.build();
+					return chain.proceed(userAgentRequest);
+				}
+			})
+			.build();
+
+		RLP_CLIENT = new OkHttpClient.Builder()
+			.pingInterval(30, TimeUnit.SECONDS)
+			.writeTimeout(5655, TimeUnit.MILLISECONDS)
+			.connectTimeout(2655, TimeUnit.MILLISECONDS)
+			.addNetworkInterceptor(new Interceptor()
+			{
+				@Override
+				public Response intercept(Chain chain) throws IOException
+				{
+					Request userAgentRequest = chain.request()
+						.newBuilder()
+						.header("User-Agent", rlpUserAgent)
 						.build();
 					return chain.proceed(userAgentRequest);
 				}
@@ -116,9 +136,9 @@ public class RuneLiteAPI
 			.build();
 	}
 
-	public static HttpUrl getSessionBase()
+	public static HttpUrl getRuneLitePlusSessionBase()
 	{
-		return HttpUrl.parse(OPENOSRS_SESSION);
+		return HttpUrl.parse(RLPLUS_SESSION);
 	}
 
 	public static HttpUrl getApiBase()
@@ -133,9 +153,9 @@ public class RuneLiteAPI
 		return HttpUrl.parse(BASE + "/runelite-" + getVersion());
 	}
 
-	public static HttpUrl getOpenOSRSApiBase()
+	public static HttpUrl getPlusApiBase()
 	{
-		return HttpUrl.parse(OPENOSRS_BASE + "/http-service-" + getRlpVersion());
+		return HttpUrl.parse(RLPLUS_BASE + "/http-service-" + getRlpVersion());
 	}
 
 	public static HttpUrl getStaticBase()
@@ -186,7 +206,7 @@ public class RuneLiteAPI
 			byte[] chunk = new byte[4096];
 			int bytesRead;
 			URLConnection conn = toDownload.openConnection();
-			conn.setRequestProperty("User-Agent", userAgent);
+			conn.setRequestProperty("User-Agent", rlpUserAgent);
 			stream = conn.getInputStream();
 
 			while ((bytesRead = stream.read(chunk)) > 0)

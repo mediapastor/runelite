@@ -36,7 +36,6 @@ import net.runelite.api.MessageNode;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.chat.ChatMessageManager;
-import net.runelite.client.config.OpenOSRSConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,10 +57,6 @@ public class EmojiPluginTest
 	@Mock
 	@Bind
 	private ChatMessageManager chatMessageManager;
-
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
 
 	@Inject
 	private EmojiPlugin emojiPlugin;

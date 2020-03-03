@@ -28,10 +28,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import io.reactivex.Completable;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.reactivex.schedulers.Schedulers;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +62,6 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.PostItemDefinition;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.util.AsyncBufferedImage;
 import net.runelite.http.api.item.ItemClient;
 import net.runelite.http.api.item.ItemPrice;
 import net.runelite.http.api.item.ItemStats;
@@ -131,29 +134,30 @@ public class ItemManager
 		put(AGILITY_CAPE_13340, AGILITY_CAPE).
 		build();
 	private final Client client;
+	private final ScheduledExecutorService scheduledExecutorService;
 	private final ClientThread clientThread;
-	private final ItemClient itemClient;
+	private final ItemClient itemClient = new ItemClient();
+	private final ImmutableMap<Integer, ItemStats> itemStatMap;
 	private final LoadingCache<ImageKey, AsyncBufferedImage> itemImages;
 	private final LoadingCache<Integer, ItemDefinition> itemDefinitions;
 	private final LoadingCache<OutlineKey, BufferedImage> itemOutlines;
 	private Map<Integer, ItemPrice> itemPrices = Collections.emptyMap();
-	private ImmutableMap<Integer, ItemStats> itemStats = ImmutableMap.of();
+	private Map<Integer, ItemStats> itemStats = Collections.emptyMap();
 
 	@Inject
 	public ItemManager(
 		Client client,
 		ScheduledExecutorService executor,
 		ClientThread clientThread,
-		EventBus eventbus,
-		ItemClient itemClient
+		EventBus eventbus
 	)
 	{
 		this.client = client;
+		this.scheduledExecutorService = executor;
 		this.clientThread = clientThread;
-		this.itemClient = itemClient;
 
-		executor.scheduleWithFixedDelay(this::loadPrices, 0, 30, TimeUnit.MINUTES);
-		executor.submit(this::loadStats);
+		scheduledExecutorService.scheduleWithFixedDelay(this::loadPrices, 0, 30, TimeUnit.MINUTES);
+		scheduledExecutorService.submit(this::loadStats);
 
 		itemImages = CacheBuilder.newBuilder()
 			.maximumSize(128L)
@@ -161,7 +165,7 @@ public class ItemManager
 			.build(new CacheLoader<ImageKey, AsyncBufferedImage>()
 			{
 				@Override
-				public AsyncBufferedImage load(@NotNull ImageKey key)
+				public AsyncBufferedImage load(@NotNull ImageKey key) throws Exception
 				{
 					return loadImage(key.itemId, key.itemQuantity, key.stackable);
 				}
@@ -173,7 +177,7 @@ public class ItemManager
 			.build(new CacheLoader<Integer, ItemDefinition>()
 			{
 				@Override
-				public ItemDefinition load(@NotNull Integer key)
+				public ItemDefinition load(@NotNull Integer key) throws Exception
 				{
 					return client.getItemDefinition(key);
 				}
@@ -185,21 +189,24 @@ public class ItemManager
 			.build(new CacheLoader<OutlineKey, BufferedImage>()
 			{
 				@Override
-				public BufferedImage load(@NotNull OutlineKey key)
+				public BufferedImage load(@NotNull OutlineKey key) throws Exception
 				{
 					return loadItemOutline(key.itemId, key.itemQuantity, key.outlineColor);
 				}
 			});
 
+		final Gson gson = new Gson();
+
+		final Type typeToken = new TypeToken<Map<Integer, ItemStats>>()
+		{
+		}.getType();
+
+		final InputStream statsFile = getClass().getResourceAsStream("/item_stats.json");
+		final Map<Integer, ItemStats> stats = gson.fromJson(new InputStreamReader(statsFile), typeToken);
+		itemStatMap = ImmutableMap.copyOf(stats);
+
 		eventbus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
 		eventbus.subscribe(PostItemDefinition.class, this, this::onPostItemDefinition);
-
-		Completable.fromAction(ItemVariationMapping::load)
-			.subscribeOn(Schedulers.computation())
-			.subscribe(
-				() -> log.debug("Loaded {} item variations", ItemVariationMapping.getSize()),
-				ex -> log.warn("Error loading item variations", ex)
-			);
 	}
 
 	private void loadPrices()
@@ -207,9 +214,21 @@ public class ItemManager
 		itemClient.getPrices()
 			.subscribeOn(Schedulers.io())
 			.subscribe(
-				m -> itemPrices = m,
-				e -> log.warn("Error loading prices", e),
-				() -> log.debug("Loaded {} prices", itemPrices.size())
+				(prices) ->
+				{
+					if (prices != null)
+					{
+						ImmutableMap.Builder<Integer, ItemPrice> map = ImmutableMap.builderWithExpectedSize(prices.length);
+						for (ItemPrice price : prices)
+						{
+							map.put(price.getId(), price);
+						}
+						itemPrices = map.build();
+					}
+
+					log.debug("Loaded {} prices", itemPrices.size());
+				},
+				(e) -> log.warn("error loading prices!", e)
 			);
 	}
 
@@ -218,9 +237,16 @@ public class ItemManager
 		itemClient.getStats()
 			.subscribeOn(Schedulers.io())
 			.subscribe(
-				m -> itemStats = m,
-				e -> log.warn("Error fetching stats", e),
-				() -> log.debug("Loaded {} stats", itemStats.size())
+				(stats) ->
+				{
+					if (stats != null)
+					{
+						itemStats = ImmutableMap.copyOf(stats);
+					}
+
+					log.debug("Loaded {} stats", itemStats.size());
+				},
+				(e) -> log.warn("error loading stats!", e)
 			);
 	}
 
@@ -326,21 +352,12 @@ public class ItemManager
 		return (int) Math.max(1, getItemDefinition(itemID).getPrice() * HIGH_ALCHEMY_MULTIPLIER);
 	}
 
-	public int getRepairValue(int itemId)
+	public int getBrokenValue(int itemId)
 	{
-		return getRepairValue(itemId, false);
-	}
-
-	public int getRepairValue(int itemId, boolean fullValue)
-	{
-		final ItemReclaimCost b = ItemReclaimCost.of(itemId);
+		PvPValueBrokenItem b = PvPValueBrokenItem.of(itemId);
 
 		if (b != null)
 		{
-			if (fullValue || b.getItemID() == GRANITE_MAUL_24225 || b.getItemID() == GRANITE_MAUL_24227)
-			{
-				return b.getValue();
-			}
 			return (int) (b.getValue() * (75.0f / 100.0f));
 		}
 
@@ -358,12 +375,12 @@ public class ItemManager
 	{
 		ItemDefinition itemDefinition = getItemDefinition(itemId);
 
-		if (!allowNote && itemDefinition.getNote() != -1)
+		if (itemDefinition.getName() == null || !allowNote && itemDefinition.getNote() != -1)
 		{
 			return null;
 		}
 
-		return itemStats.get(canonicalize(itemId));
+		return itemStatMap.get(canonicalize(itemId));
 	}
 
 	/**
@@ -443,7 +460,7 @@ public class ItemManager
 				return false;
 			}
 			sprite.toBufferedImage(img);
-			img.loaded();
+			img.changed();
 			return true;
 		});
 		return img;

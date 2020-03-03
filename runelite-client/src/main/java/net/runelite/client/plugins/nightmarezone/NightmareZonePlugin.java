@@ -25,29 +25,30 @@
 package net.runelite.client.plugins.nightmarezone;
 
 import com.google.inject.Provides;
+
 import java.awt.Color;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.AccessLevel;
+import java.time.Duration;
+import java.time.Instant;
 import lombok.Getter;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.util.Text;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.api.util.Text;
 
 @PluginDescriptor(
 	name = "Nightmare Zone",
@@ -75,9 +76,12 @@ public class NightmareZonePlugin extends Plugin
 	@Inject
 	private NightmareZoneOverlay overlay;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Getter
 	private int pointsPerHour;
-
+	
 	private Instant nmzSessionStartTime;
 
 	// This starts as true since you need to get
@@ -105,6 +109,7 @@ public class NightmareZonePlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(overlay);
 		overlay.removeAbsorptionCounter();
@@ -113,6 +118,8 @@ public class NightmareZonePlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 		overlay.removeAbsorptionCounter();
 
@@ -126,7 +133,13 @@ public class NightmareZonePlugin extends Plugin
 		resetPointsPerHour();
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("nightmareZone"))
@@ -144,7 +157,6 @@ public class NightmareZonePlugin extends Plugin
 		return configManager.getConfig(NightmareZoneConfig.class);
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (isNotInNightmareZone())
@@ -173,7 +185,6 @@ public class NightmareZonePlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (event.getType() != ChatMessageType.GAMEMESSAGE

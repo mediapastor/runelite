@@ -35,13 +35,11 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.util.Text;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.menus.AbstractComparableEntry;
 import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
@@ -100,6 +98,8 @@ public class BlackjackPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
 		menuManager.addPriorityEntry(KNOCKOUT_BANDIT);
 		menuManager.addPriorityEntry(KNOCKOUT_MENAPHITE);
 		this.pickpocketOnAggro = config.pickpocketOnAggro();
@@ -112,10 +112,10 @@ public class BlackjackPlugin extends Plugin
 		menuManager.removePriorityEntry(PICKPOCKET_MENAPHITE);
 		menuManager.removePriorityEntry(KNOCKOUT_BANDIT);
 		menuManager.removePriorityEntry(KNOCKOUT_MENAPHITE);
+		eventBus.unregister(this);
 		eventBus.unregister("poll");
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() != GameState.LOGGED_IN || !ArrayUtils.contains(client.getMapRegions(), POLLNIVNEACH_REGION))
@@ -128,7 +128,6 @@ public class BlackjackPlugin extends Plugin
 		eventBus.subscribe(ChatMessage.class, "poll", this::onChatMessage);
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("blackjack"))
@@ -182,8 +181,8 @@ public class BlackjackPlugin extends Plugin
 		public boolean matches(MenuEntry entry)
 		{
 			return
-				Text.removeTags(entry.getTarget(), true).equalsIgnoreCase(this.getTarget()) &&
-					entry.getOption().equalsIgnoreCase(this.getOption());
+				entry.getStandardizedTarget().equals(this.getTarget()) &&
+				entry.getOption().equalsIgnoreCase(this.getOption());
 		}
 	}
 }

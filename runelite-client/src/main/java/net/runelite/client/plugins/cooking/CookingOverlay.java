@@ -36,7 +36,6 @@ import javax.inject.Singleton;
 import static net.runelite.api.AnimationID.COOKING_FIRE;
 import static net.runelite.api.AnimationID.COOKING_RANGE;
 import net.runelite.api.Client;
-import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY;
 import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY_CONFIG;
 import net.runelite.api.Skill;
 import net.runelite.client.plugins.xptracker.XpTrackerService;
@@ -54,7 +53,6 @@ class CookingOverlay extends Overlay
 {
 	private static final int COOK_TIMEOUT = 3;
 	private static final DecimalFormat FORMAT = new DecimalFormat("#.#");
-	static final String COOKING_RESET = "Reset";
 
 	private final Client client;
 	private final CookingPlugin plugin;
@@ -70,7 +68,6 @@ class CookingOverlay extends Overlay
 		this.plugin = plugin;
 		this.xpTrackerService = xpTrackerService;
 		getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Cooking overlay"));
-		getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY, COOKING_RESET, "Cooking overlay"));
 	}
 
 	@Override

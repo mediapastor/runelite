@@ -1,79 +1,77 @@
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import net.runelite.mapping.Export;
-import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("x")
+@ObfuscatedName("p")
 public class class14 {
-	@ObfuscatedName("qn")
-	@ObfuscatedGetter(
-		intValue = 1643724800
-	)
-	static int field88;
-	@ObfuscatedName("gd")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "[Llx;"
+		signature = "(CI)B",
+		garbageValue = "-1488757001"
 	)
-	@Export("headIconHintSprites")
-	static Sprite[] headIconHintSprites;
-
-	@ObfuscatedName("q")
-	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "-1580849456"
-	)
-	static void method204() {
-		try {
-			File var0 = new File(class30.userHomeDirectory, "random.dat");
-			int var2;
-			if (var0.exists()) {
-				JagexCache.JagexCache_randomDat = new BufferedFile(new AccessFile(var0, "rw", 25L), 24, 0);
-			} else {
-				label39:
-				for (int var1 = 0; var1 < class312.field3803.length; ++var1) {
-					for (var2 = 0; var2 < BoundaryObject.field1859.length; ++var2) {
-						File var3 = new File(BoundaryObject.field1859[var2] + class312.field3803[var1] + File.separatorChar + "random.dat");
-						if (var3.exists()) {
-							JagexCache.JagexCache_randomDat = new BufferedFile(new AccessFile(var3, "rw", 25L), 24, 0);
-							break label39;
-						}
-					}
-				}
-			}
-
-			if (JagexCache.JagexCache_randomDat == null) {
-				RandomAccessFile var4 = new RandomAccessFile(var0, "rw");
-				var2 = var4.read();
-				var4.seek(0L);
-				var4.write(var2);
-				var4.seek(0L);
-				var4.close();
-				JagexCache.JagexCache_randomDat = new BufferedFile(new AccessFile(var0, "rw", 25L), 24, 0);
-			}
-		} catch (IOException var5) {
-		}
-
-	}
-
-	@ObfuscatedName("fw")
-	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "363418967"
-	)
-	static int method203() {
-		if (Client.archiveLoaders != null && Client.archiveLoadersDone < Client.archiveLoaders.size()) {
-			int var0 = 0;
-
-			for (int var1 = 0; var1 <= Client.archiveLoadersDone; ++var1) {
-				var0 += ((ArchiveLoader)Client.archiveLoaders.get(var1)).loadedCount;
-			}
-
-			return var0 * 10000 / Client.field903;
+	@Export("charToByteCp1252")
+	public static byte charToByteCp1252(char var0) {
+		byte var1;
+		if (var0 > 0 && var0 < 128 || var0 >= 160 && var0 <= 255) {
+			var1 = (byte)var0;
+		} else if (var0 == 8364) {
+			var1 = -128;
+		} else if (var0 == 8218) {
+			var1 = -126;
+		} else if (var0 == 402) {
+			var1 = -125;
+		} else if (var0 == 8222) {
+			var1 = -124;
+		} else if (var0 == 8230) {
+			var1 = -123;
+		} else if (var0 == 8224) {
+			var1 = -122;
+		} else if (var0 == 8225) {
+			var1 = -121;
+		} else if (var0 == 710) {
+			var1 = -120;
+		} else if (var0 == 8240) {
+			var1 = -119;
+		} else if (var0 == 352) {
+			var1 = -118;
+		} else if (var0 == 8249) {
+			var1 = -117;
+		} else if (var0 == 338) {
+			var1 = -116;
+		} else if (var0 == 381) {
+			var1 = -114;
+		} else if (var0 == 8216) {
+			var1 = -111;
+		} else if (var0 == 8217) {
+			var1 = -110;
+		} else if (var0 == 8220) {
+			var1 = -109;
+		} else if (var0 == 8221) {
+			var1 = -108;
+		} else if (var0 == 8226) {
+			var1 = -107;
+		} else if (var0 == 8211) {
+			var1 = -106;
+		} else if (var0 == 8212) {
+			var1 = -105;
+		} else if (var0 == 732) {
+			var1 = -104;
+		} else if (var0 == 8482) {
+			var1 = -103;
+		} else if (var0 == 353) {
+			var1 = -102;
+		} else if (var0 == 8250) {
+			var1 = -101;
+		} else if (var0 == 339) {
+			var1 = -100;
+		} else if (var0 == 382) {
+			var1 = -98;
+		} else if (var0 == 376) {
+			var1 = -97;
 		} else {
-			return 10000;
+			var1 = 63;
 		}
+
+		return var1;
 	}
 }

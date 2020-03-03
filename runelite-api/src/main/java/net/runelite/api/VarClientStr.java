@@ -28,11 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Client side only, content-developer strings
- *
- * VarCInts are stored entirely in memory, or locally on a user's
- * machine in the preferences2.dat file depending on how Jagex
- * configured the variable
+ * An enumeration of string local variables.
  */
 @AllArgsConstructor
 @Getter

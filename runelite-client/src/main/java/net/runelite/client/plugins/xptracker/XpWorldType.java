@@ -31,7 +31,8 @@ enum XpWorldType
 	NORMAL,
 	TOURNEY,
 	DMM,
-	LEAGUE;
+	SDMM,
+	DMMT;
 
 	static XpWorldType of(WorldType type)
 	{
@@ -41,8 +42,10 @@ enum XpWorldType
 				return TOURNEY;
 			case DEADMAN:
 				return DMM;
-			case LEAGUE:
-				return LEAGUE;
+			case SEASONAL_DEADMAN:
+				return SDMM;
+			case DEADMAN_TOURNAMENT:
+				return DMMT;
 			default:
 				return NORMAL;
 		}

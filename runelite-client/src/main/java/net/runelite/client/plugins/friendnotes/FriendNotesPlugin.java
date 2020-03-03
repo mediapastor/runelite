@@ -38,19 +38,19 @@ import net.runelite.api.Client;
 import net.runelite.api.Friend;
 import net.runelite.api.MenuOpcode;
 import net.runelite.api.Nameable;
-import net.runelite.api.events.FriendRemoved;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NameableNameChanged;
-import net.runelite.api.util.Text;
+import net.runelite.api.events.FriendRemoved;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ColorUtil;
+import net.runelite.api.util.Text;
 
 @Slf4j
 @PluginDescriptor(
@@ -83,22 +83,36 @@ public class FriendNotesPlugin extends Plugin
 	@Inject
 	private ChatboxPanelManager chatboxPanelManager;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Getter
 	private HoveredFriend hoveredFriend = null;
 
 	@Override
 	protected void startUp() throws Exception
 	{
+		addSubscriptions();
 		overlayManager.add(overlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 	}
 
-/**
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+		eventBus.subscribe(NameableNameChanged.class, this, this::onNameableNameChanged);
+		eventBus.subscribe(FriendRemoved.class, this, this::onFriendRemoved);
+	}
+
+	/**
 	 * Set a friend note, or unset by passing a null/empty note.
 	 */
 	private void setFriendNote(String displayName, String note)
@@ -158,10 +172,9 @@ public class FriendNotesPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		final int groupId = WidgetInfo.TO_GROUP(event.getParam1());
+		final int groupId = WidgetInfo.TO_GROUP(event.getActionParam1());
 
 		// Look for "Message" on friends list
 		if (groupId == WidgetInfo.FRIENDS_LIST.getGroupId() && event.getOption().equals("Message"))
@@ -176,8 +189,8 @@ public class FriendNotesPlugin extends Plugin
 				event.getTarget(),
 				MenuOpcode.RUNELITE.getId(),
 				0,
-				event.getParam0(),
-				event.getParam1(),
+				event.getActionParam0(),
+				event.getActionParam1(),
 				false
 			);
 		}
@@ -187,10 +200,9 @@ public class FriendNotesPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (WidgetInfo.TO_GROUP(event.getParam1()) == WidgetInfo.FRIENDS_LIST.getGroupId())
+		if (WidgetInfo.TO_GROUP(event.getActionParam1()) == WidgetInfo.FRIENDS_LIST.getGroupId())
 		{
 			if (Strings.isNullOrEmpty(event.getTarget()))
 			{
@@ -225,7 +237,6 @@ public class FriendNotesPlugin extends Plugin
 
 	}
 
-	@Subscribe
 	private void onNameableNameChanged(NameableNameChanged event)
 	{
 		final Nameable nameable = event.getNameable();
@@ -247,7 +258,6 @@ public class FriendNotesPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onFriendRemoved(FriendRemoved event)
 	{
 		// Delete a friend's note if they are removed

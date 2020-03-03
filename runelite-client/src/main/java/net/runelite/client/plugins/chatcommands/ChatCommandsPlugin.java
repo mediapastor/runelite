@@ -28,7 +28,6 @@ package net.runelite.client.plugins.chatcommands;
 import com.google.inject.Provides;
 import io.reactivex.schedulers.Schedulers;
 import java.io.IOException;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
@@ -43,15 +42,12 @@ import net.runelite.api.Experience;
 import net.runelite.api.IconID;
 import net.runelite.api.ItemDefinition;
 import net.runelite.api.MessageNode;
-import net.runelite.api.Player;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
-import net.runelite.api.WorldType;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WidgetLoaded;
-import static net.runelite.api.util.Text.sanitize;
 import net.runelite.api.vars.AccountType;
 import net.runelite.api.widgets.Widget;
 import static net.runelite.api.widgets.WidgetID.KILL_LOGS_GROUP_ID;
@@ -62,13 +58,14 @@ import net.runelite.client.chat.ChatCommandManager;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.events.ChatInput;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
+import static net.runelite.api.util.Text.sanitize;
 import net.runelite.http.api.chat.ChatClient;
 import net.runelite.http.api.chat.Duels;
 import net.runelite.http.api.hiscore.HiscoreClient;
@@ -148,9 +145,13 @@ public class ChatCommandsPlugin extends Plugin
 	@Inject
 	private ChatKeyboardListener chatKeyboardListener;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Override
 	public void startUp()
 	{
+		addSubscriptions();
 
 		keyManager.registerKeyListener(chatKeyboardListener);
 
@@ -169,6 +170,8 @@ public class ChatCommandsPlugin extends Plugin
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
+
 		lastBossKill = null;
 
 		keyManager.unregisterKeyListener(chatKeyboardListener);
@@ -185,7 +188,15 @@ public class ChatCommandsPlugin extends Plugin
 		chatCommandManager.unregisterCommand(DUEL_ARENA_COMMAND);
 	}
 
-@Provides
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
+	}
+
+	@Provides
 	ChatCommandsConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(ChatCommandsConfig.class);
@@ -217,7 +228,6 @@ public class ChatCommandsPlugin extends Plugin
 		return personalBest == null ? 0 : personalBest;
 	}
 
-	@Subscribe
 	void onChatMessage(ChatMessage chatMessage)
 	{
 		if (chatMessage.getType() != ChatMessageType.TRADE
@@ -351,7 +361,6 @@ public class ChatCommandsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (!logKills)
@@ -388,7 +397,6 @@ public class ChatCommandsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onWidgetLoaded(WidgetLoaded widget)
 	{
 		// don't load kc if in an instance, if the player is in another players poh
@@ -401,7 +409,6 @@ public class ChatCommandsPlugin extends Plugin
 		logKills = true;
 	}
 
-	@Subscribe
 	private void onVarbitChanged(VarbitChanged varbitChanged)
 	{
 		hiscoreEndpoint = getLocalHiscoreEndpointType();
@@ -854,11 +861,11 @@ public class ChatCommandsPlugin extends Plugin
 						builder.append(ChatColorType.NORMAL);
 						builder.append(": GE ");
 						builder.append(ChatColorType.HIGHLIGHT);
-						builder.append(QuantityFormatter.formatNumber(itemPrice));
+						builder.append(StackFormatter.formatNumber(itemPrice));
 						builder.append(ChatColorType.NORMAL);
 						builder.append(": OSB ");
 						builder.append(ChatColorType.HIGHLIGHT);
-						builder.append(QuantityFormatter.formatNumber(osbresult.getOverall_average()));
+						builder.append(StackFormatter.formatNumber(osbresult.getOverall_average()));
 
 						ItemDefinition itemComposition = itemManager.getItemDefinition(itemId);
 						if (itemComposition != null)
@@ -868,7 +875,7 @@ public class ChatCommandsPlugin extends Plugin
 								.append(ChatColorType.NORMAL)
 								.append(" HA value ")
 								.append(ChatColorType.HIGHLIGHT)
-								.append(QuantityFormatter.formatNumber(alchPrice));
+								.append(StackFormatter.formatNumber(alchPrice));
 						}
 
 						String response = builder.build();
@@ -1150,28 +1157,31 @@ public class ChatCommandsPlugin extends Plugin
 	 */
 	private HiscoreLookup getCorrectLookupFor(final ChatMessage chatMessage)
 	{
-		Player localPlayer = client.getLocalPlayer();
-		final String player = sanitize(chatMessage.getName());
+		final String player;
+		final HiscoreEndpoint ironmanStatus;
 
-		// If we are sending the message then just use the local hiscore endpoint for the world
-		if (chatMessage.getType().equals(ChatMessageType.PRIVATECHATOUT)
-			|| player.equals(localPlayer.getName()))
+		if (chatMessage.getType().equals(ChatMessageType.PRIVATECHATOUT))
 		{
-			return new HiscoreLookup(localPlayer.getName(), hiscoreEndpoint);
+			player = client.getLocalPlayer().getName();
+			ironmanStatus = hiscoreEndpoint;
 		}
-
-		// Public chat on a leagues world is always league hiscores, regardless of icon
-		if (chatMessage.getType() == ChatMessageType.PUBLICCHAT || chatMessage.getType() == ChatMessageType.MODCHAT)
+		else
 		{
-			if (client.getWorldType().contains(WorldType.LEAGUE))
+			player = sanitize(chatMessage.getName());
+
+			if (player.equals(client.getLocalPlayer().getName()))
 			{
-				return new HiscoreLookup(player, HiscoreEndpoint.LEAGUE);
+				// Get ironman status from for the local player
+				ironmanStatus = hiscoreEndpoint;
+			}
+			else
+			{
+				// Get ironman status from their icon in chat
+				ironmanStatus = getHiscoreEndpointByName(chatMessage.getName());
 			}
 		}
 
-		// Get ironman status from their icon in chat
-		HiscoreEndpoint endpoint = getHiscoreEndpointByName(chatMessage.getName());
-		return new HiscoreLookup(player, endpoint);
+		return new HiscoreLookup(player, ironmanStatus);
 	}
 
 	/**
@@ -1210,12 +1220,6 @@ public class ChatCommandsPlugin extends Plugin
 	 */
 	private HiscoreEndpoint getLocalHiscoreEndpointType()
 	{
-		EnumSet<WorldType> worldType = client.getWorldType();
-		if (worldType.contains(WorldType.LEAGUE))
-		{
-			return HiscoreEndpoint.LEAGUE;
-		}
-
 		return toEndPoint(client.getAccountType());
 	}
 

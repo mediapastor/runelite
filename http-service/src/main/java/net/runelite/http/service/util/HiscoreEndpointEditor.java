@@ -26,8 +26,9 @@
 
 package net.runelite.http.service.util;
 
-import java.beans.PropertyEditorSupport;
 import net.runelite.http.api.hiscore.HiscoreEndpoint;
+
+import java.beans.PropertyEditorSupport;
 
 public class HiscoreEndpointEditor extends PropertyEditorSupport
 {

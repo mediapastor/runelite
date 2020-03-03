@@ -27,13 +27,15 @@ package net.runelite.asm;
 import net.runelite.asm.attributes.Annotations;
 import net.runelite.asm.attributes.annotation.Annotation;
 import net.runelite.deob.DeobAnnotations;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
+
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
-public class Field implements Annotated, Named
+public class Field
 {
 	public static final int ACCESS_MODIFIERS = ACC_PUBLIC | ACC_PRIVATE | ACC_PROTECTED;
 
@@ -51,14 +53,15 @@ public class Field implements Annotated, Named
 		this.name = name;
 		this.type = type;
 
-		this.annotations = new Annotations();
+		annotations = new Annotations();
 	}
 
 	public void accept(FieldVisitor visitor)
 	{
 		for (Annotation annotation : annotations.getAnnotations())
 		{
-			annotation.accept(visitor.visitAnnotation(annotation.getType().toString(), true));
+			AnnotationVisitor av = visitor.visitAnnotation(annotation.getType().toString(), true);
+			annotation.accept(av);
 		}
 
 		visitor.visitEnd();

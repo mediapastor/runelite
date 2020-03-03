@@ -1,11 +1,11 @@
 /*
  * ******************************************************************************
- *  * Copyright (c) 2019 openosrs
+ *  * Copyright (c) 2019 RuneLitePlus
  *  *  Redistributions and modifications of this software are permitted as long as this notice remains in its original unmodified state at the top of this file.
  *  *  If there are any questions comments, or feedback about this software, please direct all inquiries directly to the file authors:
  *  *  ST0NEWALL#9112
- *  *   openosrs Discord: https://discord.gg/Q7wFtCe
- *  *   openosrs website: https://openosrs.com
+ *  *   RuneLitePlus Discord: https://discord.gg/Q7wFtCe
+ *  *   RuneLitePlus website: https://runelitepl.us
  *  *****************************************************************************
  */
 
@@ -35,22 +35,21 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
-import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemDefinition;
 import net.runelite.api.Player;
 import net.runelite.api.SkullIcon;
 import net.runelite.api.Varbits;
 import net.runelite.api.WorldType;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.events.PlayerSpawned;
-import net.runelite.api.util.Text;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.game.AsyncBufferedImage;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
@@ -61,11 +60,11 @@ import static net.runelite.client.plugins.pvptools.PvpToolsPanel.htmlLabel;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.client.util.AsyncBufferedImage;
 import net.runelite.client.util.HotkeyListener;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.PvPUtil;
-import net.runelite.client.util.QuantityFormatter;
+import static net.runelite.client.util.StackFormatter.quantityToRSDecimalStack;
+import net.runelite.api.util.Text;
 import org.apache.commons.lang3.ArrayUtils;
 
 @PluginDescriptor(
@@ -102,6 +101,9 @@ public class PvpToolsPlugin extends Plugin
 
 	@Inject
 	private ItemManager itemManager;
+
+	@Inject
+	private EventBus eventBus;
 
 	private final PvpToolsPlugin uhPvpToolsPlugin = this;
 
@@ -175,7 +177,7 @@ public class PvpToolsPlugin extends Plugin
 		}
 	};
 
-	private int[] overheadCount = new int[] {0, 0, 0};
+	private int[] overheadCount = new int[]{0, 0, 0};
 
 	@Getter
 	private int enemyPlayerCount = 0;
@@ -231,6 +233,7 @@ public class PvpToolsPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(playerCountOverlay);
 		keyManager.registerKeyListener(renderselfHotkeyListener);
@@ -269,6 +272,8 @@ public class PvpToolsPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(playerCountOverlay);
 		keyManager.unregisterKeyListener(renderselfHotkeyListener);
 		clientToolbar.removeNavigation(navButton);
@@ -281,7 +286,15 @@ public class PvpToolsPlugin extends Plugin
 		loaded = false;
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ItemContainerChanged.class, this, this::onItemContainerChanged);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(PlayerSpawned.class, this, this::onPlayerSpawned);
+		eventBus.subscribe(PlayerDespawned.class, this, this::onPlayerDespawned);
+	}
+
 	private void onConfigChanged(ConfigChanged configChanged)
 	{
 		if (!"pvptools".equals(configChanged.getGroup()))
@@ -357,7 +370,6 @@ public class PvpToolsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemContainerChanged(ItemContainerChanged event)
 	{
 		if (event.getItemContainer().equals(client.getItemContainer(InventoryID.INVENTORY)) &&
@@ -367,7 +379,6 @@ public class PvpToolsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState().equals(GameState.LOGGED_IN))
@@ -387,7 +398,6 @@ public class PvpToolsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onPlayerSpawned(PlayerSpawned event)
 	{
 		if (this.countPlayers && PvPUtil.isAttackable(client, event.getPlayer()))
@@ -400,7 +410,6 @@ public class PvpToolsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onPlayerDespawned(PlayerDespawned event)
 	{
 		if (this.countPlayers && PvPUtil.isAttackable(client, event.getPlayer()))
@@ -463,7 +472,7 @@ public class PvpToolsPlugin extends Plugin
 
 	private void countOverHeads()
 	{
-		overheadCount = new int[] {0, 0, 0};
+		overheadCount = new int[]{0, 0, 0};
 		for (Player p : client.getPlayers())
 		{
 			if (Objects.nonNull(p) && PvPUtil.isAttackable(client, p) &&
@@ -495,26 +504,23 @@ public class PvpToolsPlugin extends Plugin
 		{
 			return;
 		}
-
-		final ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
-		final ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
-		final Player player = client.getLocalPlayer();
-
-		if (equipment == null || equipment.getItems() == null ||
-			inventory == null || inventory.getItems() == null ||
-			player == null)
+		if (client.getItemContainer(InventoryID.EQUIPMENT) == null)
 		{
 			return;
 		}
-
-		final Item[] items = ArrayUtils.addAll(equipment.getItems(), inventory.getItems());
-		final TreeMap<Integer, Item> priceMap = new TreeMap<>(Comparator.comparingInt(Integer::intValue));
+		if (client.getItemContainer(InventoryID.INVENTORY).getItems() == null)
+		{
+			return;
+		}
+		Item[] items = ArrayUtils.addAll(Objects.requireNonNull(client.getItemContainer(InventoryID.EQUIPMENT)).getItems(),
+			Objects.requireNonNull(client.getItemContainer(InventoryID.INVENTORY)).getItems());
+		TreeMap<Integer, Item> priceMap = new TreeMap<>(Comparator.comparingInt(Integer::intValue));
 		int wealth = 0;
 		for (Item i : items)
 		{
 			int value = (itemManager.getItemPrice(i.getId()) * i.getQuantity());
-			final ItemDefinition itemComposition = itemManager.getItemDefinition(i.getId());
 
+			final ItemDefinition itemComposition = itemManager.getItemDefinition(i.getId());
 			if (!itemComposition.isTradeable() && value == 0)
 			{
 				value = itemComposition.getPrice() * i.getQuantity();
@@ -530,16 +536,15 @@ public class PvpToolsPlugin extends Plugin
 			}
 			wealth += value;
 		}
-
-		panel.totalRiskLabel.setText(htmlLabel("Total risk: ", QuantityFormatter.quantityToRSDecimalStack(wealth)));
+		panel.totalRiskLabel.setText(htmlLabel("Total risk: ", quantityToRSDecimalStack(wealth)));
 		panel.totalRiskLabel.repaint();
 
 		int itemLimit = 0;
-		if (player.getSkullIcon() != null && player.getSkullIcon() == SkullIcon.SKULL)
+		if (client.getLocalPlayer().getSkullIcon() != null && client.getLocalPlayer().getSkullIcon() == SkullIcon.SKULL)
 		{
 			itemLimit = 1;
 		}
-		if (player.getSkullIcon() == null)
+		if (client.getLocalPlayer().getSkullIcon() == null)
 		{
 			itemLimit = 4;
 		}
@@ -567,7 +572,7 @@ public class PvpToolsPlugin extends Plugin
 			}
 		}
 		panel.riskProtectingItem.setText(htmlLabel("Risk Protecting Item: ",
-			QuantityFormatter.quantityToRSDecimalStack(descendingMap.keySet().stream().mapToInt(Integer::intValue).sum())));
+			quantityToRSDecimalStack(descendingMap.keySet().stream().mapToInt(Integer::intValue).sum())));
 		panel.riskProtectingItem.repaint();
 
 		panel.biggestItemLabel.setText("Most Valuable Item: ");
@@ -580,7 +585,6 @@ public class PvpToolsPlugin extends Plugin
 
 	/**
 	 * Given an AttackMode, hides the appropriate attack options.
-	 *
 	 * @param mode The {@link AttackMode} specifying clanmates, friends, or both.
 	 */
 	public void hideAttackOptions(AttackMode mode)
@@ -604,7 +608,6 @@ public class PvpToolsPlugin extends Plugin
 
 	/**
 	 * Given an AttackMode, hides the appropriate cast options.
-	 *
 	 * @param mode The {@link AttackMode} specifying clanmates, friends, or both.
 	 */
 	public void hideCastOptions(AttackMode mode)

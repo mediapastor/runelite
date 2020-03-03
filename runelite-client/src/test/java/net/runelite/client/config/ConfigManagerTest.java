@@ -56,10 +56,6 @@ public class ConfigManagerTest
 	@Bind
 	RuneLiteConfig runeliteConfig;
 
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
-
 	@Inject
 	ConfigManager manager;
 

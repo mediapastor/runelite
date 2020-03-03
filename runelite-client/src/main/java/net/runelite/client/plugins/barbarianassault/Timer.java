@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, https://openosrs.com
+ * Copyright (c) 2019, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,12 +24,13 @@
  */
 package net.runelite.client.plugins.barbarianassault;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import lombok.AccessLevel;
-import lombok.Getter;
 
 class Timer
 {

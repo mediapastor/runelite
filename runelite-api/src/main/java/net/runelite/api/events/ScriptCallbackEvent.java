@@ -34,12 +34,11 @@ import lombok.Data;
 public class ScriptCallbackEvent implements Event
 {
 	/**
-	 * The script that is currently being executed
+	 * The script being called.
 	 */
 	private Script script;
-
 	/**
-	 * The name passed to runelite_callback
+	 * The name of the event that triggered script execution.
 	 */
 	private String eventName;
 }

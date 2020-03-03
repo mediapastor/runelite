@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019, 7ate9 <https://github.com/se7enAte9>
- * Copyright (c) 2019, https://openosrs.com
+ * Copyright (c) 2019, https://runelitepl.us
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,14 @@
 package net.runelite.client.plugins.barbarianassault;
 
 import com.google.common.collect.ImmutableList;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import net.runelite.api.NPC;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 
 
 @Data

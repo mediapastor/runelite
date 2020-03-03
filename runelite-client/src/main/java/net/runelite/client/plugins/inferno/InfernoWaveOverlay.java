@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import lombok.AccessLevel;
 import lombok.Setter;
 import static net.runelite.client.plugins.inferno.InfernoWaveMappings.addWaveComponent;
-import net.runelite.client.plugins.inferno.displaymodes.InfernoWaveDisplayMode;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
@@ -48,7 +47,6 @@ public class InfernoWaveOverlay extends Overlay
 			displayMode == InfernoWaveDisplayMode.BOTH)
 		{
 			addWaveComponent(
-				plugin,
 				panelComponent,
 				"Current Wave (Wave " + plugin.getCurrentWaveNumber() + ")",
 				plugin.getCurrentWaveNumber(),
@@ -61,7 +59,6 @@ public class InfernoWaveOverlay extends Overlay
 			displayMode == InfernoWaveDisplayMode.BOTH)
 		{
 			addWaveComponent(
-				plugin,
 				panelComponent,
 				"Next Wave (Wave " + plugin.getNextWaveNumber() + ")",
 				plugin.getNextWaveNumber(),

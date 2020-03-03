@@ -4,61 +4,56 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("hy")
+@ObfuscatedName("hh")
 @Implements("PlayerType")
 public enum PlayerType implements Enumerated {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Lhy;"
+		signature = "Lhh;"
 	)
 	@Export("PlayerType_normal")
 	PlayerType_normal(0, -1, true, false, true),
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Lhy;"
+		signature = "Lhh;"
 	)
 	@Export("PlayerType_playerModerator")
 	PlayerType_playerModerator(1, 0, true, true, true),
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "Lhy;"
+		signature = "Lhh;"
 	)
 	@Export("PlayerType_jagexModerator")
 	PlayerType_jagexModerator(2, 1, true, true, false),
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "Lhy;"
+		signature = "Lhh;"
 	)
 	@Export("PlayerType_ironman")
 	PlayerType_ironman(3, 2, false, false, true),
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
-		signature = "Lhy;"
+		signature = "Lhh;"
 	)
 	@Export("PlayerType_ultimateIronman")
 	PlayerType_ultimateIronman(4, 3, false, false, true),
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lhy;"
+		signature = "Lhh;"
 	)
 	@Export("PlayerType_hardcoreIronman")
 	PlayerType_hardcoreIronman(5, 10, false, false, true);
 
-	@ObfuscatedName("k")
-	static int[] field3083;
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = 28008263
+		intValue = -226803421
 	)
 	@Export("id")
 	final int id;
-	@ObfuscatedName("o")
-	@ObfuscatedGetter(
-		intValue = -573652869
-	)
+	@ObfuscatedName("q")
 	@Export("modIcon")
 	public final int modIcon;
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@Export("isPrivileged")
 	public final boolean isPrivileged;
 	@ObfuscatedName("d")
@@ -67,70 +62,48 @@ public enum PlayerType implements Enumerated {
 
 	PlayerType(int var3, int var4, boolean var5, boolean var6, boolean var7) {
 		this.id = var3;
-		this.modIcon = var4;
+		this.modIcon = var4 * 840543109;
 		this.isPrivileged = var6;
 		this.isUser = var7;
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "-1993081102"
+		signature = "(B)I",
+		garbageValue = "-32"
 	)
 	@Export("rsOrdinal")
 	public int rsOrdinal() {
 		return this.id;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(Llx;IIII)V",
-		garbageValue = "-964423468"
+		signature = "(Lhz;Lhz;Lhz;Lgp;I)Z",
+		garbageValue = "1965364942"
 	)
-	static void method4285(Sprite var0, int var1, int var2, int var3) {
-		DemotingHashTable var4 = WorldMapRegion.WorldMapRegion_cachedSprites;
-		long var6 = (long)(var3 << 16 | var1 << 8 | var2);
-		var4.put(var0, var6, var0.pixels.length * 4);
+	@Export("setAudioArchives")
+	public static boolean setAudioArchives(AbstractArchive var0, AbstractArchive var1, AbstractArchive var2, MidiPcmStream var3) {
+		class197.musicPatchesArchive = var0;
+		class197.musicSamplesArchive = var1;
+		class197.soundEffectsArchive = var2;
+		class197.midiPcmStream = var3;
+		return true;
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("h")
 	@ObfuscatedSignature(
-		signature = "(II)Liv;",
-		garbageValue = "-872663018"
+		signature = "(IZII)V",
+		garbageValue = "912146837"
 	)
-	@Export("SequenceDefinition_get")
-	public static SequenceDefinition SequenceDefinition_get(int var0) {
-		SequenceDefinition var1 = (SequenceDefinition)SequenceDefinition.SequenceDefinition_cached.get((long)var0);
-		if (var1 != null) {
-			return var1;
+	@Export("PcmPlayer_configure")
+	public static final void PcmPlayer_configure(int var0, boolean var1, int var2) {
+		if (var0 >= 8000 && var0 <= 48000) {
+			PcmPlayer.PcmPlayer_sampleRate = var0;
+			PcmPlayer.PcmPlayer_stereo = var1;
+			FloorDecoration.PcmPlayer_count = var2;
 		} else {
-			byte[] var2 = SequenceDefinition.SequenceDefinition_archive.takeFile(12, var0);
-			var1 = new SequenceDefinition();
-			if (var2 != null) {
-				var1.decode(new Buffer(var2));
-			}
-
-			var1.postDecode();
-			SequenceDefinition.SequenceDefinition_cached.put(var1, (long)var0);
-			return var1;
-		}
-	}
-
-	@ObfuscatedName("ku")
-	@ObfuscatedSignature(
-		signature = "(Lhi;IIII)V",
-		garbageValue = "-1541837446"
-	)
-	@Export("drawCompass")
-	static final void drawCompass(Widget var0, int var1, int var2, int var3) {
-		SpriteMask var4 = var0.getSpriteMask(false);
-		if (var4 != null) {
-			if (Client.minimapState < 3) {
-				class1.compass.drawRotatedMaskedCenteredAround(var1, var2, var4.width, var4.height, 25, 25, Client.camAngleY, 256, var4.xStarts, var4.xWidths);
-			} else {
-				Rasterizer2D.Rasterizer2D_fillMaskedRectangle(var1, var2, 0, var4.xStarts, var4.xWidths);
-			}
-
+			throw new IllegalArgumentException();
 		}
 	}
 }

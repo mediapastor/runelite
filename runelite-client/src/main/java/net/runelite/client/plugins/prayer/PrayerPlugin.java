@@ -38,18 +38,16 @@ import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.Prayer;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.game.ItemManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
-import net.runelite.http.api.item.ItemStats;
 
 @PluginDescriptor(
 	name = "Prayer",
@@ -91,7 +89,7 @@ public class PrayerPlugin extends Plugin
 	private PrayerConfig config;
 
 	@Inject
-	private ItemManager itemManager;
+	private EventBus eventBus;
 
 	@Getter(AccessLevel.PACKAGE)
 	private PrayerFlickLocation prayerFlickLocation;
@@ -120,6 +118,7 @@ public class PrayerPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(flickOverlay);
 		overlayManager.add(doseOverlay);
@@ -129,13 +128,21 @@ public class PrayerPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(flickOverlay);
 		overlayManager.remove(doseOverlay);
 		overlayManager.remove(barOverlay);
 		removeIndicators();
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ItemContainerChanged.class, this, this::onItemContainerChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("prayer"))
@@ -152,7 +159,6 @@ public class PrayerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemContainerChanged(final ItemContainerChanged event)
 	{
 		final ItemContainer container = event.getItemContainer();
@@ -178,7 +184,6 @@ public class PrayerPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameTick(GameTick tick)
 	{
 		prayersActive = isAnyPrayerActive();
@@ -272,11 +277,8 @@ public class PrayerPlugin extends Plugin
 				}
 			}
 
-			ItemStats is = itemManager.getItemStats(item.getId(), false);
-			if (is != null && is.getEquipment() != null)
-			{
-				total += is.getEquipment().getPrayer();
-			}
+			int bonus = PrayerItems.getItemPrayerBonus(item.getId());
+			total += bonus;
 		}
 
 		if (hasSanfew || hasSuperRestore || hasPrayerPotion)

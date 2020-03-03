@@ -117,15 +117,15 @@ public class ObjectLoader
 		}
 		else if (opcode == 19)
 		{
-			def.setWallOrDoor(is.readUnsignedByte());
+			def.setAnInt2088(is.readUnsignedByte());
 		}
 		else if (opcode == 21)
 		{
-			def.setContouredGround(0);
+			def.setAnInt2105(0);
 		}
 		else if (opcode == 22)
 		{
-			def.setMergeNormals(true);
+			def.setNonFlatShading(false);
 		}
 		else if (opcode == 23)
 		{
@@ -145,7 +145,7 @@ public class ObjectLoader
 		}
 		else if (opcode == 28)
 		{
-			def.setDecorDisplacement(is.readUnsignedByte());
+			def.setAnInt2069(is.readUnsignedByte());
 		}
 		else if (opcode == 29)
 		{
@@ -153,7 +153,7 @@ public class ObjectLoader
 		}
 		else if (opcode == 39)
 		{
-			def.setContrast(is.readByte() * 25);
+			def.setContrast(is.readByte());
 		}
 		else if (opcode >= 30 && opcode < 35)
 		{
@@ -200,7 +200,7 @@ public class ObjectLoader
 		}
 		else if (opcode == 64)
 		{
-			def.setShadow(false);
+			def.setABool2097(false);
 		}
 		else if (opcode == 65)
 		{
@@ -236,15 +236,15 @@ public class ObjectLoader
 		}
 		else if (opcode == 73)
 		{
-			def.setObstructsGround(true);
+			def.setABool2104(true);
 		}
 		else if (opcode == 74)
 		{
-			def.setHollow(true);
+			def.setSolid(true);
 		}
 		else if (opcode == 75)
 		{
-			def.setSupportsItems(is.readUnsignedByte());
+			def.setAnInt2106(is.readUnsignedByte());
 		}
 		else if (opcode == 77)
 		{
@@ -280,7 +280,7 @@ public class ObjectLoader
 		}
 		else if (opcode == 78)
 		{
-			def.setAmbientSoundId(is.readUnsignedShort());
+			def.setAnInt2110(is.readUnsignedShort());
 			def.setAnInt2083(is.readUnsignedByte());
 		}
 		else if (opcode == 79)
@@ -300,7 +300,7 @@ public class ObjectLoader
 		}
 		else if (opcode == 81)
 		{
-			def.setContouredGround(is.readUnsignedByte() * 256);
+			def.setAnInt2105(is.readUnsignedByte() * 256);
 		}
 		else if (opcode == 82)
 		{
@@ -380,26 +380,26 @@ public class ObjectLoader
 
 	private void post(ObjectDefinition def)
 	{
-		if (def.getWallOrDoor() == -1)
+		if (def.getAnInt2088() == -1)
 		{
-			def.setWallOrDoor(0);
+			def.setAnInt2088(0);
 			if (def.getObjectModels() != null && (def.getObjectTypes() == null || def.getObjectTypes()[0] == 10))
 			{
-				def.setWallOrDoor(1);
+				def.setAnInt2088(1);
 			}
 
 			for (int var1 = 0; var1 < 5; ++var1)
 			{
 				if (def.getActions()[var1] != null)
 				{
-					def.setWallOrDoor(1);
+					def.setAnInt2088(1);
 				}
 			}
 		}
 
-		if (def.getSupportsItems() == -1)
+		if (def.getAnInt2106() == -1)
 		{
-			def.setSupportsItems(def.getInteractType() != 0 ? 1 : 0);
+			def.setAnInt2106(def.getInteractType() != 0 ? 1 : 0);
 		}
 	}
 }

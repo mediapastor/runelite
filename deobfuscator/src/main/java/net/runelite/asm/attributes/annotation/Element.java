@@ -25,14 +25,21 @@
 
 package net.runelite.asm.attributes.annotation;
 
-import java.util.List;
-import org.objectweb.asm.AnnotationVisitor;
-
-public abstract class Element<T>
+public class Element
 {
-	String name = "value";
+	private final Annotation annotation;
+	private String name;
+	private Object value;
+	
+	public Element(Annotation annotation)
+	{
+		this.annotation = annotation;
+	}
 
-	T value;
+	public Annotation getAnnotation()
+	{
+		return annotation;
+	}
 
 	public String getName()
 	{
@@ -44,48 +51,18 @@ public abstract class Element<T>
 		this.name = name;
 	}
 
-	public T getValue()
+	public Object getValue()
 	{
 		return value;
 	}
 
-	public void setValue(T value)
+	public void setValue(Object value)
 	{
 		this.value = value;
 	}
-
+	
 	public String getString()
 	{
 		return value.toString();
-	}
-
-	public static void accept(AnnotationVisitor visitor, final String name, final Object value)
-	{
-		if (visitor == null)
-		{
-			return;
-		}
-
-		if (value instanceof Annotation)
-		{
-			Annotation annotation = (Annotation) value;
-			annotation.accept(visitor.visitAnnotation(name, annotation.getType().toString()));
-		}
-		else if (value instanceof List)
-		{
-			AnnotationVisitor arr = visitor.visitArray(name);
-			List<?> arrayValue = (List<?>) value;
-
-			for (Object o : arrayValue)
-			{
-				accept(arr, null, o);
-			}
-
-			arr.visitEnd();
-		}
-		else
-		{
-			visitor.visit(name, value);
-		}
 	}
 }

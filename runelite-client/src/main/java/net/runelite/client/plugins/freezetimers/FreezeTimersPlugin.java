@@ -39,13 +39,13 @@ import net.runelite.api.Player;
 import net.runelite.api.WorldType;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.LocalPlayerDeath;
 import net.runelite.api.events.NpcDespawned;
-import net.runelite.api.events.PlayerDeath;
 import net.runelite.api.events.SpotAnimationChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
@@ -78,6 +78,8 @@ public class FreezeTimersPlugin extends Plugin
 	private FreezeTimersOverlay overlay;
 	@Inject
 	private FreezeTimersConfig config;
+	@Inject
+	private EventBus eventBus;
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean showPlayers;
@@ -101,12 +103,14 @@ public class FreezeTimersPlugin extends Plugin
 	public void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(overlay);
 	}
 
 	public void shutDown()
 	{
+		eventBus.unregister(this);
 		overlayManager.remove(overlay);
 	}
 
@@ -116,7 +120,16 @@ public class FreezeTimersPlugin extends Plugin
 		return configManager.getConfig(FreezeTimersConfig.class);
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(SpotAnimationChanged.class, this, this::onSpotAnimationChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(LocalPlayerDeath.class, this, this::onLocalPlayerDeath);
+		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+	}
+
 	public void onSpotAnimationChanged(SpotAnimationChanged graphicChanged)
 	{
 		final int oldGraphic = prayerTracker.getSpotanimLastTick(graphicChanged.getActor());
@@ -149,10 +162,9 @@ public class FreezeTimersPlugin extends Plugin
 		}
 
 		timers.setTimerEnd(graphicChanged.getActor(), effect.getType(),
-			currentTime + length);
+				currentTime + length);
 	}
 
-	@Subscribe
 	public void onGameTick(GameTick tickEvent)
 	{
 		prayerTracker.gameTick();
@@ -182,12 +194,12 @@ public class FreezeTimersPlugin extends Plugin
 					timers.setTimerReApply(actor, TimerType.TELEBLOCK, System.currentTimeMillis());
 				}
 				else if (WorldType.isPvpWorld(worldTypes) &&
-					MapLocations.getPvpSafeZones(actorLoc.getPlane()).contains(actorLoc.getX(), actorLoc.getY()))
+						MapLocations.getPvpSafeZones(actorLoc.getPlane()).contains(actorLoc.getX(), actorLoc.getY()))
 				{
 					timers.setTimerReApply(actor, TimerType.TELEBLOCK, System.currentTimeMillis());
 				}
 				else if (WorldType.isDeadmanWorld(worldTypes) &&
-					MapLocations.getDeadmanSafeZones(actorLoc.getPlane()).contains(actorLoc.getX(), actorLoc.getY()))
+						MapLocations.getDeadmanSafeZones(actorLoc.getPlane()).contains(actorLoc.getX(), actorLoc.getY()))
 				{
 					timers.setTimerReApply(actor, TimerType.TELEBLOCK, System.currentTimeMillis());
 				}
@@ -195,8 +207,7 @@ public class FreezeTimersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	private void onPlayerDeath(PlayerDeath event)
+	private void onLocalPlayerDeath(LocalPlayerDeath event)
 	{
 		final Player localPlayer = client.getLocalPlayer();
 		final long currentTime = System.currentTimeMillis();
@@ -212,7 +223,6 @@ public class FreezeTimersPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	public void onNpcDespawned(NpcDespawned event)
 	{
 		if (!isAtVorkath())
@@ -230,15 +240,14 @@ public class FreezeTimersPlugin extends Plugin
 		if (npc.getName().equals("Zombified Spawn"))
 		{
 			timers.setTimerReApply(client.getLocalPlayer(), TimerType.FREEZE,
-				System.currentTimeMillis());
+					System.currentTimeMillis());
 		}
 	}
 
-	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
 		if (event.getType() != ChatMessageType.GAMEMESSAGE
-			|| !event.getMessage().contains("Your Tele Block has been removed"))
+				|| !event.getMessage().contains("Your Tele Block has been removed"))
 		{
 			return;
 		}
@@ -251,7 +260,6 @@ public class FreezeTimersPlugin extends Plugin
 		return ArrayUtils.contains(client.getMapRegions(), VORKATH_REGION);
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("freezetimers"))

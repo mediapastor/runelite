@@ -34,7 +34,6 @@ import net.runelite.api.GraphicID;
 import net.runelite.api.Player;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.SpotAnimationChanged;
-import net.runelite.client.config.OpenOSRSConfig;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
@@ -89,10 +88,6 @@ public class CookingPluginTest
 	@Mock
 	@Bind
 	OverlayManager overlayManager;
-
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
 
 	@Before
 	public void before()

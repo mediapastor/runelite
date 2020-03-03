@@ -4,89 +4,89 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("il")
+@ObfuscatedName("ig")
 @Implements("HealthBarDefinition")
 public class HealthBarDefinition extends DualNode {
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lhz;"
 	)
 	@Export("HealthBarDefinition_archive")
 	public static AbstractArchive HealthBarDefinition_archive;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "Lhq;"
+		signature = "Lhz;"
 	)
-	@Export("HitSplatDefinition_spritesArchive")
-	public static AbstractArchive HitSplatDefinition_spritesArchive;
-	@ObfuscatedName("n")
+	@Export("HealthBarDefinition_spritesArchive")
+	public static AbstractArchive HealthBarDefinition_spritesArchive;
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "Leb;"
+		signature = "Lep;"
 	)
 	@Export("HealthBarDefinition_cached")
-	public static EvictingDualNodeHashTable HealthBarDefinition_cached;
-	@ObfuscatedName("q")
+	static EvictingDualNodeHashTable HealthBarDefinition_cached;
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "Leb;"
+		signature = "Lep;"
 	)
 	@Export("HealthBarDefinition_cachedSprites")
-	public static EvictingDualNodeHashTable HealthBarDefinition_cachedSprites;
-	@ObfuscatedName("v")
+	static EvictingDualNodeHashTable HealthBarDefinition_cachedSprites;
+	@ObfuscatedName("u")
 	@ObfuscatedGetter(
-		intValue = 1067342333
+		intValue = -1504637567
 	)
-	public int field3265;
-	@ObfuscatedName("o")
+	public int field3264;
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = 2032079417
+		intValue = -1807788243
 	)
 	@Export("int1")
 	public int int1;
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@ObfuscatedGetter(
-		intValue = -1420994465
+		intValue = 1909708279
 	)
 	@Export("int2")
 	public int int2;
 	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = -601170319
+		intValue = -1885853349
 	)
 	@Export("int3")
 	public int int3;
-	@ObfuscatedName("m")
+	@ObfuscatedName("f")
 	@ObfuscatedGetter(
-		intValue = 1370340653
+		intValue = -563818397
 	)
 	@Export("int4")
 	public int int4;
-	@ObfuscatedName("p")
+	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		intValue = -197026089
+		intValue = -74768593
 	)
 	@Export("int5")
 	public int int5;
-	@ObfuscatedName("h")
+	@ObfuscatedName("r")
 	@ObfuscatedGetter(
-		intValue = -376766097
+		intValue = -1506111747
 	)
 	@Export("frontSpriteID")
 	int frontSpriteID;
-	@ObfuscatedName("k")
+	@ObfuscatedName("y")
 	@ObfuscatedGetter(
-		intValue = 1409027365
+		intValue = -1208608669
 	)
 	@Export("backSpriteID")
 	int backSpriteID;
-	@ObfuscatedName("x")
+	@ObfuscatedName("p")
 	@ObfuscatedGetter(
-		intValue = 1180776485
+		intValue = -567354113
 	)
 	@Export("width")
 	public int width;
-	@ObfuscatedName("j")
+	@ObfuscatedName("b")
 	@ObfuscatedGetter(
-		intValue = -975829671
+		intValue = 1929001923
 	)
 	@Export("widthPadding")
 	public int widthPadding;
@@ -96,7 +96,7 @@ public class HealthBarDefinition extends DualNode {
 		HealthBarDefinition_cachedSprites = new EvictingDualNodeHashTable(64);
 	}
 
-	public HealthBarDefinition() {
+	HealthBarDefinition() {
 		this.int1 = 255;
 		this.int2 = 255;
 		this.int3 = -1;
@@ -108,13 +108,13 @@ public class HealthBarDefinition extends DualNode {
 		this.widthPadding = 0;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("j")
 	@ObfuscatedSignature(
-		signature = "(Lkc;I)V",
-		garbageValue = "-276948452"
+		signature = "(Lky;I)V",
+		garbageValue = "-2108312426"
 	)
 	@Export("decode")
-	public void decode(Buffer var1) {
+	void decode(Buffer var1) {
 		while (true) {
 			int var2 = var1.readUnsignedByte();
 			if (var2 == 0) {
@@ -125,10 +125,10 @@ public class HealthBarDefinition extends DualNode {
 		}
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(Lkc;II)V",
-		garbageValue = "431816555"
+		signature = "(Lky;II)V",
+		garbageValue = "1232956083"
 	)
 	@Export("decodeNext")
 	void decodeNext(Buffer var1, int var2) {
@@ -145,9 +145,9 @@ public class HealthBarDefinition extends DualNode {
 		} else if (var2 == 6) {
 			var1.readUnsignedByte();
 		} else if (var2 == 7) {
-			this.frontSpriteID = var1.method5638();
+			this.frontSpriteID = var1.method5602();
 		} else if (var2 == 8) {
-			this.backSpriteID = var1.method5638();
+			this.backSpriteID = var1.method5602();
 		} else if (var2 == 11) {
 			this.int3 = var1.readUnsignedShort();
 		} else if (var2 == 14) {
@@ -158,10 +158,10 @@ public class HealthBarDefinition extends DualNode {
 
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "(I)Llx;",
-		garbageValue = "-907904185"
+		signature = "(I)Lls;",
+		garbageValue = "32246110"
 	)
 	@Export("getFrontSprite")
 	public Sprite getFrontSprite() {
@@ -172,7 +172,7 @@ public class HealthBarDefinition extends DualNode {
 			if (var1 != null) {
 				return var1;
 			} else {
-				var1 = MenuAction.SpriteBuffer_getSprite(HitSplatDefinition_spritesArchive, this.frontSpriteID, 0);
+				var1 = TilePaint.SpriteBuffer_getSprite(HealthBarDefinition_spritesArchive, this.frontSpriteID, 0);
 				if (var1 != null) {
 					HealthBarDefinition_cachedSprites.put(var1, (long)this.frontSpriteID);
 				}
@@ -182,10 +182,10 @@ public class HealthBarDefinition extends DualNode {
 		}
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("u")
 	@ObfuscatedSignature(
-		signature = "(I)Llx;",
-		garbageValue = "1192801770"
+		signature = "(I)Lls;",
+		garbageValue = "2113280722"
 	)
 	@Export("getBackSprite")
 	public Sprite getBackSprite() {
@@ -196,7 +196,7 @@ public class HealthBarDefinition extends DualNode {
 			if (var1 != null) {
 				return var1;
 			} else {
-				var1 = MenuAction.SpriteBuffer_getSprite(HitSplatDefinition_spritesArchive, this.backSpriteID, 0);
+				var1 = TilePaint.SpriteBuffer_getSprite(HealthBarDefinition_spritesArchive, this.backSpriteID, 0);
 				if (var1 != null) {
 					HealthBarDefinition_cachedSprites.put(var1, (long)this.backSpriteID);
 				}
@@ -204,72 +204,5 @@ public class HealthBarDefinition extends DualNode {
 				return var1;
 			}
 		}
-	}
-
-	@ObfuscatedName("ka")
-	@ObfuscatedSignature(
-		signature = "([Lhi;IB)V",
-		garbageValue = "-5"
-	)
-	@Export("drawModelComponents")
-	static final void drawModelComponents(Widget[] var0, int var1) {
-		for (int var2 = 0; var2 < var0.length; ++var2) {
-			Widget var3 = var0[var2];
-			if (var3 != null && var3.parentId == var1 && (!var3.isIf3 || !WorldMapManager.isComponentHidden(var3))) {
-				if (var3.type == 0) {
-					if (!var3.isIf3 && WorldMapManager.isComponentHidden(var3) && var3 != ChatChannel.mousedOverWidgetIf1) {
-						continue;
-					}
-
-					drawModelComponents(var0, var3.id);
-					if (var3.children != null) {
-						drawModelComponents(var3.children, var3.id);
-					}
-
-					InterfaceParent var4 = (InterfaceParent)Client.interfaceParents.get((long)var3.id);
-					if (var4 != null) {
-						AbstractWorldMapData.method326(var4.group);
-					}
-				}
-
-				if (var3.type == 6) {
-					int var5;
-					if (var3.sequenceId != -1 || var3.sequenceId2 != -1) {
-						boolean var7 = SecureRandomCallable.runCs1(var3);
-						if (var7) {
-							var5 = var3.sequenceId2;
-						} else {
-							var5 = var3.sequenceId;
-						}
-
-						if (var5 != -1) {
-							SequenceDefinition var6 = PlayerType.SequenceDefinition_get(var5);
-
-							for (var3.modelFrameCycle += Client.field693; var3.modelFrameCycle > var6.frameLengths[var3.modelFrame]; GrandExchangeOfferAgeComparator.invalidateWidget(var3)) {
-								var3.modelFrameCycle -= var6.frameLengths[var3.modelFrame];
-								++var3.modelFrame;
-								if (var3.modelFrame >= var6.frameIds.length) {
-									var3.modelFrame -= var6.frameCount;
-									if (var3.modelFrame < 0 || var3.modelFrame >= var6.frameIds.length) {
-										var3.modelFrame = 0;
-									}
-								}
-							}
-						}
-					}
-
-					if (var3.field2604 != 0 && !var3.isIf3) {
-						int var8 = var3.field2604 >> 16;
-						var5 = var3.field2604 << 16 >> 16;
-						var8 *= Client.field693;
-						var5 *= Client.field693;
-						var3.modelAngleX = var8 + var3.modelAngleX & 2047;
-						var3.modelAngleY = var5 + var3.modelAngleY & 2047;
-						GrandExchangeOfferAgeComparator.invalidateWidget(var3);
-					}
-				}
-			}
-		}
-
 	}
 }

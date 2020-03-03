@@ -30,7 +30,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Shape;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Instant;
@@ -47,12 +46,12 @@ import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.util.Text;
 import net.runelite.client.graphics.ModelOutlineRenderer;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.api.util.Text;
 
 @Singleton
 public class NpcSceneOverlay extends Overlay
@@ -161,24 +160,15 @@ public class NpcSceneOverlay extends Overlay
 		switch (plugin.getRenderStyle())
 		{
 			case SOUTH_WEST_TILE:
-			{
-				int size = 1;
-				NPCDefinition composition = actor.getTransformedDefinition();
-				if (composition != null)
+				final LocalPoint lp1 = LocalPoint.fromWorld(client, actor.getWorldLocation());
+				Polygon tilePoly1 = null;
+				if (lp1 != null)
 				{
-					size = composition.getSize();
+					tilePoly1 = Perspective.getCanvasTilePoly(client, lp1);
 				}
 
-				LocalPoint localPoint = actor.getLocalLocation();
-
-				int x = localPoint.getX() - ((size - 1) * Perspective.LOCAL_TILE_SIZE / 2);
-				int y = localPoint.getY() - ((size - 1) * Perspective.LOCAL_TILE_SIZE / 2);
-
-				Polygon tilePoly = Perspective.getCanvasTilePoly(client, new LocalPoint(x, y));
-
-				renderPoly(graphics, color, tilePoly);
+				renderPoly(graphics, color, tilePoly1);
 				break;
-			}
 			case TILE:
 				int size = 1;
 				NPCDefinition composition = actor.getTransformedDefinition();
@@ -191,9 +181,8 @@ public class NpcSceneOverlay extends Overlay
 				renderPoly(graphics, color, tilePoly);
 				break;
 			case HULL:
-				final Shape objectClickbox = actor.getConvexHull();
-				graphics.setColor(color);
-				graphics.draw(objectClickbox);
+				final Polygon objectClickbox = actor.getConvexHull();
+				renderPoly(graphics, color, objectClickbox);
 				break;
 			case THIN_OUTLINE:
 				modelOutliner.drawOutline(actor, 1, color);

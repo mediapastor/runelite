@@ -3,61 +3,70 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
+import net.runelite.rs.ScriptOpcodes;
 
-@ObfuscatedName("bp")
+@ObfuscatedName("bc")
 @Implements("GraphicsObject")
 public final class GraphicsObject extends Entity {
-	@ObfuscatedName("a")
+	@ObfuscatedName("qe")
 	@ObfuscatedGetter(
-		intValue = 1802533403
+		intValue = -487309312
+	)
+	static int field1079;
+	@ObfuscatedName("gx")
+	@Export("regionLandArchives")
+	static byte[][] regionLandArchives;
+	@ObfuscatedName("s")
+	@ObfuscatedGetter(
+		intValue = -609520515
 	)
 	@Export("id")
 	int id;
-	@ObfuscatedName("t")
+	@ObfuscatedName("j")
 	@ObfuscatedGetter(
-		intValue = 41870533
+		intValue = 528073861
 	)
 	@Export("cycleStart")
 	int cycleStart;
-	@ObfuscatedName("n")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = 2097627587
+		intValue = 1305204903
 	)
 	@Export("plane")
 	int plane;
-	@ObfuscatedName("q")
+	@ObfuscatedName("k")
 	@ObfuscatedGetter(
-		intValue = 1396277017
+		intValue = 1986692437
 	)
 	@Export("x")
 	int x;
-	@ObfuscatedName("v")
+	@ObfuscatedName("u")
 	@ObfuscatedGetter(
-		intValue = 176169087
+		intValue = 575337647
 	)
 	@Export("y")
 	int y;
-	@ObfuscatedName("l")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -1076898081
+		intValue = -893117639
 	)
 	@Export("height")
 	int height;
-	@ObfuscatedName("c")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Liv;"
+		signature = "Lij;"
 	)
 	@Export("sequenceDefinition")
 	SequenceDefinition sequenceDefinition;
-	@ObfuscatedName("o")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = 977223341
+		intValue = -1568571077
 	)
 	@Export("frame")
 	int frame;
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@ObfuscatedGetter(
-		intValue = -706128457
+		intValue = -1439045539
 	)
 	@Export("frameCycle")
 	int frameCycle;
@@ -75,20 +84,20 @@ public final class GraphicsObject extends Entity {
 		this.y = var4;
 		this.height = var5;
 		this.cycleStart = var7 + var6;
-		int var8 = MenuAction.SpotAnimationDefinition_get(this.id).sequence;
+		int var8 = HealthBarUpdate.SpotAnimationDefinition_get(this.id).sequence;
 		if (var8 != -1) {
 			this.isFinished = false;
-			this.sequenceDefinition = PlayerType.SequenceDefinition_get(var8);
+			this.sequenceDefinition = Widget.SequenceDefinition_get(var8);
 		} else {
 			this.isFinished = true;
 		}
 
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(IB)V",
-		garbageValue = "1"
+		signature = "(IS)V",
+		garbageValue = "-9690"
 	)
 	@Export("advance")
 	final void advance(int var1) {
@@ -107,14 +116,14 @@ public final class GraphicsObject extends Entity {
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("x")
 	@ObfuscatedSignature(
-		signature = "(B)Ldv;",
-		garbageValue = "-40"
+		signature = "(I)Ldo;",
+		garbageValue = "-419920513"
 	)
 	@Export("getModel")
 	protected final Model getModel() {
-		SpotAnimationDefinition var1 = MenuAction.SpotAnimationDefinition_get(this.id);
+		SpotAnimationDefinition var1 = HealthBarUpdate.SpotAnimationDefinition_get(this.id);
 		Model var2;
 		if (!this.isFinished) {
 			var2 = var1.getModel(this.frame);
@@ -125,53 +134,49 @@ public final class GraphicsObject extends Entity {
 		return var2 == null ? null : var2;
 	}
 
-	@ObfuscatedName("a")
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "(II)I",
-		garbageValue = "-1912506698"
+		signature = "(II)Z",
+		garbageValue = "971415890"
 	)
-	public static int method2158(int var0) {
-		var0 = (var0 & 1431655765) + (var0 >>> 1 & 1431655765);
-		var0 = (var0 >>> 2 & 858993459) + (var0 & 858993459);
-		var0 = var0 + (var0 >>> 4) & 252645135;
-		var0 += var0 >>> 8;
-		var0 += var0 >>> 16;
-		return var0 & 255;
+	public static boolean method1946(int var0) {
+		return var0 == WorldMapDecorationType.field2722.id;
 	}
 
-	@ObfuscatedName("n")
-	static boolean method2155(long var0) {
-		boolean var2 = var0 != 0L;
-		if (var2) {
-			boolean var3 = (int)(var0 >>> 16 & 1L) == 1;
-			var2 = !var3;
-		}
-
-		return var2;
+	@ObfuscatedName("s")
+	@ObfuscatedSignature(
+		signature = "(I)Z",
+		garbageValue = "85520367"
+	)
+	@Export("hasReflectionCheck")
+	public static boolean hasReflectionCheck() {
+		ReflectionCheck var0 = (ReflectionCheck)class96.reflectionChecks.last();
+		return var0 != null;
 	}
 
-	@ObfuscatedName("hi")
+	@ObfuscatedName("p")
 	@ObfuscatedSignature(
-		signature = "(IIII)I",
-		garbageValue = "-1853163943"
+		signature = "(ILcr;ZI)I",
+		garbageValue = "886521701"
 	)
-	@Export("getTileHeight")
-	static final int getTileHeight(int var0, int var1, int var2) {
-		int var3 = var0 >> 7;
-		int var4 = var1 >> 7;
-		if (var3 >= 0 && var4 >= 0 && var3 <= 103 && var4 <= 103) {
-			int var5 = var2;
-			if (var2 < 3 && (Tiles.Tiles_renderFlags[1][var3][var4] & 2) == 2) {
-				var5 = var2 + 1;
+	static int method1939(int var0, Script var1, boolean var2) {
+		Widget var3 = var2 ? class286.field3623 : class297.field3693;
+		if (var0 == ScriptOpcodes.CC_GETINVOBJECT) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.itemId;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETINVCOUNT) {
+			if (var3.itemId != -1) {
+				Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.itemQuantity;
+			} else {
+				Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = 0;
 			}
 
-			int var6 = var0 & 127;
-			int var7 = var1 & 127;
-			int var8 = (128 - var6) * Tiles.Tiles_heights[var5][var3][var4] + var6 * Tiles.Tiles_heights[var5][var3 + 1][var4] >> 7;
-			int var9 = var6 * Tiles.Tiles_heights[var5][var3 + 1][var4 + 1] + Tiles.Tiles_heights[var5][var3][var4 + 1] * (128 - var6) >> 7;
-			return var8 * (128 - var7) + var7 * var9 >> 7;
+			return 1;
+		} else if (var0 == ScriptOpcodes.CC_GETID) {
+			Interpreter.Interpreter_intStack[++Interpreter.Interpreter_intStackSize - 1] = var3.childIndex;
+			return 1;
 		} else {
-			return 0;
+			return 2;
 		}
 	}
 }

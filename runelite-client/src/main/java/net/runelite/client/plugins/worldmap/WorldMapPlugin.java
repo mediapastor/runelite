@@ -29,19 +29,19 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.concurrent.ScheduledExecutorService;
 import net.runelite.api.Client;
+import net.runelite.api.Experience;
 import net.runelite.api.GameState;
+import net.runelite.api.Skill;
 import net.runelite.api.Quest;
 import net.runelite.api.QuestState;
-import net.runelite.api.Skill;
-import net.runelite.api.events.StatChanged;
+import net.runelite.api.events.ConfigChanged;
+import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.AgilityShortcut;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -80,7 +80,6 @@ public class WorldMapPlugin extends Plugin
 	static final String CONFIG_KEY_RARE_TREE_TOOLTIPS = "rareTreeTooltips";
 	static final String CONFIG_KEY_RARE_TREE_LEVEL_ICON = "rareTreeIcon";
 	static final String CONFIG_KEY_TRANSPORATION_TELEPORT_TOOLTIPS = "transportationTooltips";
-	static final String CONFIG_KEY_RUNECRAFTING_ALTAR_ICON = "runecraftingAltarIcon";
 
 	static
 	{
@@ -126,7 +125,7 @@ public class WorldMapPlugin extends Plugin
 	private WorldMapPointManager worldMapPointManager;
 
 	@Inject
-	private ScheduledExecutorService executor;
+	private EventBus eventBus;
 
 	private int agilityLevel = 0;
 	private int woodcuttingLevel = 0;
@@ -159,6 +158,7 @@ public class WorldMapPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
+		addSubscriptions();
 
 		agilityLevel = client.getRealSkillLevel(Skill.AGILITY);
 		woodcuttingLevel = client.getRealSkillLevel(Skill.WOODCUTTING);
@@ -168,6 +168,8 @@ public class WorldMapPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		worldMapPointManager.removeIf(FairyRingPoint.class::isInstance);
 		worldMapPointManager.removeIf(AgilityShortcutPoint.class::isInstance);
 		worldMapPointManager.removeIf(QuestStartPoint.class::isInstance);
@@ -176,12 +178,17 @@ public class WorldMapPlugin extends Plugin
 		worldMapPointManager.removeIf(MinigamePoint.class::isInstance);
 		worldMapPointManager.removeIf(FarmingPatchPoint.class::isInstance);
 		worldMapPointManager.removeIf(RareTreePoint.class::isInstance);
-		worldMapPointManager.removeIf(RunecraftingAltarPoint.class::isInstance);
 		agilityLevel = 0;
 		woodcuttingLevel = 0;
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(ExperienceChanged.class, this, this::onExperienceChanged);
+		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
+	}
+
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals(CONFIG_KEY))
@@ -193,35 +200,29 @@ public class WorldMapPlugin extends Plugin
 		updateShownIcons();
 	}
 
-	@Subscribe
-	private void onStatChanged(StatChanged statChanged)
+	private void onExperienceChanged(ExperienceChanged event)
 	{
-		switch (statChanged.getSkill())
+		if (event.getSkill() == Skill.AGILITY)
 		{
-			case AGILITY:
+			int newAgilityLevel = Experience.getLevelForXp(client.getSkillExperience(Skill.AGILITY));
+			if (newAgilityLevel != agilityLevel)
 			{
-				int newAgilityLevel = statChanged.getLevel();
-				if (newAgilityLevel != agilityLevel)
-				{
-					agilityLevel = newAgilityLevel;
-					updateAgilityIcons();
-				}
-				break;
+				agilityLevel = newAgilityLevel;
+				updateAgilityIcons();
 			}
-			case WOODCUTTING:
+		}
+
+		if (event.getSkill() == Skill.WOODCUTTING)
+		{
+			int newWoodcutLevel = Experience.getLevelForXp(client.getSkillExperience(Skill.WOODCUTTING));
+			if (newWoodcutLevel != woodcuttingLevel)
 			{
-				int newWoodcutLevel = statChanged.getLevel();
-				if (newWoodcutLevel != woodcuttingLevel)
-				{
-					woodcuttingLevel = newWoodcutLevel;
-					updateRareTreeIcons();
-				}
-				break;
+				woodcuttingLevel = newWoodcutLevel;
+				updateRareTreeIcons();
 			}
 		}
 	}
 
-	@Subscribe
 	private void onWidgetLoaded(WidgetLoaded widgetLoaded)
 	{
 		if (widgetLoaded.getGroupId() == WidgetID.WORLD_MAP_GROUP_ID)
@@ -307,7 +308,6 @@ public class WorldMapPlugin extends Plugin
 		}
 
 		worldMapPointManager.removeIf(TeleportPoint.class::isInstance);
-		// This next part gets 142 icons from disk, and does so on the EDT (at first run)
 		Arrays.stream(TeleportLocationData.values())
 			.filter(data ->
 			{
@@ -332,14 +332,6 @@ public class WorldMapPlugin extends Plugin
 				}
 			}).map(TeleportPoint::new)
 			.forEach(worldMapPointManager::add);
-
-		worldMapPointManager.removeIf(RunecraftingAltarPoint.class::isInstance);
-		if (config.runecraftingAltarIcon())
-		{
-			Arrays.stream(RunecraftingAltarLocation.values())
-				.map(RunecraftingAltarPoint::new)
-				.forEach(worldMapPointManager::add);
-		}
 	}
 
 	private void updateQuestStartPointIcons()

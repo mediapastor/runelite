@@ -31,7 +31,6 @@ import com.google.inject.testing.fieldbinder.BoundFieldModule;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
-import net.runelite.client.config.OpenOSRSConfig;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -54,10 +53,6 @@ public class ChatFilterPluginTest
 	@Mock
 	@Bind
 	private ChatFilterConfig chatFilterConfig;
-
-	@Mock
-	@Bind
-	private OpenOSRSConfig openOSRSConfig;
 
 	@Mock
 	private Player localPlayer;
@@ -140,7 +135,6 @@ public class ChatFilterPluginTest
 	public void testMessageFromFriendIsFiltered()
 	{
 		chatFilterPlugin.setFilterFriends(true);
-		when(client.isClanMember("Iron Mammal")).thenReturn(false);
 		assertTrue(chatFilterPlugin.shouldFilterPlayerMessage("Iron Mammal"));
 	}
 
@@ -155,7 +149,8 @@ public class ChatFilterPluginTest
 	@Test
 	public void testMessageFromClanIsFiltered()
 	{
-		when(client.isFriended("B0aty", false)).thenReturn(false);
+		lenient().when(client.isClanMember("B0aty")).thenReturn(true);
+		chatFilterPlugin.setFilterClan(true);
 		assertTrue(chatFilterPlugin.shouldFilterPlayerMessage("B0aty"));
 	}
 

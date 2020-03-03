@@ -68,6 +68,7 @@ import net.runelite.api.TileItem;
 import net.runelite.api.TileItemPile;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.FocusChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
@@ -79,8 +80,7 @@ import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.util.Text;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.events.PlayerLootReceived;
 import net.runelite.client.game.ItemManager;
@@ -100,7 +100,7 @@ import net.runelite.client.plugins.grounditems.config.TimerDisplayMode;
 import net.runelite.client.plugins.grounditems.config.ValueCalculationMode;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ColorUtil;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.client.util.StackFormatter;
 
 @PluginDescriptor(
 	name = "Ground Items",
@@ -421,6 +421,8 @@ public class GroundItemsPlugin extends Plugin
 	private GroundItemsOverlay overlay;
 	@Inject
 	private Notifier notifier;
+	@Inject
+	private EventBus eventBus;
 	private LoadingCache<String, Boolean> highlightedItems;
 	private Color defaultColor;
 	private Color highlightedColor;
@@ -485,6 +487,7 @@ public class GroundItemsPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+		addSubscriptions();
 
 		overlayManager.add(overlay);
 		reset();
@@ -495,6 +498,8 @@ public class GroundItemsPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(this);
+
 		overlayManager.remove(overlay);
 		mouseManager.unregisterMouseListener(inputListener);
 		keyManager.unregisterKeyListener(inputListener);
@@ -507,7 +512,22 @@ public class GroundItemsPlugin extends Plugin
 		collectedGroundItems.clear();
 	}
 
-	@Subscribe
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(ItemSpawned.class, this, this::onItemSpawned);
+		eventBus.subscribe(ItemDespawned.class, this, this::onItemDespawned);
+		eventBus.subscribe(ItemQuantityChanged.class, this, this::onItemQuantityChanged);
+		eventBus.subscribe(NpcLootReceived.class, this, this::onNpcLootReceived);
+		eventBus.subscribe(PlayerLootReceived.class, this, this::onPlayerLootReceived);
+		eventBus.subscribe(ClientTick.class, this, this::onClientTick);
+		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
+		eventBus.subscribe(FocusChanged.class, this, this::onFocusChanged);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+	}
+
 	private void onGameTick(GameTick event)
 	{
 		for (GroundItem item : collectedGroundItems.values())
@@ -520,7 +540,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("grounditems"))
@@ -530,7 +549,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onGameStateChanged(final GameStateChanged event)
 	{
 		if (event.getGameState() == GameState.LOADING)
@@ -539,7 +557,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemSpawned(ItemSpawned itemSpawned)
 	{
 		TileItem item = itemSpawned.getItem();
@@ -566,7 +583,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemDespawned(ItemDespawned itemDespawned)
 	{
 		TileItem item = itemDespawned.getItem();
@@ -593,7 +609,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onItemQuantityChanged(ItemQuantityChanged itemQuantityChanged)
 	{
 		TileItem item = itemQuantityChanged.getItem();
@@ -610,7 +625,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onNpcLootReceived(NpcLootReceived npcLootReceived)
 	{
 		npcLootReceived.getItems().forEach(item ->
@@ -628,7 +642,6 @@ public class GroundItemsPlugin extends Plugin
 		lootNotifier(items);
 	}
 
-	@Subscribe
 	private void onPlayerLootReceived(PlayerLootReceived playerLootReceived)
 	{
 		Collection<ItemStack> items = playerLootReceived.getItems();
@@ -676,7 +689,6 @@ public class GroundItemsPlugin extends Plugin
 		notifier.notify(notification);
 	}
 
-	@Subscribe
 	private void onClientTick(ClientTick event)
 	{
 		final MenuEntry[] menuEntries = client.getMenuEntries();
@@ -723,13 +735,13 @@ public class GroundItemsPlugin extends Plugin
 				{
 					final MenuEntry aEntry = a.getEntry();
 					final int aId = aEntry.getIdentifier();
+					final boolean aHidden = isItemIdHidden(aId);
 					final int aQuantity = getCollapsedItemQuantity(aId, aEntry.getTarget());
-					final boolean aHidden = isItemIdHidden(aId, aQuantity);
 
 					final MenuEntry bEntry = b.getEntry();
 					final int bId = bEntry.getIdentifier();
+					final boolean bHidden = isItemIdHidden(bId);
 					final int bQuantity = getCollapsedItemQuantity(bId, bEntry.getTarget());
-					final boolean bHidden = isItemIdHidden(bId, bQuantity);
 
 					// only put items below walk if the config is set for it
 					if (this.rightClickHidden)
@@ -919,26 +931,27 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	private void onMenuEntryAdded(MenuEntryAdded lastEntry)
+	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
 		if (this.itemHighlightMode != OVERLAY)
 		{
-			final boolean telegrabEntry = lastEntry.getOption().equals("Cast") && lastEntry.getTarget().startsWith(TELEGRAB_TEXT) && lastEntry.getOpcode() == CAST_ON_ITEM;
-			if (!(lastEntry.getOption().equals("Take") && lastEntry.getOpcode() == THIRD_OPTION) && !telegrabEntry)
+			final boolean telegrabEntry = event.getOption().equals("Cast") && event.getTarget().startsWith(TELEGRAB_TEXT) && event.getType() == CAST_ON_ITEM;
+			if (!(event.getOption().equals("Take") && event.getType() == THIRD_OPTION) && !telegrabEntry)
 			{
 				return;
 			}
 
-			int itemId = lastEntry.getIdentifier();
+			int itemId = event.getIdentifier();
 			Scene scene = client.getScene();
-			Tile tile = scene.getTiles()[client.getPlane()][lastEntry.getParam0()][lastEntry.getParam1()];
+			Tile tile = scene.getTiles()[client.getPlane()][event.getActionParam0()][event.getActionParam1()];
 			TileItemPile tileItemPile = tile.getItemLayer();
 
 			if (tileItemPile == null)
 			{
 				return;
 			}
+
+			final MenuEntry lastEntry = event.getMenuEntry();
 
 			int quantity = 1;
 			Node current = tileItemPile.getBottom();
@@ -952,7 +965,6 @@ public class GroundItemsPlugin extends Plugin
 				}
 				current = current.getNext();
 			}
-
 
 			final ItemDefinition itemComposition = itemManager.getItemDefinition(itemId);
 			final int realItemId = itemComposition.getNote() != -1 ? itemComposition.getLinkedNoteId() : itemComposition.getId();
@@ -973,7 +985,7 @@ public class GroundItemsPlugin extends Plugin
 				{
 					final String optionText = telegrabEntry ? "Cast" : "Take";
 					lastEntry.setOption(ColorUtil.prependColorTag(optionText, color));
-					lastEntry.setModified();
+					event.setWasModified(true);
 				}
 
 				if (mode == BOTH || mode == NAME)
@@ -993,17 +1005,17 @@ public class GroundItemsPlugin extends Plugin
 					}
 
 					lastEntry.setTarget(target);
-					lastEntry.setModified();
+					event.setWasModified(true);
 				}
 			}
 
 			if (this.showMenuItemQuantities && itemComposition.isStackable() && quantity > 1)
 			{
 				lastEntry.setTarget(lastEntry.getTarget() + " (" + quantity + ")");
-				lastEntry.setModified();
+				event.setWasModified(true);
 			}
 
-			if (this.removeIgnored && lastEntry.getOption().equals("Take") && hiddenItemList.contains(Text.removeTags(lastEntry.getTarget())))
+			if (this.removeIgnored && event.getOption().equals("Take") && hiddenItemList.contains(Text.removeTags(event.getTarget())))
 			{
 				client.setMenuOptionCount(client.getMenuOptionCount() - 1);
 			}
@@ -1116,12 +1128,12 @@ public class GroundItemsPlugin extends Plugin
 		return itemManager.getItemPrice(realItemId);
 	}
 
-	private boolean isItemIdHidden(int itemId, int quantity)
+	private boolean isItemIdHidden(int itemId)
 	{
 		final ItemDefinition itemComposition = itemManager.getItemDefinition(itemId);
 		final int realItemId = itemComposition.getNote() != -1 ? itemComposition.getLinkedNoteId() : itemId;
-		final int alchPrice = itemManager.getAlchValue(realItemId) * quantity;
-		final int gePrice = itemManager.getItemPrice(realItemId) * quantity;
+		final int alchPrice = itemManager.getAlchValue(realItemId);
+		final int gePrice = itemManager.getItemPrice(realItemId);
 
 		return getHidden(itemComposition.getName(), gePrice, alchPrice, itemComposition.isTradeable()) != null;
 	}
@@ -1163,7 +1175,6 @@ public class GroundItemsPlugin extends Plugin
 		return this.defaultColor;
 	}
 
-	@Subscribe
 	private void onFocusChanged(FocusChanged focusChanged)
 	{
 		if (!focusChanged.isFocused())
@@ -1172,7 +1183,6 @@ public class GroundItemsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked menuOptionClicked)
 	{
 		if (menuOptionClicked.getMenuOpcode() == MenuOpcode.ITEM_DROP)
@@ -1205,7 +1215,7 @@ public class GroundItemsPlugin extends Plugin
 			else
 			{
 				notificationStringBuilder.append(" (")
-					.append(QuantityFormatter.quantityToStackSize(item.getQuantity()))
+					.append(StackFormatter.quantityToStackSize(item.getQuantity()))
 					.append(")");
 			}
 		}
