@@ -70,7 +70,9 @@ public class HookImporter
 		Assert.assertNotNull(is);
 
 		Gson gson = new Gson();
-		java.lang.reflect.Type type = new TypeToken<Map<String, ClassHook>>() {}.getType();
+		java.lang.reflect.Type type = new TypeToken<Map<String, ClassHook>>()
+		{
+		}.getType();
 		hooks = gson.fromJson(new InputStreamReader(is), type);
 
 		group = JarUtil.loadJar(IN);
@@ -274,7 +276,8 @@ public class HookImporter
 			{
 				for (Element e : a.getElements())
 				{
-					return (String) e.getValue();
+					String str = (String) e.getValue();
+					return str;
 				}
 			}
 		}
@@ -285,7 +288,7 @@ public class HookImporter
 	private Signature getObfuscatedMethodSignature(Method method)
 	{
 		String sig = getAnnotation(method.getAnnotations(), OBFUSCATED_SIGNATURE);
-		if (!sig.isEmpty())
+		if (sig.isEmpty() == false)
 		{
 			return toObSignature(new Signature(sig)); // if it is annoted, use that
 		}

@@ -81,7 +81,9 @@ public class HookImporter
 
 		InputStream is = getClass().getResourceAsStream("hooks.json");
 		Gson gson = new Gson();
-		java.lang.reflect.Type type = new TypeToken<List<HookClass>>() {}.getType();
+		java.lang.reflect.Type type = new TypeToken<List<HookClass>>()
+		{
+		}.getType();
 		hooks = gson.fromJson(new InputStreamReader(is), type);
 	}
 

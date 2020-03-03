@@ -25,8 +25,9 @@
 
 package net.runelite.asm.pool;
 
-import java.util.Objects;
 import net.runelite.asm.Type;
+
+import java.util.Objects;
 
 public class Field
 {

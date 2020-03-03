@@ -32,7 +32,6 @@ import net.runelite.asm.Method;
 import net.runelite.asm.attributes.Annotations;
 import net.runelite.asm.attributes.annotation.Annotation;
 import net.runelite.asm.attributes.annotation.Element;
-import net.runelite.asm.attributes.annotation.SimpleElement;
 import net.runelite.deob.DeobAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class AnnotationMapper
 {
 	private static final Logger logger = LoggerFactory.getLogger(AnnotationMapper.class);
-
+	
 	private final ClassGroup source, target;
 	private final ParallelExecutorMapping mapping;
 
@@ -120,17 +119,20 @@ public class AnnotationMapper
 
 		if (from.getAnnotations() == null)
 			return count;
-
+		
 		for (Annotation a : from.getAnnotations())
 		{
 			if (isCopyable(a))
 			{
-				Annotation annotation = new Annotation(a.getType());
+				Annotation annotation = new Annotation(to);
+				annotation.setType(a.getType());
 				to.addAnnotation(annotation);
 
 				for (Element e : a.getElements())
 				{
-					Element element = new SimpleElement(e.getName(), e.getValue());
+					Element element = new Element(annotation);
+					element.setName(e.getName());
+					element.setValue(e.getValue());
 					annotation.addElement(element);
 				}
 
@@ -153,6 +155,7 @@ public class AnnotationMapper
 	private boolean isCopyable(Annotation a)
 	{
 		return a.getType().equals(DeobAnnotations.EXPORT)
-			|| a.getType().equals(DeobAnnotations.IMPLEMENTS);
+			|| a.getType().equals(DeobAnnotations.IMPLEMENTS)
+			|| a.getType().equals(DeobAnnotations.HOOK);
 	}
 }
