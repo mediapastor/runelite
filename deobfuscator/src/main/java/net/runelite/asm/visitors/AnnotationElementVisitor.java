@@ -25,44 +25,59 @@
 
 package net.runelite.asm.visitors;
 
-import net.runelite.asm.Method;
 import net.runelite.asm.Type;
 import net.runelite.asm.attributes.annotation.Annotation;
-import net.runelite.asm.attributes.annotation.Element;
+import net.runelite.asm.attributes.annotation.ArrayElement;
+import net.runelite.asm.attributes.annotation.SimpleElement;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class MethodAnnotationVisitor extends AnnotationVisitor
+public class AnnotationElementVisitor extends AnnotationVisitor
 {
-	private final Method method;
-	private final Type type;
 	private final Annotation annotation;
-	
-	public MethodAnnotationVisitor(Method method, Type type)
+
+	AnnotationElementVisitor(Annotation annotation)
 	{
 		super(Opcodes.ASM5);
-		
-		this.method = method;
-		this.type = type;
-		
-		annotation = new Annotation(method.getAnnotations());
-		annotation.setType(type);
+
+		this.annotation = annotation;
 	}
-	
+
 	@Override
 	public void visit(String name, Object value)
 	{
-		Element element = new Element(annotation);
-		
-		element.setName(name);
-		element.setValue(value);
-		
+		SimpleElement element = new SimpleElement(name, value);
 		annotation.addElement(element);
 	}
-	
+
 	@Override
-	public void visitEnd()
+	public AnnotationVisitor visitArray(String name)
 	{
-		method.getAnnotations().addAnnotation(annotation);
+		ArrayElement element = new ArrayElement(name);
+		this.annotation.addElement(element);
+		return new AnnotationVisitor(Opcodes.ASM5)
+		{
+			@Override
+			public void visit(String name, Object value)
+			{
+				element.addValue(value);
+			}
+
+			@Override
+			public AnnotationVisitor visitAnnotation(String name, String descriptor)
+			{
+				Annotation annotation = new Annotation(name, new Type(descriptor));
+				element.addValue(annotation);
+				return new AnnotationElementVisitor(annotation);
+			}
+		};
+	}
+
+	@Override
+	public AnnotationVisitor visitAnnotation(String name, String descriptor)
+	{
+		Annotation annotation = new Annotation(name, new Type(descriptor));
+		this.annotation.addElement(annotation);
+		return new AnnotationElementVisitor(annotation);
 	}
 }
