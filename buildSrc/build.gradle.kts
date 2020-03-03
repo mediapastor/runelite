@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2019 Owain van Brakel <https://github.com/Owain94>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,6 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.cache.definitions;
 
-public interface WorldMapTypeBase {}
+plugins {
+    `kotlin-dsl`
+}
+
+repositories {
+    jcenter()
+    maven(url = "https://raw.githubusercontent.com/open-osrs/hosting/master")
+}
+
+dependencies {
+    implementation(gradleApi())
+    implementation(group = "net.runelite", name = "fernflower", version = "07082019")
+    implementation(group = "org.json", name = "json", version = "20190722")
+}
+
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
+}

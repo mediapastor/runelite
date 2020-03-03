@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2019 Owain van Brakel <https://github.com/Owain94>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,6 +22,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.cache.definitions;
 
-public interface WorldMapTypeBase {}
+description = "Cache Client"
+
+dependencies {
+    api(project(":cache"))
+    api(project(":protocol"))
+
+    implementation(Libraries.guava)
+    implementation(Libraries.nettyAll)
+    implementation(Libraries.slf4jApi)
+
+    testImplementation(Libraries.junit)
+    testImplementation(Libraries.slf4jSimple)
+    testImplementation(project(path = ":cache", configuration = "testArchives"))
+}
+
+tasks {
+    register<JavaExec>("download") {
+        dependsOn(":cache-client:build")
+
+        classpath = project.sourceSets.main.get().runtimeClasspath
+        main = "net.runelite.cache.client.CacheClient"
+        args(listOf(ProjectVersions.rsversion))
+    }
+}

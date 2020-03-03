@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2019 Owain van Brakel <https://github.com/Owain94>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,6 +22,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.cache.definitions;
 
-public interface WorldMapTypeBase {}
+description = "Cache Updater"
+
+dependencies {
+    annotationProcessor(Libraries.lombok)
+
+    compileOnly(Libraries.lombok)
+
+    implementation(Libraries.minio)
+    implementation(Libraries.mysqlConnectorJava)
+    implementation(Libraries.springbootDevtools)
+    implementation(Libraries.springbootStarter)
+    implementation(Libraries.springbootStarterJdbc)
+    implementation(Libraries.sql2o)
+    implementation(project(":cache-client"))
+}
