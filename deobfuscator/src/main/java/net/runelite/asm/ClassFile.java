@@ -31,12 +31,13 @@ import net.runelite.asm.attributes.annotation.Annotation;
 import net.runelite.asm.pool.Class;
 import net.runelite.asm.signature.Signature;
 import static net.runelite.deob.DeobAnnotations.*;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class ClassFile implements Annotated, Named
+public class ClassFile
 {
 	private ClassGroup group;
 
@@ -99,9 +100,10 @@ public class ClassFile implements Annotated, Named
 		visitor.visit(version, access, name.getName(), null, super_class.getName(), ints);
 		visitor.visitSource(source, null);
 
-		for (Annotation annotation : annotations)
+		for (Annotation annotation : annotations.getAnnotations())
 		{
-			annotation.accept(visitor.visitAnnotation(annotation.getType().toString(), true));
+			AnnotationVisitor av = visitor.visitAnnotation(annotation.getType().toString(), true);
+			annotation.accept(av);
 		}
 
 		for (Field field : fields)

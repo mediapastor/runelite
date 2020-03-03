@@ -69,16 +69,16 @@ public class ObjectSaver
 		{
 			out.writeByte(18);
 		}
-		if (obj.getWallOrDoor() != -1)
+		if (obj.getAnInt2088() != -1)
 		{
 			out.writeByte(19);
-			out.writeByte(obj.getWallOrDoor());
+			out.writeByte(obj.getAnInt2088());
 		}
-		if (obj.getContouredGround() == 0)
+		if (obj.getAnInt2105() == 0)
 		{
 			out.writeByte(21);
 		}
-		if (!obj.isMergeNormals())
+		if (!obj.isNonFlatShading())
 		{
 			out.writeByte(22);
 		}
@@ -96,11 +96,11 @@ public class ObjectSaver
 			out.writeByte(27);
 		}
 		out.writeByte(28);
-		out.writeByte(obj.getDecorDisplacement());
+		out.writeByte(obj.getAnInt2069());
 		out.writeByte(29);
 		out.writeByte(obj.getAmbient());
 		out.writeByte(39);
-		out.writeByte(obj.getContrast() / 25);
+		out.writeByte(obj.getContrast());
 		for (int i = 0; i < 5; ++i)
 		{
 			out.writeByte(30 + i);
@@ -131,7 +131,7 @@ public class ObjectSaver
 		{
 			out.writeByte(62);
 		}
-		if (!obj.isShadow())
+		if (!obj.isABool2097())
 		{
 			out.writeByte(64);
 		}
@@ -152,23 +152,23 @@ public class ObjectSaver
 		out.writeShort(obj.getOffsetHeight());
 		out.writeByte(72);
 		out.writeShort(obj.getOffsetY());
-		if (obj.isObstructsGround())
+		if (obj.isABool2104())
 		{
 			out.writeByte(73);
 		}
-		if (obj.isHollow())
+		if (obj.isSolid())
 		{
 			out.writeByte(74);
 		}
-		if (obj.getSupportsItems() != -1)
+		if (obj.getAnInt2106() != -1)
 		{
 			out.writeByte(75);
-			out.writeByte(obj.getSupportsItems());
+			out.writeByte(obj.getAnInt2106());
 		}
-		if (obj.getAmbientSoundId() != -1)
+		if (obj.getAnInt2110() != -1)
 		{
 			out.writeByte(78);
-			out.writeShort(obj.getAmbientSoundId());
+			out.writeShort(obj.getAnInt2110());
 			out.writeByte(obj.getAnInt2083());
 		}
 		if (obj.getAnIntArray2084() != null)
@@ -183,10 +183,10 @@ public class ObjectSaver
 				out.writeShort(i);
 			}
 		}
-		if (obj.getContouredGround() != -1)
+		if (obj.getAnInt2105() != -1)
 		{
 			out.writeByte(81);
-			out.writeByte(obj.getContouredGround() / 256);
+			out.writeByte(obj.getAnInt2105() / 256);
 		}
 		if (obj.getMapAreaId() != -1)
 		{
