@@ -1,18 +1,14 @@
-import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ke")
+@ObfuscatedName("kj")
 public class class297 {
-	@ObfuscatedName("s")
+	@ObfuscatedName("ag")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "(Lcc;B)V",
+		garbageValue = "23"
 	)
-	@Export("KitDefinition_archive")
-	public static AbstractArchive KitDefinition_archive;
-	@ObfuscatedName("r")
-	@ObfuscatedSignature(
-		signature = "Lhp;"
-	)
-	static Widget field3693;
+	public static final void method5550(class99 var0) {
+		class188.pcmPlayerProvider = var0;
+	}
 }

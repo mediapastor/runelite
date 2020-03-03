@@ -30,14 +30,17 @@ import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Setter;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.MenuOpcode;
 import net.runelite.api.events.ClientTick;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.FocusChanged;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
 import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.menus.AbstractComparableEntry;
 import net.runelite.client.menus.MenuManager;
@@ -173,29 +176,53 @@ public class ShiftWalkerPlugin extends Plugin
 	{
 		this.shiftWalk = config.shiftWalk();
 		this.shiftLoot = config.shiftLoot();
-
-		addSubscriptions();
-		keyManager.registerKeyListener(shift);
+		if (client.getGameState() == GameState.LOGGED_IN)
+		{
+			keyManager.registerKeyListener(shift);
+		}
 	}
 
 	@Override
 	public void shutDown()
 	{
-		eventBus.unregister(this);
 		keyManager.unregisterKeyListener(shift);
 	}
 
-	private void addSubscriptions()
+	@Subscribe
+	private void onGameStateChanged(GameStateChanged event)
 	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(FocusChanged.class, this, this::onFocusChanged);
+		if (event.getGameState() != GameState.LOGGED_IN)
+		{
+			keyManager.unregisterKeyListener(shift);
+			return;
+		}
+		keyManager.registerKeyListener(shift);
 	}
 
+	@Subscribe
 	private void onFocusChanged(FocusChanged event)
 	{
 		if (!event.isFocused())
 		{
 			stopPrioritizing();
+		}
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("shiftwalkhere"))
+		{
+			return;
+		}
+
+		if ("shiftWalk".equals(event.getKey()))
+		{
+			this.shiftWalk = "true".equals(event.getNewValue());
+		}
+		else
+		{
+			this.shiftLoot = "true".equals(event.getNewValue());
 		}
 	}
 
@@ -250,22 +277,5 @@ public class ShiftWalkerPlugin extends Plugin
 		menuManager.removePriorityEntry(TAKE);
 		menuManager.removePriorityEntry(WALK);
 		eventBus.unregister(EVENTBUS_THING);
-	}
-
-	private void onConfigChanged(ConfigChanged event)
-	{
-		if (!event.getGroup().equals("shiftwalkhere"))
-		{
-			return;
-		}
-
-		if ("shiftWalk".equals(event.getKey()))
-		{
-			this.shiftWalk = "true".equals(event.getNewValue());
-		}
-		else
-		{
-			this.shiftLoot = "true".equals(event.getNewValue());
-		}
 	}
 }

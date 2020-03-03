@@ -4,44 +4,44 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("fy")
+@ObfuscatedName("fn")
 @Implements("NanoClock")
 public class NanoClock extends Clock {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		longValue = -485242875267144609L
+		longValue = 3388451480976067985L
 	)
 	@Export("lastTimeNano")
 	long lastTimeNano;
 
-	NanoClock() {
+	public NanoClock() {
 		this.lastTimeNano = System.nanoTime();
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "-779324795"
+		garbageValue = "1605126906"
 	)
 	@Export("mark")
 	public void mark() {
 		this.lastTimeNano = System.nanoTime();
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
 		signature = "(III)I",
-		garbageValue = "930751718"
+		garbageValue = "432238723"
 	)
 	@Export("wait")
 	public int wait(int var1, int var2) {
-		long var3 = (long)var2 * 1000000L;
+		long var3 = 1000000L * (long)var2;
 		long var5 = this.lastTimeNano - System.nanoTime();
 		if (var5 < var3) {
 			var5 = var3;
 		}
 
-		UserList.sleepMillis(var5 / 1000000L);
+		ClanChat.method5367(var5 / 1000000L);
 		long var7 = System.nanoTime();
 
 		int var9;

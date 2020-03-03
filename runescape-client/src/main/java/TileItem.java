@@ -4,18 +4,24 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("cu")
+@ObfuscatedName("cl")
 @Implements("TileItem")
 public final class TileItem extends Entity {
-	@ObfuscatedName("s")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = -431370449
+		intValue = 731743959
+	)
+	@Export("clientType")
+	public static int clientType;
+	@ObfuscatedName("a")
+	@ObfuscatedGetter(
+		intValue = -1432392447
 	)
 	@Export("id")
 	int id;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = -143029991
+		intValue = -423063441
 	)
 	@Export("quantity")
 	int quantity;
@@ -23,23 +29,13 @@ public final class TileItem extends Entity {
 	TileItem() {
 	}
 
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(I)Ldo;",
-		garbageValue = "-419920513"
+		signature = "(B)Ldv;",
+		garbageValue = "-40"
 	)
 	@Export("getModel")
 	protected final Model getModel() {
-		return WorldMapData_0.ItemDefinition_get(this.id).getModel(this.quantity);
-	}
-
-	@ObfuscatedName("u")
-	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "-10"
-	)
-	public static void method2048() {
-		SpotAnimationDefinition.SpotAnimationDefinition_cached.clear();
-		SpotAnimationDefinition.SpotAnimationDefinition_cachedModels.clear();
+		return class222.ItemDefinition_get(this.id).getModel(this.quantity);
 	}
 }

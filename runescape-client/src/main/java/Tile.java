@@ -4,134 +4,129 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("de")
+@ObfuscatedName("dh")
 @Implements("Tile")
 public final class Tile extends Node {
-	@ObfuscatedName("nn")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = -590587583
-	)
-	static int field1648;
-	@ObfuscatedName("s")
-	@ObfuscatedGetter(
-		intValue = 1576668311
+		intValue = -1309939485
 	)
 	@Export("plane")
 	int plane;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = -2142283815
+		intValue = 2038032895
 	)
 	@Export("x")
 	int x;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = 22720331
+		intValue = -1013860717
 	)
 	@Export("y")
 	int y;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = 322819535
+		intValue = -371358755
 	)
 	@Export("originalPlane")
 	int originalPlane;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedSignature(
-		signature = "Lef;"
+		signature = "Leg;"
 	)
 	@Export("paint")
 	TilePaint paint;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@ObfuscatedSignature(
-		signature = "Ldg;"
+		signature = "Ldk;"
 	)
 	@Export("model")
 	TileModel model;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@ObfuscatedSignature(
-		signature = "Ley;"
+		signature = "Let;"
 	)
 	@Export("boundaryObject")
 	BoundaryObject boundaryObject;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@ObfuscatedSignature(
-		signature = "Lec;"
+		signature = "Lei;"
 	)
 	@Export("wallDecoration")
 	WallDecoration wallDecoration;
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "Ldy;"
+		signature = "Ldx;"
 	)
 	@Export("floorDecoration")
 	FloorDecoration floorDecoration;
 	@ObfuscatedName("d")
 	@ObfuscatedSignature(
-		signature = "Ldu;"
+		signature = "Ldy;"
 	)
 	@Export("tileItemPile")
 	TileItemPile tileItemPile;
-	@ObfuscatedName("f")
+	@ObfuscatedName("m")
 	@ObfuscatedGetter(
-		intValue = -76351175
+		intValue = -1638075719
 	)
 	@Export("gameObjectsCount")
 	int gameObjectsCount;
-	@ObfuscatedName("c")
+	@ObfuscatedName("p")
 	@ObfuscatedSignature(
-		signature = "[Lej;"
+		signature = "[Lex;"
 	)
 	@Export("gameObjects")
 	GameObject[] gameObjects;
-	@ObfuscatedName("r")
+	@ObfuscatedName("h")
 	@Export("gameObjectEdgeMasks")
 	int[] gameObjectEdgeMasks;
-	@ObfuscatedName("y")
+	@ObfuscatedName("k")
 	@ObfuscatedGetter(
-		intValue = 832836189
+		intValue = -2114693013
 	)
 	@Export("gameObjectsEdgeMask")
 	int gameObjectsEdgeMask;
-	@ObfuscatedName("p")
+	@ObfuscatedName("x")
 	@ObfuscatedGetter(
-		intValue = 1717986561
+		intValue = -1476239689
 	)
 	@Export("minPlane")
 	int minPlane;
-	@ObfuscatedName("b")
+	@ObfuscatedName("j")
 	@Export("drawPrimary")
 	boolean drawPrimary;
-	@ObfuscatedName("g")
+	@ObfuscatedName("r")
 	@Export("drawSecondary")
 	boolean drawSecondary;
 	@ObfuscatedName("e")
 	@Export("drawGameObjects")
 	boolean drawGameObjects;
-	@ObfuscatedName("z")
+	@ObfuscatedName("s")
 	@ObfuscatedGetter(
-		intValue = -1859538339
+		intValue = 1357741969
 	)
 	@Export("drawGameObjectEdges")
 	int drawGameObjectEdges;
-	@ObfuscatedName("a")
+	@ObfuscatedName("b")
 	@ObfuscatedGetter(
-		intValue = -652671997
+		intValue = 1034029719
+	)
+	int field1638;
+	@ObfuscatedName("z")
+	@ObfuscatedGetter(
+		intValue = 772889311
+	)
+	int field1639;
+	@ObfuscatedName("f")
+	@ObfuscatedGetter(
+		intValue = 1173456745
 	)
 	int field1637;
-	@ObfuscatedName("w")
-	@ObfuscatedGetter(
-		intValue = -1052800923
-	)
-	int field1645;
-	@ObfuscatedName("l")
-	@ObfuscatedGetter(
-		intValue = 837010603
-	)
-	int field1636;
-	@ObfuscatedName("h")
+	@ObfuscatedName("g")
 	@ObfuscatedSignature(
-		signature = "Lde;"
+		signature = "Ldh;"
 	)
 	@Export("linkedBelowTile")
 	Tile linkedBelowTile;
@@ -145,182 +140,114 @@ public final class Tile extends Node {
 		this.y = var3;
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "([Lbl;II[I[IB)V",
-		garbageValue = "-18"
+		signature = "(III)V",
+		garbageValue = "59620731"
 	)
-	@Export("sortWorlds")
-	static void sortWorlds(World[] var0, int var1, int var2, int[] var3, int[] var4) {
-		if (var1 < var2) {
-			int var5 = var1 - 1;
-			int var6 = var2 + 1;
-			int var7 = (var2 + var1) / 2;
-			World var8 = var0[var7];
-			var0[var7] = var0[var1];
-			var0[var1] = var8;
+	static void method3021(int var0, int var1) {
+		long var2 = (long)((var0 << 16) + var1);
+		NetFileRequest var4 = (NetFileRequest)NetCache.NetCache_pendingWrites.get(var2);
+		if (var4 != null) {
+			NetCache.NetCache_pendingWritesQueue.addLast(var4);
+		}
+	}
 
-			while (var5 < var6) {
-				boolean var9 = true;
+	@ObfuscatedName("v")
+	@ObfuscatedSignature(
+		signature = "(B)V",
+		garbageValue = "-2"
+	)
+	public static void method3023() {
+		try {
+			JagexCache.JagexCache_dat2File.close();
 
-				int var10;
-				int var11;
-				int var12;
-				do {
-					--var6;
-
-					for (var10 = 0; var10 < 4; ++var10) {
-						if (var3[var10] == 2) {
-							var11 = var0[var6].index;
-							var12 = var8.index;
-						} else if (var3[var10] == 1) {
-							var11 = var0[var6].population;
-							var12 = var8.population;
-							if (var11 == -1 && var4[var10] == 1) {
-								var11 = 2001;
-							}
-
-							if (var12 == -1 && var4[var10] == 1) {
-								var12 = 2001;
-							}
-						} else if (var3[var10] == 3) {
-							var11 = var0[var6].isMembersOnly() ? 1 : 0;
-							var12 = var8.isMembersOnly() ? 1 : 0;
-						} else {
-							var11 = var0[var6].id;
-							var12 = var8.id;
-						}
-
-						if (var12 != var11) {
-							if ((var4[var10] != 1 || var11 <= var12) && (var4[var10] != 0 || var11 >= var12)) {
-								var9 = false;
-							}
-							break;
-						}
-
-						if (var10 == 3) {
-							var9 = false;
-						}
-					}
-				} while(var9);
-
-				var9 = true;
-
-				do {
-					++var5;
-
-					for (var10 = 0; var10 < 4; ++var10) {
-						if (var3[var10] == 2) {
-							var11 = var0[var5].index;
-							var12 = var8.index;
-						} else if (var3[var10] == 1) {
-							var11 = var0[var5].population;
-							var12 = var8.population;
-							if (var11 == -1 && var4[var10] == 1) {
-								var11 = 2001;
-							}
-
-							if (var12 == -1 && var4[var10] == 1) {
-								var12 = 2001;
-							}
-						} else if (var3[var10] == 3) {
-							var11 = var0[var5].isMembersOnly() ? 1 : 0;
-							var12 = var8.isMembersOnly() ? 1 : 0;
-						} else {
-							var11 = var0[var5].id;
-							var12 = var8.id;
-						}
-
-						if (var11 != var12) {
-							if ((var4[var10] != 1 || var11 >= var12) && (var4[var10] != 0 || var11 <= var12)) {
-								var9 = false;
-							}
-							break;
-						}
-
-						if (var10 == 3) {
-							var9 = false;
-						}
-					}
-				} while(var9);
-
-				if (var5 < var6) {
-					World var13 = var0[var5];
-					var0[var5] = var0[var6];
-					var0[var6] = var13;
-				}
+			for (int var0 = 0; var0 < JagexCache.idxCount; ++var0) {
+				ArchiveLoader.JagexCache_idxFiles[var0].close();
 			}
 
-			sortWorlds(var0, var1, var6, var3, var4);
-			sortWorlds(var0, var6 + 1, var2, var3, var4);
+			JagexCache.JagexCache_idx255File.close();
+			JagexCache.JagexCache_randomDat.close();
+		} catch (Exception var2) {
 		}
 
 	}
 
-	@ObfuscatedName("jj")
+	@ObfuscatedName("fp")
 	@ObfuscatedSignature(
-		signature = "([Lhp;II)V",
-		garbageValue = "1415111680"
+		signature = "(IB)V",
+		garbageValue = "104"
 	)
-	@Export("drawModelComponents")
-	static final void drawModelComponents(Widget[] var0, int var1) {
-		for (int var2 = 0; var2 < var0.length; ++var2) {
-			Widget var3 = var0[var2];
-			if (var3 != null && var3.parentId == var1 && (!var3.isIf3 || !WorldMapRectangle.isComponentHidden(var3))) {
-				if (var3.type == 0) {
-					if (!var3.isIf3 && WorldMapRectangle.isComponentHidden(var3) && var3 != class65.mousedOverWidgetIf1) {
-						continue;
-					}
+	@Export("updateGameState")
+	static void updateGameState(int var0) {
+		if (var0 != Client.gameState) {
+			if (Client.gameState == 0) {
+				WorldMapID.client.method1029();
+			}
 
-					drawModelComponents(var0, var3.id);
-					if (var3.children != null) {
-						drawModelComponents(var3.children, var3.id);
-					}
-
-					InterfaceParent var4 = (InterfaceParent)Client.interfaceParents.get((long)var3.id);
-					if (var4 != null) {
-						CollisionMap.drawInterfaceModelComponents(var4.group);
-					}
+			if (var0 == 20 || var0 == 40 || var0 == 45) {
+				Client.loginState = 0;
+				Client.field666 = 0;
+				Client.field667 = 0;
+				Client.timer.method5118(var0);
+				if (var0 != 20) {
+					WorldMapLabelSize.method235(false);
 				}
+			}
 
-				if (var3.type == 6) {
-					int var5;
-					if (var3.sequenceId != -1 || var3.sequenceId2 != -1) {
-						boolean var7 = UserComparator10.runCs1(var3);
-						if (var7) {
-							var5 = var3.sequenceId2;
-						} else {
-							var5 = var3.sequenceId;
-						}
+			if (var0 != 20 && var0 != 40 && Tiles.field499 != null) {
+				Tiles.field499.close();
+				Tiles.field499 = null;
+			}
 
-						if (var5 != -1) {
-							SequenceDefinition var6 = Widget.SequenceDefinition_get(var5);
+			if (Client.gameState == 25) {
+				Client.field688 = 0;
+				Client.field684 = 0;
+				Client.field685 = 1;
+				Client.field686 = 0;
+				Client.field687 = 1;
+			}
 
-							for (var3.modelFrameCycle += Client.field879; var3.modelFrameCycle > var6.frameLengths[var3.modelFrame]; FriendSystem.invalidateWidget(var3)) {
-								var3.modelFrameCycle -= var6.frameLengths[var3.modelFrame];
-								++var3.modelFrame;
-								if (var3.modelFrame >= var6.frameIds.length) {
-									var3.modelFrame -= var6.frameCount;
-									if (var3.modelFrame < 0 || var3.modelFrame >= var6.frameIds.length) {
-										var3.modelFrame = 0;
-									}
-								}
-							}
-						}
-					}
+			if (var0 != 5 && var0 != 10) {
+				if (var0 == 20) {
+					AttackOption.method2218(WorldMapID.archive10, GrandExchangeOfferUnitPriceComparator.archive8, true, Client.gameState == 11 ? 4 : 0);
+				} else if (var0 == 11) {
+					AttackOption.method2218(WorldMapID.archive10, GrandExchangeOfferUnitPriceComparator.archive8, false, 4);
+				} else {
+					Coord.method4144();
+				}
+			} else {
+				AttackOption.method2218(WorldMapID.archive10, GrandExchangeOfferUnitPriceComparator.archive8, true, 0);
+			}
 
-					if (var3.field2602 != 0 && !var3.isIf3) {
-						int var8 = var3.field2602 >> 16;
-						var5 = var3.field2602 << 16 >> 16;
-						var8 *= Client.field879;
-						var5 *= Client.field879;
-						var3.modelAngleX = var8 + var3.modelAngleX & 2047;
-						var3.modelAngleY = var5 + var3.modelAngleY & 2047;
-						FriendSystem.invalidateWidget(var3);
-					}
+			Client.gameState = var0;
+		}
+	}
+
+	@ObfuscatedName("fb")
+	@ObfuscatedSignature(
+		signature = "(Liv;IIII)V",
+		garbageValue = "-723801001"
+	)
+	@Export("addSequenceSoundEffect")
+	static void addSequenceSoundEffect(SequenceDefinition var0, int var1, int var2, int var3) {
+		if (Client.soundEffectCount < 50 && Client.areaSoundEffectVolume != 0) {
+			if (var0.soundEffects != null && var1 < var0.soundEffects.length) {
+				int var4 = var0.soundEffects[var1];
+				if (var4 != 0) {
+					int var5 = var4 >> 8;
+					int var6 = var4 >> 4 & 7;
+					int var7 = var4 & 15;
+					Client.soundEffectIds[Client.soundEffectCount] = var5;
+					Client.queuedSoundEffectLoops[Client.soundEffectCount] = var6;
+					Client.queuedSoundEffectDelays[Client.soundEffectCount] = 0;
+					Client.soundEffects[Client.soundEffectCount] = null;
+					int var8 = (var2 - 64) / 128;
+					int var9 = (var3 - 64) / 128;
+					Client.soundLocations[Client.soundEffectCount] = var7 + (var9 << 8) + (var8 << 16);
+					++Client.soundEffectCount;
 				}
 			}
 		}
-
 	}
 }

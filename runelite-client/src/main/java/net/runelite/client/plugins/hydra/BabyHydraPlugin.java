@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, https://runelitepl.us
+ * Copyright (c) 2018, https://openosrs.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,11 +35,11 @@ import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.AnimationChanged;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
@@ -73,9 +73,6 @@ public class BabyHydraPlugin extends Plugin
 	@Inject
 	private Client client;
 
-	@Inject
-	private EventBus eventBus;
-
 	@Provides
 	BabyHydraConfig provideConfig(ConfigManager configManager)
 	{
@@ -100,7 +97,6 @@ public class BabyHydraPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
-		addSubscriptions();
 
 		if (this.TextIndicator)
 		{
@@ -116,8 +112,6 @@ public class BabyHydraPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
-
 		overlayManager.remove(hydraOverlay);
 		overlayManager.remove(hydraPrayOverlay);
 		overlayManager.remove(hydraIndicatorOverlay);
@@ -125,14 +119,7 @@ public class BabyHydraPlugin extends Plugin
 		hydraattacks.clear();
 	}
 
-	private void addSubscriptions()
-	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(NpcSpawned.class, this, this::onNpcSpawned);
-		eventBus.subscribe(NpcDespawned.class, this, this::onNpcDespawned);
-		eventBus.subscribe(AnimationChanged.class, this, this::onAnimationChanged);
-	}
-
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("hydra"))
@@ -168,6 +155,7 @@ public class BabyHydraPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onNpcSpawned(NpcSpawned event)
 	{
 		NPC hydra = event.getNpc();
@@ -177,6 +165,7 @@ public class BabyHydraPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onNpcDespawned(NpcDespawned event)
 	{
 		NPC hydra = event.getNpc();
@@ -187,11 +176,12 @@ public class BabyHydraPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onAnimationChanged(AnimationChanged event)
 	{
 		Actor monster = event.getActor();
 		Actor local = client.getLocalPlayer();
-		if (!(monster instanceof NPC))
+		if (!(monster instanceof NPC) || local == null)
 		{
 			return;
 		}
@@ -212,7 +202,7 @@ public class BabyHydraPlugin extends Plugin
 			return;
 		}
 
-		if (hydra.getInteracting().equals(local))
+		if (hydra.getInteracting() != null && hydra.getInteracting() == local)
 		{
 			this.hydra = hydra;
 		}

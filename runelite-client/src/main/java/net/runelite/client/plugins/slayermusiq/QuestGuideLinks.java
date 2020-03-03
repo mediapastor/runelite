@@ -114,7 +114,7 @@ class QuestGuideLinks
 		new Link("My Arm's Big Adventure", "https://www.youtube.com/watch?v=xa1KWOewgYA"),
 		new Link("Enlightened Journey", "https://www.youtube.com/watch?v=XAPthC8d7k0"),
 		new Link("Eagles' Peak", "https://www.youtube.com/watch?v=KDxIrrwXp7U"),
-		new Link("Animal Magnetism", "https://www.youtube.com/watch?v=kUyjXA7TaFU"),
+		new Link("Animal Magnetism", "https://www.youtube.com/watch?v=_JldgJTnc7I"),
 		new Link("Contact!", "https://www.youtube.com/watch?v=czn-yWABBWs"),
 		new Link("Cold War", "https://www.youtube.com/watch?v=0m1KpP-qKWI"),
 		new Link("The Fremennik Isles", "https://www.youtube.com/watch?v=EvxhiOWmraY"),
@@ -155,6 +155,7 @@ class QuestGuideLinks
 		new Link("The Slug Menace", "https://www.youtube.com/watch?v=BRQbdr3JEZ8"),
 		new Link("Another Slice of H.A.M.", "https://www.youtube.com/watch?v=Yq3db7827Lk"),
 		new Link("Song of the Elves", "https://www.youtube.com/watch?v=oMGvdBCuxoY"),
+		new Link("The Fremennik Exiles", "https://www.youtube.com/watch?v=1Vz2rXYhi4E"),
 		//Miniquests
 		new Link("Alfred Grimhand's Barcrawl", "https://www.youtube.com/watch?v=hE2dmiDaoK4"),
 		new Link("Bear your Soul", "https://www.youtube.com/watch?v=Pb6N-_6HJNc"),

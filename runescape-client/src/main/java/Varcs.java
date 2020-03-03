@@ -9,55 +9,52 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ch")
+@ObfuscatedName("cz")
 @Implements("Varcs")
 public class Varcs {
-	@ObfuscatedName("f")
-	@Export("musicTrackBoolean")
-	public static boolean musicTrackBoolean;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("intsPersistence")
 	boolean[] intsPersistence;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("map")
 	Map map;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("strings")
 	String[] strings;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("unwrittenChanges")
 	boolean unwrittenChanges;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		longValue = -3102782666800977811L
+		longValue = 4894374485782924843L
 	)
-	long field1243;
+	long field1246;
 
 	Varcs() {
 		this.unwrittenChanges = false;
-		int var1 = HealthBarUpdate.archive2.getGroupFileCount(19);
+		int var1 = AbstractWorldMapIcon.archive2.getGroupFileCount(19);
 		this.map = new HashMap();
 		this.intsPersistence = new boolean[var1];
 
 		int var2;
 		for (var2 = 0; var2 < var1; ++var2) {
-			VarcInt var3 = FileSystem.method3447(var2);
+			VarcInt var3 = Decimator.method2694(var2);
 			this.intsPersistence[var2] = var3.persist;
 		}
 
 		var2 = 0;
-		if (HealthBarUpdate.archive2.method4199(15)) {
-			var2 = HealthBarUpdate.archive2.getGroupFileCount(15);
+		if (AbstractWorldMapIcon.archive2.method4436(15)) {
+			var2 = AbstractWorldMapIcon.archive2.getGroupFileCount(15);
 		}
 
 		this.strings = new String[var2];
 		this.read();
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
 		signature = "(III)V",
-		garbageValue = "-1411494049"
+		garbageValue = "878961648"
 	)
 	@Export("setInt")
 	void setInt(int var1, int var2) {
@@ -68,10 +65,10 @@ public class Varcs {
 
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(IB)I",
-		garbageValue = "-102"
+		signature = "(II)I",
+		garbageValue = "1218722234"
 	)
 	@Export("getInt")
 	int getInt(int var1) {
@@ -79,20 +76,20 @@ public class Varcs {
 		return var2 instanceof Integer ? (Integer)var2 : -1;
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
 		signature = "(ILjava/lang/String;I)V",
-		garbageValue = "-461145893"
+		garbageValue = "-1237376058"
 	)
 	@Export("setString")
 	void setString(int var1, String var2) {
 		this.map.put(var1, var2);
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "(IB)Ljava/lang/String;",
-		garbageValue = "-6"
+		signature = "(II)Ljava/lang/String;",
+		garbageValue = "-1479997522"
 	)
 	@Export("getString")
 	String getString(int var1) {
@@ -100,30 +97,30 @@ public class Varcs {
 		return var2 instanceof String ? (String)var2 : "";
 	}
 
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedSignature(
-		signature = "(ILjava/lang/String;I)V",
-		garbageValue = "1336031066"
+		signature = "(ILjava/lang/String;B)V",
+		garbageValue = "64"
 	)
 	@Export("setStringOld")
 	void setStringOld(int var1, String var2) {
 		this.strings[var1] = var2;
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@ObfuscatedSignature(
-		signature = "(IB)Ljava/lang/String;",
-		garbageValue = "-122"
+		signature = "(II)Ljava/lang/String;",
+		garbageValue = "1714600398"
 	)
 	@Export("getStringOld")
 	String getStringOld(int var1) {
 		return this.strings[var1];
 	}
 
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "30"
+		signature = "(I)V",
+		garbageValue = "526123607"
 	)
 	@Export("clearTransient")
 	void clearTransient() {
@@ -140,20 +137,20 @@ public class Varcs {
 
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@ObfuscatedSignature(
-		signature = "(ZI)Lmm;",
-		garbageValue = "1411517965"
+		signature = "(ZB)Lmh;",
+		garbageValue = "1"
 	)
 	@Export("getPreferencesFile")
 	AccessFile getPreferencesFile(boolean var1) {
-		return TaskHandler.getPreferencesFile("2", WorldMapRectangle.field166.name, var1);
+		return CollisionMap.getPreferencesFile("2", MouseHandler.field458.name, var1);
 	}
 
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "1634973674"
+		garbageValue = "2015022450"
 	)
 	@Export("write")
 	void write() {
@@ -173,105 +170,54 @@ public class Varcs {
 					if (var7 instanceof Integer) {
 						var2 += 4;
 					} else if (var7 instanceof String) {
-						var2 += Buddy.stringCp1252NullTerminatedByteSize((String)var7);
+						var2 += UserComparator6.stringCp1252NullTerminatedByteSize((String)var7);
 					}
 
 					++var3;
 				}
 			}
 
-			Buffer var32 = new Buffer(var2);
-			var32.writeByte(2);
-			var32.writeShort(var3);
-			Iterator var33 = this.map.entrySet().iterator();
+			Buffer var23 = new Buffer(var2);
+			var23.writeByte(2);
+			var23.writeShort(var3);
+			Iterator var24 = this.map.entrySet().iterator();
 
-			label185:
-			while (true) {
-				Entry var20;
-				int var21;
-				do {
-					if (!var33.hasNext()) {
-						var1.write(var32.array, 0, var32.offset);
-						break label185;
-					}
-
-					var20 = (Entry)var33.next();
-					var21 = (Integer)var20.getKey();
-				} while(!this.intsPersistence[var21]);
-
-				var32.writeShort(var21);
-				Object var8 = var20.getValue();
-				Class var10 = var8.getClass();
-				class3[] var11 = class3.method44();
-				int var12 = 0;
-
-				class3 var9;
-				while (true) {
-					if (var12 >= var11.length) {
-						var9 = null;
-						break;
-					}
-
-					class3 var13 = var11[var12];
-					if (var10 == var13.field29) {
-						var9 = var13;
-						break;
-					}
-
-					++var12;
+			while (var24.hasNext()) {
+				Entry var12 = (Entry)var24.next();
+				int var13 = (Integer)var12.getKey();
+				if (this.intsPersistence[var13]) {
+					var23.writeShort(var13);
+					Object var8 = var12.getValue();
+					class3 var9 = class3.method51(var8.getClass());
+					var23.writeByte(var9.field14);
+					class3.method52(var8, var23);
 				}
-
-				var32.writeByte(var9.field18);
-				Class var34 = var8.getClass();
-				class3[] var15 = class3.method44();
-				int var16 = 0;
-
-				class3 var14;
-				while (true) {
-					if (var16 >= var15.length) {
-						var14 = null;
-						break;
-					}
-
-					class3 var17 = var15[var16];
-					if (var34 == var17.field29) {
-						var14 = var17;
-						break;
-					}
-
-					++var16;
-				}
-
-				if (var14 == null) {
-					throw new IllegalArgumentException();
-				}
-
-				class0 var22 = var14.field13;
-				var22.vmethod58(var8, var32);
 			}
-		} catch (Exception var30) {
+
+			var1.write(var23.array, 0, var23.offset);
+		} catch (Exception var21) {
 		} finally {
 			try {
 				var1.close();
-			} catch (Exception var29) {
+			} catch (Exception var20) {
 			}
 
 		}
 
 		this.unwrittenChanges = false;
-		this.field1243 = SequenceDefinition.method4686();
+		this.field1246 = PlayerAppearance.currentTimeMillis();
 	}
 
 	@ObfuscatedName("d")
 	@ObfuscatedSignature(
 		signature = "(B)V",
-		garbageValue = "-85"
+		garbageValue = "37"
 	)
 	@Export("read")
 	void read() {
 		AccessFile var1 = this.getPreferencesFile(false);
 
-		label229: {
+		label225: {
 			try {
 				byte[] var2 = new byte[(int)var1.length()];
 
@@ -283,67 +229,68 @@ public class Varcs {
 					}
 				}
 
-				Buffer var14 = new Buffer(var2);
-				if (var14.array.length - var14.offset >= 1) {
-					int var15 = var14.readUnsignedByte();
-					if (var15 >= 0 && var15 <= 2) {
-						int var7;
-						int var8;
-						int var9;
-						int var16;
-						if (var15 >= 2) {
-							var16 = var14.readUnsignedShort();
-							var7 = 0;
-
-							while (true) {
-								if (var7 >= var16) {
-									break label229;
-								}
-
-								var8 = var14.readUnsignedShort();
-								var9 = var14.readUnsignedByte();
-								class3 var10 = (class3)FriendSystem.findEnumerated(class3.method44(), var9);
-								Object var11 = var10.method43(var14);
-								if (this.intsPersistence[var8]) {
-									this.map.put(var8, var11);
-								}
-
-								++var7;
-							}
-						} else {
-							var16 = var14.readUnsignedShort();
-
-							for (var7 = 0; var7 < var16; ++var7) {
-								var8 = var14.readUnsignedShort();
-								var9 = var14.readInt();
-								if (this.intsPersistence[var8]) {
-									this.map.put(var8, var9);
-								}
-							}
-
-							var7 = var14.readUnsignedShort();
-							var8 = 0;
-
-							while (true) {
-								if (var8 >= var7) {
-									break label229;
-								}
-
-								var14.readUnsignedShort();
-								var14.readStringCp1252NullTerminated();
-								++var8;
-							}
-						}
-					}
-
+				Buffer var15 = new Buffer(var2);
+				if (var15.array.length - var15.offset < 1) {
 					return;
 				}
-			} catch (Exception var25) {
-				break label229;
+
+				int var16 = var15.readUnsignedByte();
+				if (var16 >= 0 && var16 <= 2) {
+					int var7;
+					int var8;
+					int var9;
+					int var17;
+					if (var16 >= 2) {
+						var17 = var15.readUnsignedShort();
+						var7 = 0;
+
+						while (true) {
+							if (var7 >= var17) {
+								break label225;
+							}
+
+							var8 = var15.readUnsignedShort();
+							var9 = var15.readUnsignedByte();
+							class3[] var10 = new class3[]{class3.field13, class3.field18, class3.field17};
+							class3 var11 = (class3)WorldMapIcon_1.findEnumerated(var10, var9);
+							Object var12 = var11.method55(var15);
+							if (this.intsPersistence[var8]) {
+								this.map.put(var8, var12);
+							}
+
+							++var7;
+						}
+					} else {
+						var17 = var15.readUnsignedShort();
+
+						for (var7 = 0; var7 < var17; ++var7) {
+							var8 = var15.readUnsignedShort();
+							var9 = var15.readInt();
+							if (this.intsPersistence[var8]) {
+								this.map.put(var8, var9);
+							}
+						}
+
+						var7 = var15.readUnsignedShort();
+						var8 = 0;
+
+						while (true) {
+							if (var8 >= var7) {
+								break label225;
+							}
+
+							var15.readUnsignedShort();
+							var15.readStringCp1252NullTerminated();
+							++var8;
+						}
+					}
+				}
+			} catch (Exception var26) {
+				break label225;
 			} finally {
 				try {
 					var1.close();
-				} catch (Exception var24) {
+				} catch (Exception var25) {
 				}
 
 			}
@@ -354,26 +301,48 @@ public class Varcs {
 		this.unwrittenChanges = false;
 	}
 
-	@ObfuscatedName("f")
+	@ObfuscatedName("m")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "573629327"
+		garbageValue = "-53918442"
 	)
 	@Export("tryWrite")
 	void tryWrite() {
-		if (this.unwrittenChanges && this.field1243 < SequenceDefinition.method4686() - 60000L) {
+		if (this.unwrittenChanges && this.field1246 < PlayerAppearance.currentTimeMillis() - 60000L) {
 			this.write();
 		}
 
 	}
 
-	@ObfuscatedName("c")
+	@ObfuscatedName("p")
 	@ObfuscatedSignature(
-		signature = "(I)Z",
-		garbageValue = "702857669"
+		signature = "(B)Z",
+		garbageValue = "4"
 	)
 	@Export("hasUnwrittenChanges")
 	boolean hasUnwrittenChanges() {
 		return this.unwrittenChanges;
+	}
+
+	@ObfuscatedName("t")
+	@ObfuscatedSignature(
+		signature = "(II)Liu;",
+		garbageValue = "-1999284157"
+	)
+	@Export("VarpDefinition_get")
+	public static VarpDefinition VarpDefinition_get(int var0) {
+		VarpDefinition var1 = (VarpDefinition)VarpDefinition.VarpDefinition_cached.get((long)var0);
+		if (var1 != null) {
+			return var1;
+		} else {
+			byte[] var2 = VarpDefinition.VarpDefinition_archive.takeFile(16, var0);
+			var1 = new VarpDefinition();
+			if (var2 != null) {
+				var1.decode(new Buffer(var2));
+			}
+
+			VarpDefinition.VarpDefinition_cached.put(var1, (long)var0);
+			return var1;
+		}
 	}
 }

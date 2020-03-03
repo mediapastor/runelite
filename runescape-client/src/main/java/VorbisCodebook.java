@@ -2,23 +2,23 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 
-@ObfuscatedName("cx")
+@ObfuscatedName("ch")
 @Implements("VorbisCodebook")
 public class VorbisCodebook {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("dimensions")
 	int dimensions;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@Export("entries")
 	int entries;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("lengthMap")
 	int[] lengthMap;
-	@ObfuscatedName("k")
-	int[] field1321;
-	@ObfuscatedName("u")
-	float[][] field1320;
-	@ObfuscatedName("n")
+	@ObfuscatedName("q")
+	int[] field1322;
+	@ObfuscatedName("v")
+	float[][] field1323;
+	@ObfuscatedName("l")
 	@Export("keys")
 	int[] keys;
 
@@ -35,7 +35,7 @@ public class VorbisCodebook {
 			var2 = 0;
 
 			for (var3 = VorbisSample.readBits(5) + 1; var2 < this.entries; ++var3) {
-				int var4 = VorbisSample.readBits(class160.iLog(this.entries - var2));
+				int var4 = VorbisSample.readBits(Tiles.iLog(this.entries - var2));
 
 				for (var5 = 0; var5 < var4; ++var5) {
 					this.lengthMap[var2++] = var3;
@@ -53,7 +53,7 @@ public class VorbisCodebook {
 			}
 		}
 
-		this.method2252();
+		this.method2492();
 		var2 = VorbisSample.readBits(4);
 		if (var2 > 0) {
 			float var15 = VorbisSample.float32Unpack(VorbisSample.readBits(32));
@@ -67,14 +67,14 @@ public class VorbisCodebook {
 				var7 = this.entries * this.dimensions;
 			}
 
-			this.field1321 = new int[var7];
+			this.field1322 = new int[var7];
 
 			int var8;
 			for (var8 = 0; var8 < var7; ++var8) {
-				this.field1321[var8] = VorbisSample.readBits(var5);
+				this.field1322[var8] = VorbisSample.readBits(var5);
 			}
 
-			this.field1320 = new float[this.entries][this.dimensions];
+			this.field1323 = new float[this.entries][this.dimensions];
 			float var9;
 			int var10;
 			int var11;
@@ -85,8 +85,8 @@ public class VorbisCodebook {
 
 					for (var11 = 0; var11 < this.dimensions; ++var11) {
 						int var12 = var8 / var10 % var7;
-						float var13 = (float)this.field1321[var12] * var16 + var15 + var9;
-						this.field1320[var8][var11] = var13;
+						float var13 = (float)this.field1322[var12] * var16 + var15 + var9;
+						this.field1323[var8][var11] = var13;
 						if (var6) {
 							var9 = var13;
 						}
@@ -100,8 +100,8 @@ public class VorbisCodebook {
 					var10 = var8 * this.dimensions;
 
 					for (var11 = 0; var11 < this.dimensions; ++var11) {
-						float var17 = (float)this.field1321[var10] * var16 + var15 + var9;
-						this.field1320[var8][var11] = var17;
+						float var17 = (float)this.field1322[var10] * var16 + var15 + var9;
+						this.field1323[var8][var11] = var17;
 						if (var6) {
 							var9 = var17;
 						}
@@ -114,8 +114,8 @@ public class VorbisCodebook {
 
 	}
 
-	@ObfuscatedName("j")
-	void method2252() {
+	@ObfuscatedName("t")
+	void method2492() {
 		int[] var1 = new int[this.entries];
 		int[] var2 = new int[33];
 
@@ -208,8 +208,8 @@ public class VorbisCodebook {
 
 	}
 
-	@ObfuscatedName("i")
-	int method2254() {
+	@ObfuscatedName("n")
+	int method2487() {
 		int var1;
 		for (var1 = 0; this.keys[var1] >= 0; var1 = VorbisSample.readBit() != 0 ? this.keys[var1] : var1 + 1) {
 		}
@@ -217,12 +217,12 @@ public class VorbisCodebook {
 		return ~this.keys[var1];
 	}
 
-	@ObfuscatedName("k")
-	float[] method2255() {
-		return this.field1320[this.method2254()];
+	@ObfuscatedName("q")
+	float[] method2496() {
+		return this.field1323[this.method2487()];
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("mapType1QuantValues")
 	static int mapType1QuantValues(int var0, int var1) {
 		int var2 = (int)Math.pow((double)var0, 1.0D / (double)var1) + 1;

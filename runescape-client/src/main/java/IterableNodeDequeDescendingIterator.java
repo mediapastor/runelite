@@ -4,38 +4,38 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("jn")
+@ObfuscatedName("jk")
 @Implements("IterableNodeDequeDescendingIterator")
 public class IterableNodeDequeDescendingIterator implements Iterator {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Ljp;"
+		signature = "Ljm;"
 	)
 	@Export("deque")
 	IterableNodeDeque deque;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lfb;"
+		signature = "Lfd;"
 	)
-	Node field3521;
-	@ObfuscatedName("i")
+	Node field3535;
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lfb;"
+		signature = "Lfd;"
 	)
 	@Export("last")
 	Node last;
 
 	@ObfuscatedSignature(
-		signature = "(Ljp;)V"
+		signature = "(Ljm;)V"
 	)
 	IterableNodeDequeDescendingIterator(IterableNodeDeque var1) {
 		this.last = null;
 		this.setDeque(var1);
 	}
 
-	@ObfuscatedName("r")
+	@ObfuscatedName("d")
 	@ObfuscatedSignature(
-		signature = "(Ljp;)V"
+		signature = "(Ljm;)V"
 	)
 	@Export("setDeque")
 	void setDeque(IterableNodeDeque var1) {
@@ -43,15 +43,15 @@ public class IterableNodeDequeDescendingIterator implements Iterator {
 		this.start();
 	}
 
-	@ObfuscatedName("y")
+	@ObfuscatedName("m")
 	@Export("start")
 	void start() {
-		this.field3521 = this.deque != null ? this.deque.sentinel.previous : null;
+		this.field3535 = this.deque != null ? this.deque.sentinel.previous : null;
 		this.last = null;
 	}
 
 	public boolean hasNext() {
-		return this.deque.sentinel != this.field3521;
+		return this.deque.sentinel != this.field3535;
 	}
 
 	public void remove() {
@@ -64,12 +64,12 @@ public class IterableNodeDequeDescendingIterator implements Iterator {
 	}
 
 	public Object next() {
-		Node var1 = this.field3521;
+		Node var1 = this.field3535;
 		if (var1 == this.deque.sentinel) {
 			var1 = null;
-			this.field3521 = null;
+			this.field3535 = null;
 		} else {
-			this.field3521 = var1.previous;
+			this.field3535 = var1.previous;
 		}
 
 		this.last = var1;

@@ -4,62 +4,75 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("be")
+@ObfuscatedName("by")
 @Implements("Interpreter")
 public class Interpreter {
-	@ObfuscatedName("u")
+	@ObfuscatedName("qg")
+	@ObfuscatedGetter(
+		intValue = 596908915
+	)
+	static int field1068;
+	@ObfuscatedName("q")
+	@Export("Interpreter_stringLocals")
+	static String[] Interpreter_stringLocals;
+	@ObfuscatedName("v")
 	@Export("Interpreter_arrayLengths")
 	static int[] Interpreter_arrayLengths;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("Interpreter_arrays")
 	static int[][] Interpreter_arrays;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@Export("Interpreter_intStack")
 	static int[] Interpreter_intStack;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@ObfuscatedGetter(
-		intValue = 1267204541
+		intValue = -548793337
 	)
 	@Export("Interpreter_intStackSize")
 	static int Interpreter_intStackSize;
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@Export("Interpreter_stringStack")
 	static String[] Interpreter_stringStack;
 	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = -1592164881
+		intValue = -36200349
 	)
-	@Export("Interpreter_stringStackSize")
-	static int Interpreter_stringStackSize;
-	@ObfuscatedName("f")
+	static int field1063;
+	@ObfuscatedName("m")
 	@ObfuscatedGetter(
-		intValue = 579682077
+		intValue = -1766816567
 	)
 	@Export("Interpreter_frameDepth")
 	static int Interpreter_frameDepth;
-	@ObfuscatedName("c")
+	@ObfuscatedName("p")
 	@ObfuscatedSignature(
-		signature = "[Lbp;"
+		signature = "[Lbx;"
 	)
 	@Export("Interpreter_frames")
 	static ScriptFrame[] Interpreter_frames;
-	@ObfuscatedName("p")
+	@ObfuscatedName("x")
 	@Export("Interpreter_calendar")
 	static java.util.Calendar Interpreter_calendar;
-	@ObfuscatedName("b")
+	@ObfuscatedName("j")
 	@Export("Interpreter_MONTHS")
 	static final String[] Interpreter_MONTHS;
 	@ObfuscatedName("e")
-	static boolean field1074;
-	@ObfuscatedName("z")
-	static boolean field1072;
-	@ObfuscatedName("a")
+	static boolean field1075;
+	@ObfuscatedName("s")
+	static boolean field1076;
+	@ObfuscatedName("b")
 	@ObfuscatedGetter(
-		intValue = -1440593965
+		intValue = 1096350801
 	)
-	static int field1064;
-	@ObfuscatedName("v")
+	static int field1080;
+	@ObfuscatedName("w")
 	static final double field1078;
+	@ObfuscatedName("bi")
+	@ObfuscatedSignature(
+		signature = "[Llw;"
+	)
+	@Export("worldSelectStars")
+	static IndexedSprite[] worldSelectStars;
 
 	static {
 		Interpreter_arrayLengths = new int[5];
@@ -70,9 +83,9 @@ public class Interpreter {
 		Interpreter_frames = new ScriptFrame[50];
 		Interpreter_calendar = java.util.Calendar.getInstance();
 		Interpreter_MONTHS = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-		field1074 = false;
-		field1072 = false;
-		field1064 = 0;
+		field1075 = false;
+		field1076 = false;
+		field1080 = 0;
 		field1078 = Math.log(2.0D);
 	}
 }

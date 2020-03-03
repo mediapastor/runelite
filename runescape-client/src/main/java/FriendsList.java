@@ -4,61 +4,61 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("jo")
+@ObfuscatedName("jh")
 @Implements("FriendsList")
 public class FriendsList extends UserList {
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Llu;"
+		signature = "Lln;"
 	)
 	@Export("loginType")
 	final LoginType loginType;
 	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = 1273879743
+		intValue = 823977789
 	)
-	int field3600;
-	@ObfuscatedName("f")
+	int field3603;
+	@ObfuscatedName("m")
 	@ObfuscatedSignature(
-		signature = "Ljf;"
+		signature = "Lja;"
 	)
 	@Export("friendLoginUpdates")
 	public LinkDeque friendLoginUpdates;
 
 	@ObfuscatedSignature(
-		signature = "(Llu;)V"
+		signature = "(Lln;)V"
 	)
 	public FriendsList(LoginType var1) {
 		super(400);
-		this.field3600 = 1;
+		this.field3603 = 1;
 		this.friendLoginUpdates = new LinkDeque();
 		this.loginType = var1;
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(I)Lju;",
-		garbageValue = "-192021045"
+		signature = "(I)Ljg;",
+		garbageValue = "-706396611"
 	)
 	@Export("newInstance")
 	User newInstance() {
 		return new Friend();
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(II)[Lju;",
-		garbageValue = "518998026"
+		signature = "(II)[Ljg;",
+		garbageValue = "1510983955"
 	)
 	@Export("newTypedArray")
 	User[] newTypedArray(int var1) {
 		return new Friend[var1];
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(Ljx;ZI)Z",
-		garbageValue = "-1515368457"
+		signature = "(Lju;ZI)Z",
+		garbageValue = "-163065823"
 	)
 	@Export("isFriended")
 	public boolean isFriended(Username var1, boolean var2) {
@@ -70,10 +70,10 @@ public class FriendsList extends UserList {
 		}
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("cw")
 	@ObfuscatedSignature(
-		signature = "(Lky;IB)V",
-		garbageValue = "0"
+		signature = "(Lkc;II)V",
+		garbageValue = "1371210383"
 	)
 	@Export("read")
 	public void read(Buffer var1, int var2) {
@@ -98,7 +98,7 @@ public class FriendsList extends UserList {
 					Friend var11 = (Friend)this.getByCurrentUsername(var4);
 					if (var3) {
 						Friend var12 = (Friend)this.getByCurrentUsername(var5);
-						if (var12 != null && var12 != var11) {
+						if (var12 != null && var11 != var12) {
 							if (var11 != null) {
 								this.remove(var12);
 							} else {
@@ -137,17 +137,17 @@ public class FriendsList extends UserList {
 					}
 
 					if (var6 != var11.world) {
-						var11.int2 = ++this.field3600 - 1;
+						var11.int2 = ++this.field3603 - 1;
 						if (var11.world == -1 && var6 == 0) {
-							var11.int2 = -(var11.int2 * 1037739243) * 1487463363;
+							var11.int2 = -(var11.int2 * 357239599) * 1797004239;
 						}
 
 						var11.world = var6;
 					}
 
 					var11.rank = var7;
-					var11.field3607 = var9;
-					var11.field3606 = var10;
+					var11.field3613 = var9;
+					var11.field3611 = var10;
 					continue;
 				}
 
@@ -159,47 +159,17 @@ public class FriendsList extends UserList {
 		}
 	}
 
-	@ObfuscatedName("fk")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(Lbd;III)V",
-		garbageValue = "1475900100"
+		signature = "(Llr;III)I",
+		garbageValue = "2102175416"
 	)
-	@Export("performPlayerAnimation")
-	static void performPlayerAnimation(Player var0, int var1, int var2) {
-		if (var0.sequence == var1 && var1 != -1) {
-			int var3 = Widget.SequenceDefinition_get(var1).field3492;
-			if (var3 == 1) {
-				var0.sequenceFrame = 0;
-				var0.sequenceFrameCycle = 0;
-				var0.sequenceDelay = var2;
-				var0.field964 = 0;
-			}
-
-			if (var3 == 2) {
-				var0.field964 = 0;
-			}
-		} else if (var1 == -1 || var0.sequence == -1 || Widget.SequenceDefinition_get(var1).field3508 >= Widget.SequenceDefinition_get(var0.sequence).field3508) {
-			var0.sequence = var1;
-			var0.sequenceFrame = 0;
-			var0.sequenceFrameCycle = 0;
-			var0.sequenceDelay = var2;
-			var0.field964 = 0;
-			var0.field947 = var0.pathLength;
+	static int method5306(IterableNodeHashTable var0, int var1, int var2) {
+		if (var0 == null) {
+			return var2;
+		} else {
+			IntegerNode var3 = (IntegerNode)var0.get((long)var1);
+			return var3 == null ? var2 : var3.integer;
 		}
-
-	}
-
-	@ObfuscatedName("ht")
-	@ObfuscatedSignature(
-		signature = "(IIIIB)V",
-		garbageValue = "-11"
-	)
-	static final void method5102(int var0, int var1, int var2, int var3) {
-		for (int var4 = 0; var4 < Client.rootWidgetCount; ++var4) {
-			if (Client.rootWidgetXs[var4] + Client.rootWidgetWidths[var4] > var0 && Client.rootWidgetXs[var4] < var0 + var2 && Client.rootWidgetYs[var4] + Client.rootWidgetHeights[var4] > var1 && Client.rootWidgetYs[var4] < var3 + var1) {
-				Client.field829[var4] = true;
-			}
-		}
-
 	}
 }

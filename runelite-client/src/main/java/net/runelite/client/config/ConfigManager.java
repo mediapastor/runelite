@@ -45,9 +45,7 @@ import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -56,13 +54,12 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.ConfigChanged;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.RuneLite;
 import static net.runelite.client.RuneLite.PROFILES_DIR;
 import net.runelite.client.eventbus.EventBus;
@@ -83,7 +80,6 @@ public class ConfigManager
 
 	private final ConfigInvocationHandler handler = new ConfigInvocationHandler(this);
 	private final Properties properties = new Properties();
-	private final Map<String, Object> configObjectCache = new HashMap<>();
 	private final Map<String, String> pendingChanges = new HashMap<>();
 
 	@Inject
@@ -156,6 +152,7 @@ public class ConfigManager
 
 	private synchronized void loadFromFile()
 	{
+		handler.invalidate();
 		properties.clear();
 
 		try (FileInputStream in = new FileInputStream(SETTINGS_FILE))
@@ -221,20 +218,6 @@ public class ConfigManager
 		}
 	}
 
-	// Attempts to fetch the config value from the cache if present. Otherwise it calls the get value function and caches the result
-	Object getConfigObjectFromCacheOrElse(String groupName, String key, Function<String, Object> getValue)
-	{
-		String configItemKey = groupName + "." + key;
-		return configObjectCache.computeIfAbsent(configItemKey, getValue);
-	}
-
-	// Posts the configchanged event to the event bus and remove the changed key from the cache
-	private void postConfigChanged(ConfigChanged configChanged)
-	{
-		configObjectCache.remove(configChanged.getGroup() + "." + configChanged.getKey());
-		eventBus.post(ConfigChanged.class, configChanged);
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T> T getConfig(Class<T> clazz)
 	{
@@ -257,11 +240,6 @@ public class ConfigManager
 	public String getConfiguration(String groupName, String key)
 	{
 		return properties.getProperty(groupName + "." + key);
-	}
-
-	public String getConfiguration(String propertyKey)
-	{
-		return properties.getProperty(propertyKey);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -292,6 +270,7 @@ public class ConfigManager
 		}
 
 		log.debug("Setting configuration value for {}.{} to {}", groupName, key, value);
+		handler.invalidate();
 
 		synchronized (pendingChanges)
 		{
@@ -304,7 +283,7 @@ public class ConfigManager
 		configChanged.setOldValue(oldValue);
 		configChanged.setNewValue(value);
 
-		postConfigChanged(configChanged);
+		eventBus.post(ConfigChanged.class, configChanged);
 	}
 
 	public void setConfiguration(String groupName, String key, Object value)
@@ -322,6 +301,7 @@ public class ConfigManager
 		}
 
 		log.debug("Unsetting configuration value for {}.{}", groupName, key);
+		handler.invalidate();
 
 		synchronized (pendingChanges)
 		{
@@ -346,8 +326,26 @@ public class ConfigManager
 			throw new IllegalArgumentException("Not a config group");
 		}
 
+		final List<ConfigSection> sections = Arrays.stream(inter.getMethods())
+			.filter(m -> m.getParameterCount() == 0 && m.isAnnotationPresent(ConfigSection.class) && m.getReturnType() == boolean.class)
+			.map(m -> m.getDeclaredAnnotation(ConfigSection.class))
+			.sorted((a, b) -> ComparisonChain.start()
+				.compare(a.position(), b.position())
+				.compare(a.name(), b.name())
+				.result())
+			.collect(Collectors.toList());
+
+		final List<ConfigTitleSection> titleSections = Arrays.stream(inter.getMethods())
+			.filter(m -> m.getParameterCount() == 0 && m.isAnnotationPresent(ConfigTitleSection.class))
+			.map(m -> m.getDeclaredAnnotation(ConfigTitleSection.class))
+			.sorted((a, b) -> ComparisonChain.start()
+				.compare(a.position(), b.position())
+				.compare(a.name(), b.name())
+				.result())
+			.collect(Collectors.toList());
+
 		final List<ConfigItemDescriptor> items = Arrays.stream(inter.getMethods())
-			.filter(m -> m.getParameterCount() == 0)
+			.filter(m -> m.getParameterCount() == 0 && m.isAnnotationPresent(ConfigItem.class))
 			.map(m -> new ConfigItemDescriptor(
 				m.getDeclaredAnnotation(ConfigItem.class),
 				m.getReturnType(),
@@ -360,35 +358,7 @@ public class ConfigManager
 				.result())
 			.collect(Collectors.toList());
 
-		Collection<ConfigItemsGroup> itemGroups = new ArrayList<>();
-
-		for (ConfigItemDescriptor item : items)
-		{
-			String groupName = item.getItem().group();
-			boolean found = false;
-			for (ConfigItemsGroup g : itemGroups)
-			{
-				if (g.getGroup().equals(groupName))
-				{
-					g.addItem(item);
-					found = true;
-					break;
-				}
-			}
-			if (!found)
-			{
-				ConfigItemsGroup newGroup = new ConfigItemsGroup(groupName);
-				newGroup.addItem(item);
-				itemGroups.add(newGroup);
-			}
-		}
-
-		itemGroups = itemGroups.stream().sorted((a, b) -> ComparisonChain.start()
-			.compare(a.getGroup(), b.getGroup())
-			.result())
-			.collect(Collectors.toList());
-
-		return new ConfigDescriptor(group, itemGroups);
+		return new ConfigDescriptor(group, sections, titleSections, items);
 	}
 
 	/**
@@ -543,7 +513,7 @@ public class ConfigManager
 			{
 				return Arrays.stream(str.split(",")).mapToInt(Integer::valueOf).toArray();
 			}
-			return new int[] {Integer.parseInt(str)};
+			return new int[]{Integer.parseInt(str)};
 		}
 		if (type == EnumSet.class)
 		{

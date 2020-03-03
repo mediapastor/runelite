@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, https://runelitepl.us
+ * Copyright (c) 2018, https://openosrs.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,10 @@ import static net.runelite.api.AnimationID.LIZARDMAN_SHAMAN_SPAWN;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
@@ -75,9 +75,6 @@ public class LizardmenShamanPlugin extends Plugin
 	@Inject
 	private Notifier notifier;
 
-	@Inject
-	private EventBus eventBus;
-
 	private boolean showTimer;
 	private boolean notifyOnSpawn;
 
@@ -90,7 +87,6 @@ public class LizardmenShamanPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		addSubscriptions();
 
 		this.showTimer = config.showTimer();
 		this.notifyOnSpawn = config.notifyOnSpawn();
@@ -101,19 +97,11 @@ public class LizardmenShamanPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
-
 		overlayManager.remove(overlay);
 		spawns.clear();
 	}
 
-	private void addSubscriptions()
-	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
-		eventBus.subscribe(AnimationChanged.class, this, this::onAnimationChanged);
-	}
-
+	@Subscribe
 	private void onChatMessage(ChatMessage event)
 	{
 		if (this.notifyOnSpawn && /* event.getType() == ChatMessageType.GAMEMESSAGE && */event.getMessage().contains(MESSAGE))
@@ -123,6 +111,7 @@ public class LizardmenShamanPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onAnimationChanged(AnimationChanged event)
 	{
 		Actor actor = event.getActor();
@@ -137,6 +126,7 @@ public class LizardmenShamanPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("shaman"))

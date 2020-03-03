@@ -52,6 +52,7 @@ import net.runelite.api.MenuOpcode;
 import static net.runelite.api.MenuOpcode.MENU_ACTION_DEPRIORITIZE_OFFSET;
 import net.runelite.api.NPCDefinition;
 import net.runelite.api.events.BeforeRender;
+import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
@@ -60,10 +61,10 @@ import net.runelite.api.events.PlayerMenuOptionClicked;
 import net.runelite.api.events.PlayerMenuOptionsChanged;
 import net.runelite.api.events.WidgetMenuOptionClicked;
 import net.runelite.api.events.WidgetPressed;
+import net.runelite.api.util.Text;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.eventbus.EventBus;
 import static net.runelite.client.menus.ComparableEntries.newBaseComparableEntry;
-import net.runelite.api.util.Text;
 
 @Singleton
 @Slf4j
@@ -83,13 +84,14 @@ public class MenuManager
 	//Used to manage custom non-player menu options
 	private final Multimap<Integer, WidgetMenuOption> managedMenuOptions = HashMultimap.create();
 	private final Set<String> npcMenuOptions = new HashSet<>();
-	private final HashSet<AbstractComparableEntry> priorityEntries = new HashSet<>();
-	private LinkedHashMap<MenuEntry, AbstractComparableEntry> currentPriorityEntries = new LinkedHashMap<>();
-	private final HashSet<AbstractComparableEntry> hiddenEntries = new HashSet<>();
-	private final HashMap<AbstractComparableEntry, AbstractComparableEntry> swaps = new HashMap<>();
+	private final Set<AbstractComparableEntry> priorityEntries = new HashSet<>();
+	private final Map<MenuEntry, AbstractComparableEntry> currentPriorityEntries = new LinkedHashMap<>();
+	private final Set<AbstractComparableEntry> hiddenEntries = new HashSet<>();
+	private final Map<AbstractComparableEntry, AbstractComparableEntry> swaps = new HashMap<>();
 
 	private MenuEntry leftClickEntry = null;
-	private MenuEntry firstEntry = null;
+
+	private int playerAttackIdx = -1;
 
 	@Inject
 	private MenuManager(Client client, EventBus eventBus)
@@ -100,11 +102,15 @@ public class MenuManager
 
 		eventBus.subscribe(MenuOpened.class, this, this::onMenuOpened);
 		eventBus.subscribe(MenuEntryAdded.class, this, this::onMenuEntryAdded);
-		eventBus.subscribe(BeforeRender.class, this, this::onBeforeRender);
 		eventBus.subscribe(PlayerMenuOptionsChanged.class, this, this::onPlayerMenuOptionsChanged);
 		eventBus.subscribe(NpcActionChanged.class, this, this::onNpcActionChanged);
 		eventBus.subscribe(WidgetPressed.class, this, this::onWidgetPressed);
 		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+
+		// Make sure last tick's entry gets cleared
+		eventBus.subscribe(ClientTick.class, this, tick -> leftClickEntry = null);
+		// Rebuild left click menu for top left entry
+		eventBus.subscribe(BeforeRender.class, this, br -> rebuildLeftClickMenu());
 	}
 
 	/**
@@ -151,7 +157,7 @@ public class MenuManager
 		// Need to reorder the list to normal, then rebuild with swaps
 		MenuEntry[] oldEntries = event.getMenuEntries();
 
-		firstEntry = null;
+		leftClickEntry = null;
 
 		List<MenuEntry> newEntries = Lists.newArrayList(oldEntries);
 
@@ -240,21 +246,26 @@ public class MenuManager
 
 		// Need to set the event entries to prevent conflicts
 		event.setMenuEntries(arrayEntries);
-		event.setModified(true);
+		event.setModified();
 	}
 
 	private void onMenuEntryAdded(MenuEntryAdded event)
 	{
+		if (client.isSpellSelected())
+		{
+			return;
+		}
+
 		for (AbstractComparableEntry e : hiddenEntries)
 		{
-			if (e.matches(event.getMenuEntry()))
+			if (e.matches(event))
 			{
 				client.setMenuOptionCount(client.getMenuOptionCount() - 1);
 				return;
 			}
 		}
 
-		int widgetId = event.getActionParam1();
+		int widgetId = event.getParam1();
 		Collection<WidgetMenuOption> options = managedMenuOptions.get(widgetId);
 
 		for (WidgetMenuOption currentMenu : options)
@@ -274,25 +285,20 @@ public class MenuManager
 		}
 	}
 
-	private void onBeforeRender(BeforeRender event)
+	private void rebuildLeftClickMenu()
 	{
-		rebuildLeftClickMenu();
-	}
-
-	private MenuEntry rebuildLeftClickMenu()
-	{
+		leftClickEntry = null;
 		if (client.isMenuOpen())
 		{
-			return null;
+			return;
 		}
 
 		int menuOptionCount = client.getMenuOptionCount();
 		if (menuOptionCount <= 2)
 		{
-			return null;
+			return;
 		}
 
-		firstEntry = null;
 		MenuEntry[] entries = new MenuEntry[menuOptionCount + priorityEntries.size()];
 		System.arraycopy(client.getMenuEntries(), 0, entries, 0, menuOptionCount);
 
@@ -301,21 +307,19 @@ public class MenuManager
 			indexPriorityEntries(entries, menuOptionCount);
 		}
 
-		if (firstEntry == null && !swaps.isEmpty())
+		if (leftClickEntry == null && !swaps.isEmpty())
 		{
 			indexSwapEntries(entries, menuOptionCount);
 		}
 
 
-		if (firstEntry == null)
+		if (leftClickEntry == null)
 		{
 			// stop being null smh
-			firstEntry = entries[menuOptionCount - 1];
+			leftClickEntry = entries[menuOptionCount - 1];
 		}
 
 		client.setMenuEntries(entries);
-
-		return firstEntry;
 	}
 
 	public void addPlayerMenuItem(String menuText)
@@ -419,16 +423,18 @@ public class MenuManager
 
 	private void onWidgetPressed(WidgetPressed event)
 	{
-		leftClickEntry = rebuildLeftClickMenu();
+		rebuildLeftClickMenu();
+		client.setTempMenuEntry(leftClickEntry);
 	}
 
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (!client.isMenuOpen() && event.isAuthentic())
+		// option and target will be the same if this one came from "tempMenuAction"
+		if (!client.isMenuOpen() && !event.getOption().equals(event.getTarget()) && event.isAuthentic())
 		{
-			if (event.getMouseButton() != 0)
+			if (!event.equals(leftClickEntry))
 			{
-				leftClickEntry = rebuildLeftClickMenu();
+				rebuildLeftClickMenu();
 			}
 
 			if (leftClickEntry != null)
@@ -443,7 +449,7 @@ public class MenuManager
 			return; // not a player menu
 		}
 
-		int widgetId = event.getActionParam1();
+		int widgetId = event.getParam1();
 		Collection<WidgetMenuOption> options = managedMenuOptions.get(widgetId);
 
 		for (WidgetMenuOption curMenuOption : options)
@@ -460,11 +466,7 @@ public class MenuManager
 			}
 		}
 
-		String target = event.getTarget();
-
-		// removes tags and level from player names for example:
-		// <col=ffffff>username<col=40ff00>  (level-42) or <col=ffffff><img=2>username</col>
-		String username = Text.removeTags(target).split("[(]")[0].trim();
+		String username = Text.removeTags(event.getTarget(), true);
 
 		PlayerMenuOptionClicked playerMenuOptionClicked = new PlayerMenuOptionClicked();
 		playerMenuOptionClicked.setMenuOption(event.getOption());
@@ -504,12 +506,35 @@ public class MenuManager
 		return index;
 	}
 
+	public int getPlayerAttackOpcode()
+	{
+		final String[] playerMenuOptions = client.getPlayerOptions();
+
+		if (playerAttackIdx != -1 && playerMenuOptions[playerAttackIdx].equals("Attack"))
+		{
+			return client.getPlayerMenuTypes()[playerAttackIdx];
+		}
+
+		playerAttackIdx = -1;
+
+		for (int i = IDX_LOWER; i < IDX_UPPER; i++)
+		{
+			if ("Attack".equals(playerMenuOptions[i]))
+			{
+				playerAttackIdx = i;
+				break;
+			}
+		}
+
+		return playerAttackIdx >= 0 ? client.getPlayerMenuTypes()[playerAttackIdx] : -1;
+	}
+
 	/**
 	 * Adds to the set of menu entries which when present, will remove all entries except for this one
 	 */
 	public AbstractComparableEntry addPriorityEntry(String option, String target)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, target);
@@ -521,12 +546,12 @@ public class MenuManager
 
 	public void removePriorityEntry(String option, String target)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, target);
 
-		priorityEntries.removeIf(entry::equals);
+		priorityEntries.remove(entry);
 	}
 
 
@@ -536,7 +561,7 @@ public class MenuManager
 	 */
 	public AbstractComparableEntry addPriorityEntry(String option)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, "", false);
 
@@ -547,7 +572,7 @@ public class MenuManager
 
 	public AbstractComparableEntry addPriorityEntry(String option, boolean strictOption)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 
 		AbstractComparableEntry entry =
 			newBaseComparableEntry(option, "", -1, -1, false, strictOption);
@@ -566,26 +591,36 @@ public class MenuManager
 
 	public void removePriorityEntry(AbstractComparableEntry entry)
 	{
-		priorityEntries.removeIf(entry::equals);
+		priorityEntries.remove(entry);
 	}
 
 	public void removePriorityEntry(String option)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, "", false);
 
-		priorityEntries.removeIf(entry::equals);
+		priorityEntries.remove(entry);
 	}
 
 	public void removePriorityEntry(String option, boolean strictOption)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 
 		AbstractComparableEntry entry =
 			newBaseComparableEntry(option, "", -1, -1, false, strictOption);
 
-		priorityEntries.removeIf(entry::equals);
+		priorityEntries.remove(entry);
+	}
+
+	public void addPriorityEntries(Collection<AbstractComparableEntry> entries)
+	{
+		priorityEntries.addAll(entries);
+	}
+
+	public void removePriorityEntries(Collection<AbstractComparableEntry> entries)
+	{
+		priorityEntries.removeAll(entries);
 	}
 
 	/**
@@ -606,10 +641,10 @@ public class MenuManager
 	 */
 	public void addSwap(String option, String target, String option2, String target2, boolean strictOption, boolean strictTarget)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
-		option2 = Text.standardize(option2);
+		option2 = option2.trim().toLowerCase();
 		target2 = Text.standardize(target2);
 
 		AbstractComparableEntry swapFrom = newBaseComparableEntry(option, target, -1, -1, strictOption, strictTarget);
@@ -627,10 +662,10 @@ public class MenuManager
 
 	public void removeSwap(String option, String target, String option2, String target2, boolean strictOption, boolean strictTarget)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
-		option2 = Text.standardize(option2);
+		option2 = option2.trim().toLowerCase();
 		target2 = Text.standardize(target2);
 
 		AbstractComparableEntry swapFrom = newBaseComparableEntry(option, target, -1, -1, strictOption, strictTarget);
@@ -672,10 +707,10 @@ public class MenuManager
 	 */
 	public void addSwap(String option, String target, int id, int type, String option2, String target2, int id2, int type2)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
-		option2 = Text.standardize(option2);
+		option2 = option2.trim().toLowerCase();
 		target2 = Text.standardize(target2);
 
 		AbstractComparableEntry swapFrom = newBaseComparableEntry(option, target, id, type, false, false);
@@ -692,10 +727,10 @@ public class MenuManager
 
 	public void removeSwap(String option, String target, int id, int type, String option2, String target2, int id2, int type2)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
-		option2 = Text.standardize(option2);
+		option2 = option2.trim().toLowerCase();
 		target2 = Text.standardize(target2);
 
 		AbstractComparableEntry swapFrom = newBaseComparableEntry(option, target, id, type, false, false);
@@ -712,11 +747,15 @@ public class MenuManager
 	/**
 	 * Removes all swaps with target
 	 */
-	public void removeSwaps(String withTarget)
+	public void removeSwaps(String... fromTarget)
 	{
-		final String target = Text.standardize(withTarget);
-
-		swaps.keySet().removeIf(e -> e.getTarget().equals(target));
+		for (String target : fromTarget)
+		{
+			final String s = Text.standardize(target);
+			swaps.keySet().removeIf(e -> e.getTarget() != null && e.getTarget().equals(s));
+			priorityEntries.removeIf(e -> e.getTarget() != null && e.getTarget().equals(s));
+			hiddenEntries.removeIf(e -> e.getTarget() != null && e.getTarget().equals(s));
+		}
 	}
 
 	/**
@@ -724,7 +763,7 @@ public class MenuManager
 	 */
 	public void addHiddenEntry(String option, String target)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, target);
@@ -734,7 +773,7 @@ public class MenuManager
 
 	public void removeHiddenEntry(String option, String target)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, target);
@@ -748,7 +787,7 @@ public class MenuManager
 	 */
 	public void addHiddenEntry(String option)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, "", false);
 
@@ -757,7 +796,7 @@ public class MenuManager
 
 	public void removeHiddenEntry(String option)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, "", false);
 
@@ -769,7 +808,7 @@ public class MenuManager
 	 */
 	public void addHiddenEntry(String option, String target, boolean strictOption, boolean strictTarget)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, target, -1, -1, strictOption, strictTarget);
@@ -779,7 +818,7 @@ public class MenuManager
 
 	public void removeHiddenEntry(String option, String target, boolean strictOption, boolean strictTarget)
 	{
-		option = Text.standardize(option);
+		option = option.trim().toLowerCase();
 		target = Text.standardize(target);
 
 		AbstractComparableEntry entry = newBaseComparableEntry(option, target, -1, -1, strictOption, strictTarget);
@@ -839,7 +878,7 @@ public class MenuManager
 			entries[menuOptionCount + i] = prios[i].entry;
 		}
 
-		firstEntry = entries[menuOptionCount + i - 1];
+		leftClickEntry = entries[menuOptionCount + i - 1];
 
 	}
 
@@ -882,14 +921,14 @@ public class MenuManager
 
 				entries[i] = first;
 				entries[menuOptionCount - 1] = entry;
-				firstEntry = entry;
+				leftClickEntry = entry;
 				return;
 			}
 		}
 	}
 
 	@AllArgsConstructor
-	private class SortMapping implements Comparable<SortMapping>
+	private static class SortMapping implements Comparable<SortMapping>
 	{
 		private final int priority;
 		private final MenuEntry entry;

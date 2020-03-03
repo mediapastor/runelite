@@ -44,10 +44,10 @@ import net.runelite.api.ScriptID;
 import net.runelite.api.SoundEffectID;
 import net.runelite.api.SpriteID;
 import net.runelite.api.Varbits;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.util.Text;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
@@ -55,12 +55,12 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.game.chatbox.ChatboxTextInput;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.api.util.Text;
 
 @Slf4j
 @PluginDescriptor(
@@ -71,9 +71,9 @@ import net.runelite.api.util.Text;
 @Singleton
 public class FairyRingPlugin extends Plugin
 {
-	private static final String[] leftDial = new String[]{"A", "D", "C", "B"};
-	private static final String[] middleDial = new String[]{"I", "L", "K", "J"};
-	private static final String[] rightDial = new String[]{"P", "S", "R", "Q"};
+	private static final String[] leftDial = new String[] {"A", "D", "C", "B"};
+	private static final String[] middleDial = new String[] {"I", "L", "K", "J"};
+	private static final String[] rightDial = new String[] {"P", "S", "R", "Q"};
 
 	private static final int ENTRY_PADDING = 3;
 
@@ -91,9 +91,6 @@ public class FairyRingPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
-
-	@Inject
-	private EventBus eventBus;
 
 	private ChatboxTextInput searchInput = null;
 	private Widget searchBtn;
@@ -118,23 +115,14 @@ public class FairyRingPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		this.autoOpen = config.autoOpen();
-		addSubscriptions();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
-	}
+		}
 
-	private void addSubscriptions()
-	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
-		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
-		eventBus.subscribe(GameTick.class, this, this::onGameTick);
-	}
-
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("fairyrings"))
@@ -151,11 +139,13 @@ public class FairyRingPlugin extends Plugin
 		return configManager.getConfig(FairyRingConfig.class);
 	}
 
+	@Subscribe
 	private void onVarbitChanged(VarbitChanged event)
 	{
 		setWidgetTextToDestination();
 	}
 
+	@Subscribe
 	private void onWidgetLoaded(WidgetLoaded widgetLoaded)
 	{
 		if (widgetLoaded.getGroupId() == WidgetID.FAIRY_RING_PANEL_GROUP_ID)
@@ -242,6 +232,7 @@ public class FairyRingPlugin extends Plugin
 			.build();
 	}
 
+	@Subscribe
 	private void onGameTick(GameTick t)
 	{
 		// This has to happen because the only widget that gets hidden is the tli one

@@ -33,8 +33,8 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import net.runelite.api.Actor;
@@ -61,11 +61,65 @@ public class OverlayUtil
 	private static final int MINIMAP_DOT_RADIUS = 4;
 	private static final double UNIT = Math.PI / 1024.0d;
 
-	public static void renderPolygon(Graphics2D graphics, Polygon poly, Color color)
+	public static void renderPolygon(Graphics2D graphics, Shape poly, Color color)
 	{
 		graphics.setColor(color);
 		final Stroke originalStroke = graphics.getStroke();
 		graphics.setStroke(new BasicStroke(2));
+		graphics.draw(poly);
+		graphics.setColor(new Color(0, 0, 0, 50));
+		graphics.fill(poly);
+		graphics.setStroke(originalStroke);
+	}
+
+	public static void renderOutlinePolygon(Graphics2D graphics, Shape poly, Color color)
+	{
+		graphics.setColor(color);
+		final Stroke originalStroke = graphics.getStroke();
+		graphics.setStroke(new BasicStroke(2));
+		graphics.draw(poly);
+		graphics.setStroke(originalStroke);
+	}
+
+	public static void renderFilledPolygon(Graphics2D graphics, Shape poly, Color color)
+	{
+		graphics.setColor(color);
+		final Stroke originalStroke = graphics.getStroke();
+		graphics.setStroke(new BasicStroke(2));
+		graphics.draw(poly);
+		graphics.fill(poly);
+		graphics.setStroke(originalStroke);
+	}
+
+	public static void renderAreaTilePolygon(Graphics2D graphics, Shape poly, Color color)
+	{
+		graphics.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 10));
+		graphics.fill(poly);
+	}
+
+	public static void renderFullLine(Graphics2D graphics, int[][] line, Color color)
+	{
+		graphics.setColor(color);
+		final Stroke originalStroke = graphics.getStroke();
+		graphics.setStroke(new BasicStroke(2));
+		graphics.drawLine(line[0][0], line[0][1], line[1][0], line[1][1]);
+		graphics.setStroke(originalStroke);
+	}
+
+	public static void renderDashedLine(Graphics2D graphics, int[][] line, Color color)
+	{
+		graphics.setColor(color);
+		final Stroke originalStroke = graphics.getStroke();
+		graphics.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));
+		graphics.drawLine(line[0][0], line[0][1], line[1][0], line[1][1]);
+		graphics.setStroke(originalStroke);
+	}
+
+	public static void renderPolygonThin(Graphics2D graphics, Polygon poly, Color color)
+	{
+		graphics.setColor(color);
+		final Stroke originalStroke = graphics.getStroke();
+		graphics.setStroke(new BasicStroke(1));
 		graphics.drawPolygon(poly);
 		graphics.setColor(new Color(0, 0, 0, 50));
 		graphics.fillPolygon(poly);
@@ -200,7 +254,7 @@ public class OverlayUtil
 		renderImageLocation(client, graphics, localLocation, image, 0);
 	}
 
-	public static void renderHoverableArea(Graphics2D graphics, Area area, net.runelite.api.Point mousePosition, Color fillColor, Color borderColor, Color borderHoverColor)
+	public static void renderHoverableArea(Graphics2D graphics, Shape area, net.runelite.api.Point mousePosition, Color fillColor, Color borderColor, Color borderHoverColor)
 	{
 		if (area != null)
 		{
@@ -286,14 +340,14 @@ public class OverlayUtil
 
 	public static void renderActorTextAndImage(Graphics2D graphics, Actor actor, String text, Color color, BufferedImage image, int yOffset, int xOffset)
 	{
-		Point textLocation = new Point(actor.getConvexHull().getBounds().x + xOffset,
-			actor.getConvexHull().getBounds().y + yOffset);
+		Point textLocation = actor.getCanvasTextLocation(graphics, text, actor.getLogicalHeight() + yOffset);
 
-		renderImageLocation(graphics, textLocation, image);
-		xOffset = image.getWidth() + 1;
-		yOffset = (image.getHeight() - (int) graphics.getFontMetrics().getStringBounds(text, graphics).getHeight());
-		textLocation = new Point(textLocation.getX() + xOffset, textLocation.getY() + image.getHeight() - yOffset);
-		renderTextLocation(graphics, textLocation, text, color);
+		if (textLocation != null)
+		{
+			renderImageLocation(graphics, textLocation, image);
+			textLocation = new Point(textLocation.getX() + xOffset, textLocation.getY());
+			renderTextLocation(graphics, textLocation, text, color);
+		}
 	}
 
 	public static void renderTextLocation(Graphics2D graphics, String txtString, int fontSize, int fontStyle, Color fontColor, Point canvasPoint, boolean shadows, int yOffset)
@@ -315,7 +369,7 @@ public class OverlayUtil
 		}
 	}
 
-	public static void renderClickBox(Graphics2D graphics, Point mousePosition, Area objectClickbox, Color configColor)
+	public static void renderClickBox(Graphics2D graphics, Point mousePosition, Shape objectClickbox, Color configColor)
 	{
 		if (objectClickbox.contains(mousePosition.getX(), mousePosition.getY()))
 		{

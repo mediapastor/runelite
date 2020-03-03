@@ -3,77 +3,87 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("gi")
+@ObfuscatedName("gh")
 public class class197 {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "Lhq;"
 	)
 	@Export("musicPatchesArchive")
 	public static AbstractArchive musicPatchesArchive;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "Lhq;"
 	)
 	@Export("musicSamplesArchive")
 	public static AbstractArchive musicSamplesArchive;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "Lhq;"
 	)
 	@Export("soundEffectsArchive")
 	public static AbstractArchive soundEffectsArchive;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "Lgp;"
+		signature = "Lgg;"
 	)
 	@Export("midiPcmStream")
 	public static MidiPcmStream midiPcmStream;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = 1319916027
+		intValue = -1610594971
 	)
-	public static int field2378;
-	@ObfuscatedName("t")
+	public static int field2377;
+	@ObfuscatedName("o")
 	@ObfuscatedGetter(
-		intValue = -2004813651
-	)
-	@Export("musicTrackGroupId")
-	public static int musicTrackGroupId;
-	@ObfuscatedName("q")
-	@ObfuscatedGetter(
-		intValue = 1949584783
+		intValue = 319435127
 	)
 	@Export("musicTrackFileId")
 	public static int musicTrackFileId;
-	@ObfuscatedName("ea")
-	@ObfuscatedSignature(
-		signature = "Lkp;"
+	@ObfuscatedName("i")
+	@ObfuscatedGetter(
+		intValue = -1006961815
 	)
-	@Export("spriteIds")
-	static GraphicsDefaults spriteIds;
+	@Export("musicTrackVolume")
+	public static int musicTrackVolume;
+	@ObfuscatedName("d")
+	@ObfuscatedGetter(
+		intValue = -1415687209
+	)
+	public static int field2384;
+	@ObfuscatedName("p")
+	@ObfuscatedSignature(
+		signature = "Lgb;"
+	)
+	@Export("musicTrack")
+	public static MusicTrack musicTrack;
 
 	static {
-		field2378 = 0;
+		field2377 = 0;
 	}
 
-	@ObfuscatedName("y")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(III)I",
-		garbageValue = "2056468523"
+		signature = "(Lhq;Lhq;Lhq;I)V",
+		garbageValue = "1749712810"
 	)
-	static final int method3645(int var0, int var1) {
-		if (var0 == -1) {
-			return 12345678;
-		} else {
-			var1 = (var0 & 127) * var1 / 128;
-			if (var1 < 2) {
-				var1 = 2;
-			} else if (var1 > 126) {
-				var1 = 126;
-			}
+	public static void method3845(AbstractArchive var0, AbstractArchive var1, AbstractArchive var2) {
+		SequenceDefinition.SequenceDefinition_archive = var0;
+		DevicePcmPlayerProvider.SequenceDefinition_animationsArchive = var1;
+		SequenceDefinition.SequenceDefinition_skeletonsArchive = var2;
+	}
 
-			return (var0 & 65408) + var1;
+	@ObfuscatedName("lr")
+	@ObfuscatedSignature(
+		signature = "(II)V",
+		garbageValue = "-224459169"
+	)
+	static void method3844(int var0) {
+		for (IntegerNode var1 = (IntegerNode)Client.widgetClickMasks.first(); var1 != null; var1 = (IntegerNode)Client.widgetClickMasks.next()) {
+			if ((long)var0 == (var1.key >> 48 & 65535L)) {
+				var1.remove();
+			}
 		}
+
 	}
 }

@@ -47,11 +47,15 @@ import net.runelite.api.Entity;
 import net.runelite.api.MainBufferProvider;
 import net.runelite.api.NullItemID;
 import net.runelite.api.RenderOverview;
+import net.runelite.api.Skill;
 import net.runelite.api.WorldMapManager;
 import net.runelite.api.events.BeforeMenuRender;
 import net.runelite.api.events.BeforeRender;
 import net.runelite.api.events.Event;
+import net.runelite.api.events.FakeXpDrop;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.hooks.Callbacks;
 import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.api.widgets.Widget;
@@ -126,6 +130,7 @@ public class Hooks implements Callbacks
 	private Graphics2D stretchedGraphics;
 
 	private long lastCheck;
+	private boolean ignoreNextNpcUpdate;
 	private boolean shouldProcessGameTick;
 
 	private static MainBufferProvider lastMainBufferProvider;
@@ -154,13 +159,13 @@ public class Hooks implements Callbacks
 	}
 
 	@Override
-	public <T> void post(Class<T> eventClass, Event event)
+	public <T extends Event, E extends T> void post(Class<T> eventClass, E event)
 	{
 		eventBus.post(eventClass, event);
 	}
 
 	@Override
-	public <T> void postDeferred(Class<T> eventClass, Event event)
+	public <T extends Event, E extends T> void postDeferred(Class<T> eventClass, E event)
 	{
 		deferredEventBus.post(eventClass, event);
 	}
@@ -459,15 +464,36 @@ public class Hooks implements Callbacks
 		overlayManager.getItemWidgets().clear();
 	}
 
+	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	{
+		switch (gameStateChanged.getGameState())
+		{
+			case LOGGING_IN:
+			case HOPPING:
+				ignoreNextNpcUpdate = true;
+		}
+	}
+
 	@Override
 	public void updateNpcs()
 	{
-		// The NPC update event seem to run every server tick,
-		// but having the game tick event after all packets
-		// have been processed is typically more useful.
-		shouldProcessGameTick = true;
+		if (ignoreNextNpcUpdate)
+		{
+			// After logging in an NPC update happens outside of the normal game tick, which
+			// is sent prior to skills and vars being bursted, so ignore it.
+			ignoreNextNpcUpdate = false;
+			log.debug("Skipping login updateNpc");
+		}
+		else
+		{
+			// The NPC update event seem to run every server tick,
+			// but having the game tick event after all packets
+			// have been processed is typically more useful.
+			shouldProcessGameTick = true;
+		}
+
 		// Replay deferred events, otherwise if two npc
-		// update packets get processed in one frame, a
+		// update packets get processed in one client tick, a
 		// despawn event could be published prior to the
 		// spawn event, which is deferred
 		deferredEventBus.replay();
@@ -520,5 +546,26 @@ public class Hooks implements Callbacks
 		BeforeMenuRender event = new BeforeMenuRender();
 		client.getCallbacks().post(BeforeMenuRender.class, event);
 		return event.isConsumed();
+	}
+
+	public void onScriptCallbackEvent(ScriptCallbackEvent scriptCallbackEvent)
+	{
+		if (!scriptCallbackEvent.getEventName().equals("fakeXpDrop"))
+		{
+			return;
+		}
+
+		final int[] intStack = client.getIntStack();
+		final int intStackSize = client.getIntStackSize();
+
+		final int statId = intStack[intStackSize - 2];
+		final int xp = intStack[intStackSize - 1];
+
+		Skill skill = Skill.values()[statId];
+		FakeXpDrop fakeXpDrop = new FakeXpDrop(
+			skill,
+			xp
+		);
+		eventBus.post(FakeXpDrop.class, fakeXpDrop);
 	}
 }

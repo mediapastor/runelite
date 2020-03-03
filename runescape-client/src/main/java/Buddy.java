@@ -4,27 +4,24 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("jt")
+@ObfuscatedName("jx")
 @Implements("Buddy")
 public class Buddy extends User {
-	@ObfuscatedName("c")
-	@Export("Tiles_lightness")
-	static int[] Tiles_lightness;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = 453016847
+		intValue = 1646057305
 	)
 	@Export("world")
 	public int world;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@ObfuscatedGetter(
-		intValue = 1487463363
+		intValue = 1797004239
 	)
 	@Export("int2")
 	public int int2;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		intValue = -838100941
+		intValue = 48717521
 	)
 	@Export("rank")
 	public int rank;
@@ -33,10 +30,10 @@ public class Buddy extends User {
 		this.world = -1;
 	}
 
-	@ObfuscatedName("aq")
+	@ObfuscatedName("bx")
 	@ObfuscatedSignature(
-		signature = "(III)V",
-		garbageValue = "-1748427179"
+		signature = "(IIB)V",
+		garbageValue = "-15"
 	)
 	@Export("set")
 	void set(int var1, int var2) {
@@ -44,33 +41,120 @@ public class Buddy extends User {
 		this.int2 = var2;
 	}
 
-	@ObfuscatedName("ay")
+	@ObfuscatedName("bl")
 	@ObfuscatedSignature(
 		signature = "(I)I",
-		garbageValue = "-1469335924"
+		garbageValue = "-319513783"
 	)
 	@Export("getWorld")
 	public int getWorld() {
 		return this.world;
 	}
 
-	@ObfuscatedName("ad")
+	@ObfuscatedName("bh")
 	@ObfuscatedSignature(
-		signature = "(I)Z",
-		garbageValue = "-1595892037"
+		signature = "(B)Z",
+		garbageValue = "0"
 	)
 	@Export("hasWorld")
 	public boolean hasWorld() {
 		return this.world > 0;
 	}
 
-	@ObfuscatedName("bk")
+	@ObfuscatedName("q")
+	@ObfuscatedSignature(
+		signature = "(CI)C",
+		garbageValue = "129853061"
+	)
+	public static char method5286(char var0) {
+		switch(var0) {
+		case ' ':
+		case '-':
+		case '_':
+		case ' ':
+			return '_';
+		case '#':
+		case '[':
+		case ']':
+			return var0;
+		case 'À':
+		case 'Á':
+		case 'Â':
+		case 'Ã':
+		case 'Ä':
+		case 'à':
+		case 'á':
+		case 'â':
+		case 'ã':
+		case 'ä':
+			return 'a';
+		case 'Ç':
+		case 'ç':
+			return 'c';
+		case 'È':
+		case 'É':
+		case 'Ê':
+		case 'Ë':
+		case 'è':
+		case 'é':
+		case 'ê':
+		case 'ë':
+			return 'e';
+		case 'Í':
+		case 'Î':
+		case 'Ï':
+		case 'í':
+		case 'î':
+		case 'ï':
+			return 'i';
+		case 'Ñ':
+		case 'ñ':
+			return 'n';
+		case 'Ò':
+		case 'Ó':
+		case 'Ô':
+		case 'Õ':
+		case 'Ö':
+		case 'ò':
+		case 'ó':
+		case 'ô':
+		case 'õ':
+		case 'ö':
+			return 'o';
+		case 'Ù':
+		case 'Ú':
+		case 'Û':
+		case 'Ü':
+		case 'ù':
+		case 'ú':
+		case 'û':
+		case 'ü':
+			return 'u';
+		case 'ß':
+			return 'b';
+		case 'ÿ':
+		case 'Ÿ':
+			return 'y';
+		default:
+			return Character.toLowerCase(var0);
+		}
+	}
+
+	@ObfuscatedName("ah")
+	@ObfuscatedSignature(
+		signature = "(IB)I",
+		garbageValue = "116"
+	)
+	static int method5298(int var0) {
+		return (int)Math.pow(2.0D, (double)((float)var0 / 256.0F + 7.0F));
+	}
+
+	@ObfuscatedName("bh")
 	@ObfuscatedSignature(
 		signature = "(Ljava/lang/String;I)I",
-		garbageValue = "1544989297"
+		garbageValue = "-2095111578"
 	)
-	@Export("stringCp1252NullTerminatedByteSize")
-	public static int stringCp1252NullTerminatedByteSize(String var0) {
-		return var0.length() + 1;
+	public static int method5297(String var0) {
+		return var0.length() + 2;
 	}
 }

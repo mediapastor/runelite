@@ -1,28 +1,29 @@
+import java.io.IOException;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ex")
+@ObfuscatedName("ee")
 @Implements("Skeleton")
 public class Skeleton extends Node {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = 1796359349
+		intValue = -567509563
 	)
 	@Export("id")
 	int id;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = -911873839
+		intValue = 774941897
 	)
 	@Export("count")
 	int count;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("transformTypes")
 	int[] transformTypes;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("labels")
 	int[][] labels;
 
@@ -50,12 +51,38 @@ public class Skeleton extends Node {
 
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(I)I",
-		garbageValue = "244690440"
+		signature = "(I)Lbw;",
+		garbageValue = "25013403"
 	)
-	public static int method3008() {
-		return KeyHandler.KeyHandler_idleCycles;
+	static ClientPreferences method3201() {
+		AccessFile var0 = null;
+		ClientPreferences var1 = new ClientPreferences();
+
+		try {
+			var0 = CollisionMap.getPreferencesFile("", MouseHandler.field458.name, false);
+			byte[] var2 = new byte[(int)var0.length()];
+
+			int var4;
+			for (int var3 = 0; var3 < var2.length; var3 += var4) {
+				var4 = var0.read(var2, var3, var2.length - var3);
+				if (var4 == -1) {
+					throw new IOException();
+				}
+			}
+
+			var1 = new ClientPreferences(new Buffer(var2));
+		} catch (Exception var6) {
+		}
+
+		try {
+			if (var0 != null) {
+				var0.close();
+			}
+		} catch (Exception var5) {
+		}
+
+		return var1;
 	}
 }

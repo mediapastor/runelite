@@ -4,100 +4,89 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ej")
+@ObfuscatedName("ex")
 @Implements("GameObject")
 public final class GameObject {
-	@ObfuscatedName("sg")
-	@ObfuscatedSignature(
-		signature = "Lic;"
-	)
-	public static class237 field1921;
-	@ObfuscatedName("dg")
-	@ObfuscatedSignature(
-		signature = "Lid;"
-	)
-	@Export("archive10")
-	static Archive archive10;
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = 744501361
+		intValue = -1950933673
 	)
 	@Export("plane")
 	int plane;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = 2026651009
+		intValue = -1570818829
 	)
 	@Export("height")
 	int height;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -500411517
+		intValue = -1477915037
 	)
 	@Export("centerX")
 	int centerX;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = -560576891
+		intValue = 1448814329
 	)
 	@Export("centerY")
 	int centerY;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedSignature(
-		signature = "Len;"
+		signature = "Lep;"
 	)
 	@Export("entity")
 	public Entity entity;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@ObfuscatedGetter(
-		intValue = 939156699
+		intValue = -1886669661
 	)
 	@Export("orientation")
 	int orientation;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		intValue = 86850281
+		intValue = -564679873
 	)
 	@Export("startX")
 	int startX;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@ObfuscatedGetter(
-		intValue = -698919929
+		intValue = -441030449
 	)
 	@Export("endX")
 	int endX;
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = 1676112193
+		intValue = -187063391
 	)
 	@Export("startY")
 	int startY;
 	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = 2114738955
+		intValue = -1484089673
 	)
 	@Export("endY")
 	int endY;
-	@ObfuscatedName("f")
+	@ObfuscatedName("m")
 	@ObfuscatedGetter(
-		intValue = -1792624973
+		intValue = -875771859
 	)
-	int field1916;
-	@ObfuscatedName("c")
+	int field1912;
+	@ObfuscatedName("p")
 	@ObfuscatedGetter(
-		intValue = 1739525873
+		intValue = -1503559581
 	)
 	@Export("lastDrawn")
 	int lastDrawn;
-	@ObfuscatedName("r")
+	@ObfuscatedName("h")
 	@ObfuscatedGetter(
-		longValue = 7927595607641920085L
+		longValue = -3849133574729992117L
 	)
 	@Export("tag")
 	public long tag;
-	@ObfuscatedName("y")
+	@ObfuscatedName("k")
 	@ObfuscatedGetter(
-		intValue = 692610593
+		intValue = 823124257
 	)
 	@Export("flags")
 	int flags;
@@ -107,25 +96,48 @@ public final class GameObject {
 		this.flags = 0;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;ZZI)V",
-		garbageValue = "-1828723850"
+		signature = "(Lhi;I[B[BB)V",
+		garbageValue = "-22"
 	)
-	@Export("openURL")
-	public static void openURL(String var0, boolean var1, boolean var2) {
-		StudioGame.method4056(var0, var1, "openjs", var2);
+	@Export("Widget_setKey")
+	static final void Widget_setKey(Widget var0, int var1, byte[] var2, byte[] var3) {
+		if (var0.field2623 == null) {
+			if (var2 == null) {
+				return;
+			}
+
+			var0.field2623 = new byte[11][];
+			var0.field2624 = new byte[11][];
+			var0.field2628 = new int[11];
+			var0.field2626 = new int[11];
+		}
+
+		var0.field2623[var1] = var2;
+		if (var2 != null) {
+			var0.field2606 = true;
+		} else {
+			var0.field2606 = false;
+
+			for (int var4 = 0; var4 < var0.field2623.length; ++var4) {
+				if (var0.field2623[var4] != null) {
+					var0.field2606 = true;
+					break;
+				}
+			}
+		}
+
+		var0.field2624[var1] = var3;
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("ii")
 	@ObfuscatedSignature(
-		signature = "(II)I",
-		garbageValue = "-2110373438"
+		signature = "(Ljava/lang/String;Ljava/lang/String;IIIIB)V",
+		garbageValue = "-59"
 	)
-	@Export("ViewportMouse_unpackY")
-	public static int ViewportMouse_unpackY(int var0) {
-		long var2 = ViewportMouse.ViewportMouse_entityTags[var0];
-		int var1 = (int)(var2 >>> 7 & 127L);
-		return var1;
+	@Export("insertMenuItemNoShift")
+	public static final void insertMenuItemNoShift(String var0, String var1, int var2, int var3, int var4, int var5) {
+		ArchiveDiskAction.insertMenuItem(var0, var1, var2, var3, var4, var5, false);
 	}
 }

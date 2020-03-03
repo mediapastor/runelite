@@ -1,40 +1,38 @@
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("kv")
+@ObfuscatedName("ke")
 @Implements("ArchiveDisk")
 public final class ArchiveDisk {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("ArchiveDisk_buffer")
 	static byte[] ArchiveDisk_buffer;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lmw;"
+		signature = "Lmz;"
 	)
 	@Export("datFile")
 	BufferedFile datFile;
-	@ObfuscatedName("i")
-	@ObfuscatedGetter(
-		intValue = -1905715445
-	)
-	@Export("archive")
-	int archive;
-	@ObfuscatedName("k")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lmw;"
+		signature = "Lmz;"
 	)
 	@Export("idxFile")
 	BufferedFile idxFile;
-	@ObfuscatedName("u")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = 1039930471
+		intValue = 161703877
+	)
+	@Export("archive")
+	int archive;
+	@ObfuscatedName("v")
+	@ObfuscatedGetter(
+		intValue = -1904076189
 	)
 	@Export("maxEntrySize")
 	int maxEntrySize;
@@ -44,7 +42,7 @@ public final class ArchiveDisk {
 	}
 
 	@ObfuscatedSignature(
-		signature = "(ILmw;Lmw;I)V"
+		signature = "(ILmz;Lmz;I)V"
 	)
 	public ArchiveDisk(int var1, BufferedFile var2, BufferedFile var3, int var4) {
 		this.datFile = null;
@@ -56,10 +54,10 @@ public final class ArchiveDisk {
 		this.maxEntrySize = var4;
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(IB)[B",
-		garbageValue = "93"
+		signature = "(II)[B",
+		garbageValue = "909989456"
 	)
 	@Export("read")
 	public byte[] read(int var1) {
@@ -83,8 +81,9 @@ public final class ArchiveDisk {
 					} else {
 						byte[] var5 = new byte[var3];
 						int var6 = 0;
+						int var7 = 0;
 
-						for (int var7 = 0; var6 < var3; ++var7) {
+						while (var6 < var3) {
 							if (var4 == 0) {
 								var10000 = null;
 								return (byte[])var10000;
@@ -103,7 +102,7 @@ public final class ArchiveDisk {
 								}
 
 								var13 = 10;
-								this.datFile.read(ArchiveDisk_buffer, 0, var8 + var13);
+								this.datFile.read(ArchiveDisk_buffer, 0, var13 + var8);
 								var9 = ((ArchiveDisk_buffer[1] & 255) << 16) + ((ArchiveDisk_buffer[0] & 255) << 24) + (ArchiveDisk_buffer[3] & 255) + ((ArchiveDisk_buffer[2] & 255) << 8);
 								var10 = (ArchiveDisk_buffer[5] & 255) + ((ArchiveDisk_buffer[4] & 255) << 8);
 								var11 = (ArchiveDisk_buffer[8] & 255) + ((ArchiveDisk_buffer[7] & 255) << 8) + ((ArchiveDisk_buffer[6] & 255) << 16);
@@ -121,23 +120,25 @@ public final class ArchiveDisk {
 								var12 = ArchiveDisk_buffer[7] & 255;
 							}
 
-							if (var9 != var1 || var7 != var10 || var12 != this.archive) {
+							if (var9 == var1 && var7 == var10 && var12 == this.archive) {
+								if (var11 >= 0 && (long)var11 <= this.datFile.length() / 520L) {
+									int var14 = var13 + var8;
+
+									for (int var15 = var13; var15 < var14; ++var15) {
+										var5[var6++] = ArchiveDisk_buffer[var15];
+									}
+
+									var4 = var11;
+									++var7;
+									continue;
+								}
+
 								var10000 = null;
 								return (byte[])var10000;
 							}
 
-							if (var11 < 0 || (long)var11 > this.datFile.length() / 520L) {
-								var10000 = null;
-								return (byte[])var10000;
-							}
-
-							int var14 = var13 + var8;
-
-							for (int var15 = var13; var15 < var14; ++var15) {
-								var5[var6++] = ArchiveDisk_buffer[var15];
-							}
-
-							var4 = var11;
+							var10000 = null;
+							return (byte[])var10000;
 						}
 
 						byte[] var20 = var5;
@@ -150,10 +151,10 @@ public final class ArchiveDisk {
 		}
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
 		signature = "(I[BII)Z",
-		garbageValue = "1937661421"
+		garbageValue = "434454104"
 	)
 	@Export("write")
 	public boolean write(int var1, byte[] var2, int var3) {
@@ -171,10 +172,10 @@ public final class ArchiveDisk {
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(I[BIZB)Z",
-		garbageValue = "16"
+		signature = "(I[BIZI)Z",
+		garbageValue = "-498922457"
 	)
 	@Export("write0")
 	boolean write0(int var1, byte[] var2, int var3, boolean var4) {
@@ -215,7 +216,7 @@ public final class ArchiveDisk {
 
 				while (true) {
 					if (var7 < var3) {
-						label171: {
+						label170: {
 							int var9 = 0;
 							int var10;
 							if (var4) {
@@ -226,7 +227,7 @@ public final class ArchiveDisk {
 									try {
 										this.datFile.read(ArchiveDisk_buffer, 0, 10);
 									} catch (EOFException var17) {
-										break label171;
+										break label170;
 									}
 
 									var10 = ((ArchiveDisk_buffer[1] & 255) << 16) + ((ArchiveDisk_buffer[0] & 255) << 24) + (ArchiveDisk_buffer[3] & 255) + ((ArchiveDisk_buffer[2] & 255) << 8);
@@ -237,7 +238,7 @@ public final class ArchiveDisk {
 									try {
 										this.datFile.read(ArchiveDisk_buffer, 0, 8);
 									} catch (EOFException var16) {
-										break label171;
+										break label170;
 									}
 
 									var10 = (ArchiveDisk_buffer[1] & 255) + ((ArchiveDisk_buffer[0] & 255) << 8);
@@ -246,7 +247,7 @@ public final class ArchiveDisk {
 									var12 = ArchiveDisk_buffer[7] & 255;
 								}
 
-								if (var10 != var1 || var11 != var8 || var12 != this.archive) {
+								if (var10 != var1 || var8 != var11 || var12 != this.archive) {
 									var10000 = false;
 									return var10000;
 								}
@@ -284,7 +285,7 @@ public final class ArchiveDisk {
 								ArchiveDisk_buffer[7] = (byte)(var9 >> 8);
 								ArchiveDisk_buffer[8] = (byte)var9;
 								ArchiveDisk_buffer[9] = (byte)this.archive;
-								this.datFile.seek(520L * (long)var6);
+								this.datFile.seek((long)var6 * 520L);
 								this.datFile.write(ArchiveDisk_buffer, 0, 10);
 								var10 = var3 - var7;
 								if (var10 > 510) {
@@ -306,7 +307,7 @@ public final class ArchiveDisk {
 								ArchiveDisk_buffer[5] = (byte)(var9 >> 8);
 								ArchiveDisk_buffer[6] = (byte)var9;
 								ArchiveDisk_buffer[7] = (byte)this.archive;
-								this.datFile.seek(520L * (long)var6);
+								this.datFile.seek((long)var6 * 520L);
 								this.datFile.write(ArchiveDisk_buffer, 0, 8);
 								var10 = var3 - var7;
 								if (var10 > 512) {
@@ -332,62 +333,7 @@ public final class ArchiveDisk {
 		}
 	}
 
-	public String abd() {
-		return "" + this.archive;
-	}
-
-	public String abb() {
-		return "" + this.archive * 1098163870;
-	}
-
 	public String toString() {
 		return "" + this.archive;
-	}
-
-	@ObfuscatedName("v")
-	@ObfuscatedSignature(
-		signature = "(Lfu;III)Ldd;",
-		garbageValue = "670296930"
-	)
-	public static final PcmPlayer method5757(TaskHandler var0, int var1, int var2) {
-		if (PcmPlayer.PcmPlayer_sampleRate == 0) {
-			throw new IllegalStateException();
-		} else if (var1 >= 0 && var1 < 2) {
-			if (var2 < 256) {
-				var2 = 256;
-			}
-
-			try {
-				PcmPlayer var3 = SecureRandomCallable.pcmPlayerProvider.player();
-				var3.samples = new int[(PcmPlayer.PcmPlayer_stereo ? 2 : 1) * 256];
-				var3.field1399 = var2;
-				var3.init();
-				var3.capacity = (var2 & -1024) + 1024;
-				if (var3.capacity > 16384) {
-					var3.capacity = 16384;
-				}
-
-				var3.open(var3.capacity);
-				if (FloorDecoration.PcmPlayer_count > 0 && PacketBufferNode.soundSystem == null) {
-					PacketBufferNode.soundSystem = new SoundSystem();
-					GrandExchangeOfferWorldComparator.soundSystemExecutor = Executors.newScheduledThreadPool(1);
-					GrandExchangeOfferWorldComparator.soundSystemExecutor.scheduleAtFixedRate(PacketBufferNode.soundSystem, 0L, 10L, TimeUnit.MILLISECONDS);
-				}
-
-				if (PacketBufferNode.soundSystem != null) {
-					if (PacketBufferNode.soundSystem.players[var1] != null) {
-						throw new IllegalArgumentException();
-					}
-
-					PacketBufferNode.soundSystem.players[var1] = var3;
-				}
-
-				return var3;
-			} catch (Throwable var4) {
-				return new PcmPlayer();
-			}
-		} else {
-			throw new IllegalArgumentException();
-		}
 	}
 }

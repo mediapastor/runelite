@@ -4,36 +4,38 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("im")
+@ObfuscatedName("ib")
 @Implements("VarbitDefinition")
 public class VarbitDefinition extends DualNode {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "Lhq;"
 	)
 	@Export("VarbitDefinition_archive")
 	public static AbstractArchive VarbitDefinition_archive;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lep;"
+		signature = "Leb;"
 	)
 	@Export("VarbitDefinition_cached")
 	public static EvictingDualNodeHashTable VarbitDefinition_cached;
-	@ObfuscatedName("i")
+	@ObfuscatedName("av")
+	static String field3288;
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = 343295379
+		intValue = 928721065
 	)
 	@Export("baseVar")
 	public int baseVar;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = -213865641
+		intValue = 92662329
 	)
 	@Export("startBit")
 	public int startBit;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = 1172808511
+		intValue = 2061625257
 	)
 	@Export("endBit")
 	public int endBit;
@@ -42,10 +44,10 @@ public class VarbitDefinition extends DualNode {
 		VarbitDefinition_cached = new EvictingDualNodeHashTable(64);
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(Lky;I)V",
-		garbageValue = "-404678806"
+		signature = "(Lkc;I)V",
+		garbageValue = "-1741375018"
 	)
 	@Export("decode")
 	public void decode(Buffer var1) {
@@ -59,10 +61,10 @@ public class VarbitDefinition extends DualNode {
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(Lky;IB)V",
-		garbageValue = "40"
+		signature = "(Lkc;II)V",
+		garbageValue = "1555734488"
 	)
 	@Export("decodeNext")
 	void decodeNext(Buffer var1, int var2) {
@@ -72,5 +74,17 @@ public class VarbitDefinition extends DualNode {
 			this.endBit = var1.readUnsignedByte();
 		}
 
+	}
+
+	@ObfuscatedName("x")
+	@ObfuscatedSignature(
+		signature = "(Ljava/lang/String;B)V",
+		garbageValue = "-49"
+	)
+	static final void method4651(String var0) {
+		StringBuilder var10000 = (new StringBuilder()).append(var0);
+		Object var10001 = null;
+		String var1 = var10000.append(" is already on your ignore list").toString();
+		class30.addGameMessage(30, "", var1);
 	}
 }

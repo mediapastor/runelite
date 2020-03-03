@@ -3,16 +3,16 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ff")
+@ObfuscatedName("fi")
 @Implements("UserComparator6")
 public class UserComparator6 extends AbstractUserComparator {
-	@ObfuscatedName("ga")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "[Lls;"
+		signature = "Lho;"
 	)
-	@Export("headIconPkSprites")
-	static Sprite[] headIconPkSprites;
-	@ObfuscatedName("s")
+	@Export("NetCache_currentResponse")
+	public static NetFileRequest NetCache_currentResponse;
+	@ObfuscatedName("a")
 	@Export("reversed")
 	final boolean reversed;
 
@@ -20,10 +20,10 @@ public class UserComparator6 extends AbstractUserComparator {
 		this.reversed = var1;
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(Ljt;Ljt;B)I",
-		garbageValue = "11"
+		signature = "(Ljx;Ljx;B)I",
+		garbageValue = "67"
 	)
 	@Export("compareBuddy")
 	int compareBuddy(Buddy var1, Buddy var2) {
@@ -38,15 +38,13 @@ public class UserComparator6 extends AbstractUserComparator {
 		return this.compareBuddy((Buddy)var1, (Buddy)var2);
 	}
 
-	@ObfuscatedName("ji")
+	@ObfuscatedName("bx")
 	@ObfuscatedSignature(
-		signature = "(III)V",
-		garbageValue = "-1763118149"
+		signature = "(Ljava/lang/String;I)I",
+		garbageValue = "-1069282044"
 	)
-	@Export("runIntfCloseListeners")
-	static final void runIntfCloseListeners(int var0, int var1) {
-		if (Projectile.loadInterface(var0)) {
-			class189.runComponentCloseListeners(Widget.Widget_interfaceComponents[var0], var1);
-		}
+	@Export("stringCp1252NullTerminatedByteSize")
+	public static int stringCp1252NullTerminatedByteSize(String var0) {
+		return var0.length() + 1;
 	}
 }

@@ -6,39 +6,36 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("cn")
+@ObfuscatedName("cq")
 @Implements("Messages")
 public class Messages {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("Messages_channels")
 	static final Map Messages_channels;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lln;"
+		signature = "Llr;"
 	)
 	@Export("Messages_hashTable")
 	static final IterableNodeHashTable Messages_hashTable;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Ljm;"
+		signature = "Ljq;"
 	)
 	@Export("Messages_queue")
 	static final IterableDualNodeQueue Messages_queue;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = -1379002883
+		intValue = -34471415
 	)
 	@Export("Messages_count")
 	static int Messages_count;
-	@ObfuscatedName("gw")
-	@Export("regionMapArchives")
-	static byte[][] regionMapArchives;
-	@ObfuscatedName("gz")
-	@ObfuscatedSignature(
-		signature = "[Llq;"
+	@ObfuscatedName("k")
+	@ObfuscatedGetter(
+		intValue = 93041405
 	)
-	@Export("modIconSprites")
-	static IndexedSprite[] modIconSprites;
+	@Export("graphicsTickTimeIdx")
+	static int graphicsTickTimeIdx;
 
 	static {
 		Messages_channels = new HashMap();

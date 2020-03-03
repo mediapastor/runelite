@@ -4,85 +4,96 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("db")
+@ObfuscatedName("do")
 @Implements("Decimator")
 public class Decimator {
-	@ObfuscatedName("a")
+	@ObfuscatedName("d")
 	@ObfuscatedSignature(
-		signature = "Lky;"
+		signature = "[Llw;"
 	)
-	@Export("NetCache_reference")
-	static Buffer NetCache_reference;
-	@ObfuscatedName("l")
-	public static String field1439;
-	@ObfuscatedName("as")
+	@Export("title_muteSprite")
+	static IndexedSprite[] title_muteSprite;
+	@ObfuscatedName("dx")
 	@ObfuscatedSignature(
-		signature = "Llh;"
+		signature = "Lij;"
 	)
-	static Bounds field1443;
-	@ObfuscatedName("bq")
-	@ObfuscatedSignature(
-		signature = "[Llq;"
-	)
-	@Export("worldSelectArrows")
-	static IndexedSprite[] worldSelectArrows;
-	@ObfuscatedName("k")
+	@Export("archive11")
+	static Archive archive11;
+	@ObfuscatedName("ei")
 	@ObfuscatedGetter(
-		intValue = -617171721
+		intValue = -1888445625
+	)
+	@Export("port2")
+	static int port2;
+	@ObfuscatedName("q")
+	@ObfuscatedGetter(
+		intValue = -885023939
 	)
 	@Export("inputRate")
 	int inputRate;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = 72965647
+		intValue = 929482819
 	)
 	@Export("outputRate")
 	int outputRate;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("table")
 	int[][] table;
 
 	public Decimator(int var1, int var2) {
 		if (var2 != var1) {
-			int var3 = WorldMapIcon_1.method301(var1, var2);
-			var1 /= var3;
-			var2 /= var3;
+			int var4 = var1;
+			int var5 = var2;
+			if (var2 > var1) {
+				var4 = var2;
+				var5 = var1;
+			}
+
+			while (var5 != 0) {
+				int var6 = var4 % var5;
+				var4 = var5;
+				var5 = var6;
+			}
+
+			var1 /= var4;
+			var2 /= var4;
 			this.inputRate = var1;
 			this.outputRate = var2;
 			this.table = new int[var1][14];
 
-			for (int var4 = 0; var4 < var1; ++var4) {
-				int[] var5 = this.table[var4];
-				double var6 = 6.0D + (double)var4 / (double)var1;
-				int var8 = (int)Math.floor(var6 - 7.0D + 1.0D);
-				if (var8 < 0) {
-					var8 = 0;
+			for (int var7 = 0; var7 < var1; ++var7) {
+				int[] var8 = this.table[var7];
+				double var9 = (double)var7 / (double)var1 + 6.0D;
+				int var11 = (int)Math.floor(1.0D + (var9 - 7.0D));
+				if (var11 < 0) {
+					var11 = 0;
 				}
 
-				int var9 = (int)Math.ceil(var6 + 7.0D);
-				if (var9 > 14) {
-					var9 = 14;
+				int var12 = (int)Math.ceil(var9 + 7.0D);
+				if (var12 > 14) {
+					var12 = 14;
 				}
 
-				for (double var10 = (double)var2 / (double)var1; var8 < var9; ++var8) {
-					double var12 = ((double)var8 - var6) * 3.141592653589793D;
-					double var14 = var10;
-					if (var12 < -1.0E-4D || var12 > 1.0E-4D) {
-						var14 = var10 * (Math.sin(var12) / var12);
+				for (double var13 = (double)var2 / (double)var1; var11 < var12; ++var11) {
+					double var15 = ((double)var11 - var9) * 3.141592653589793D;
+					double var17 = var13;
+					if (var15 < -1.0E-4D || var15 > 1.0E-4D) {
+						var17 = var13 * (Math.sin(var15) / var15);
 					}
 
-					var14 *= 0.54D + 0.46D * Math.cos(((double)var8 - var6) * 0.2243994752564138D);
-					var5[var8] = (int)Math.floor(0.5D + var14 * 65536.0D);
+					var17 *= 0.54D + 0.46D * Math.cos(0.2243994752564138D * ((double)var11 - var9));
+					var8[var11] = (int)Math.floor(0.5D + 65536.0D * var17);
 				}
 			}
 
 		}
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "([BB)[B",
-		garbageValue = "1"
+		signature = "([BI)[B",
+		garbageValue = "73782280"
 	)
 	@Export("resample")
 	byte[] resample(byte[] var1) {
@@ -99,7 +110,7 @@ public class Decimator {
 
 				int var9;
 				for (var9 = 0; var9 < 14; ++var9) {
-					var3[var9 + var4] += var7 * var8[var9];
+					var3[var4 + var9] += var8[var9] * var7;
 				}
 
 				var5 += this.outputRate;
@@ -125,108 +136,116 @@ public class Decimator {
 		return var1;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(II)I",
-		garbageValue = "-2098361715"
+		signature = "(IB)I",
+		garbageValue = "30"
 	)
 	@Export("scaleRate")
 	int scaleRate(int var1) {
 		if (this.table != null) {
-			var1 = (int)((long)this.outputRate * (long)var1 / (long)this.inputRate);
+			var1 = (int)((long)var1 * (long)this.outputRate / (long)this.inputRate);
 		}
 
 		return var1;
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
 		signature = "(IB)I",
-		garbageValue = "45"
+		garbageValue = "13"
 	)
 	@Export("scalePosition")
 	int scalePosition(int var1) {
 		if (this.table != null) {
-			var1 = (int)((long)var1 * (long)this.outputRate / (long)this.inputRate) + 6;
+			var1 = (int)((long)this.outputRate * (long)var1 / (long)this.inputRate) + 6;
 		}
 
 		return var1;
 	}
 
-	@ObfuscatedName("s")
-	public static final int method2452(double var0, double var2, double var4) {
-		double var6 = var4;
-		double var8 = var4;
-		double var10 = var4;
-		if (0.0D != var2) {
-			double var12;
-			if (var4 < 0.5D) {
-				var12 = (var2 + 1.0D) * var4;
-			} else {
-				var12 = var4 + var2 - var4 * var2;
+	@ObfuscatedName("a")
+	@ObfuscatedSignature(
+		signature = "(II)Liz;",
+		garbageValue = "1437628659"
+	)
+	public static VarcInt method2694(int var0) {
+		VarcInt var1 = (VarcInt)VarcInt.VarcInt_cached.get((long)var0);
+		if (var1 != null) {
+			return var1;
+		} else {
+			byte[] var2 = VarcInt.VarcInt_archive.takeFile(19, var0);
+			var1 = new VarcInt();
+			if (var2 != null) {
+				var1.method4549(new Buffer(var2));
 			}
 
-			double var14 = 2.0D * var4 - var12;
-			double var16 = 0.3333333333333333D + var0;
-			if (var16 > 1.0D) {
-				--var16;
-			}
-
-			double var20 = var0 - 0.3333333333333333D;
-			if (var20 < 0.0D) {
-				++var20;
-			}
-
-			if (var16 * 6.0D < 1.0D) {
-				var6 = var16 * 6.0D * (var12 - var14) + var14;
-			} else if (2.0D * var16 < 1.0D) {
-				var6 = var12;
-			} else if (3.0D * var16 < 2.0D) {
-				var6 = 6.0D * (var12 - var14) * (0.6666666666666666D - var16) + var14;
-			} else {
-				var6 = var14;
-			}
-
-			if (6.0D * var0 < 1.0D) {
-				var8 = var14 + (var12 - var14) * 6.0D * var0;
-			} else if (var0 * 2.0D < 1.0D) {
-				var8 = var12;
-			} else if (3.0D * var0 < 2.0D) {
-				var8 = 6.0D * (var12 - var14) * (0.6666666666666666D - var0) + var14;
-			} else {
-				var8 = var14;
-			}
-
-			if (var20 * 6.0D < 1.0D) {
-				var10 = var20 * 6.0D * (var12 - var14) + var14;
-			} else if (2.0D * var20 < 1.0D) {
-				var10 = var12;
-			} else if (var20 * 3.0D < 2.0D) {
-				var10 = (var12 - var14) * (0.6666666666666666D - var20) * 6.0D + var14;
-			} else {
-				var10 = var14;
-			}
+			VarcInt.VarcInt_cached.put(var1, (long)var0);
+			return var1;
 		}
-
-		int var22 = (int)(var6 * 256.0D);
-		int var13 = (int)(var8 * 256.0D);
-		int var23 = (int)(256.0D * var10);
-		int var15 = var23 + (var13 << 8) + (var22 << 16);
-		return var15;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(III)I",
-		garbageValue = "-882236217"
+		signature = "(Ljava/lang/Object;ZI)[B",
+		garbageValue = "1813906686"
 	)
-	@Export("ItemContainer_getCount")
-	static int ItemContainer_getCount(int var0, int var1) {
-		ItemContainer var2 = (ItemContainer)ItemContainer.itemContainers.get((long)var0);
-		if (var2 == null) {
-			return 0;
+	@Export("serialize")
+	public static byte[] serialize(Object var0, boolean var1) {
+		if (var0 == null) {
+			return null;
+		} else if (var0 instanceof byte[]) {
+			byte[] var3 = (byte[])((byte[])var0);
+			return var1 ? Message.method1312(var3) : var3;
+		} else if (var0 instanceof AbstractByteArrayCopier) {
+			AbstractByteArrayCopier var2 = (AbstractByteArrayCopier)var0;
+			return var2.get();
 		} else {
-			return var1 >= 0 && var1 < var2.quantities.length ? var2.quantities[var1] : 0;
+			throw new IllegalArgumentException();
 		}
+	}
+
+	@ObfuscatedName("im")
+	@ObfuscatedSignature(
+		signature = "(III)V",
+		garbageValue = "-962309215"
+	)
+	@Export("calculateMenuBounds")
+	static void calculateMenuBounds(int var0, int var1) {
+		int var2 = class43.fontBold12.stringWidth("Choose Option");
+
+		int var3;
+		int var4;
+		for (var3 = 0; var3 < Client.menuOptionsCount; ++var3) {
+			var4 = class43.fontBold12.stringWidth(class65.method1316(var3));
+			if (var4 > var2) {
+				var2 = var4;
+			}
+		}
+
+		var2 += 8;
+		var3 = Client.menuOptionsCount * 15 + 22;
+		var4 = var0 - var2 / 2;
+		if (var2 + var4 > class286.canvasWidth) {
+			var4 = class286.canvasWidth - var2;
+		}
+
+		if (var4 < 0) {
+			var4 = 0;
+		}
+
+		int var5 = var1;
+		if (var1 + var3 > FloorUnderlayDefinition.canvasHeight) {
+			var5 = FloorUnderlayDefinition.canvasHeight - var3;
+		}
+
+		if (var5 < 0) {
+			var5 = 0;
+		}
+
+		MusicPatchNode.menuX = var4;
+		TextureProvider.menuY = var5;
+		KeyHandler.menuWidth = var2;
+		WorldMapData_1.menuHeight = Client.menuOptionsCount * 15 + 22;
 	}
 }

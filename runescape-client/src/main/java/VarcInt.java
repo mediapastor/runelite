@@ -3,22 +3,33 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ip")
+@ObfuscatedName("iz")
 @Implements("VarcInt")
 public class VarcInt extends DualNode {
-	@ObfuscatedName("s")
+	@ObfuscatedName("ns")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "[Lhi;"
+	)
+	static Widget[] field3218;
+	@ObfuscatedName("a")
+	@ObfuscatedSignature(
+		signature = "Lhq;"
 	)
 	@Export("VarcInt_archive")
 	public static AbstractArchive VarcInt_archive;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lep;"
+		signature = "Leb;"
 	)
 	@Export("VarcInt_cached")
 	static EvictingDualNodeHashTable VarcInt_cached;
-	@ObfuscatedName("i")
+	@ObfuscatedName("gi")
+	@ObfuscatedSignature(
+		signature = "[Llw;"
+	)
+	@Export("modIconSprites")
+	static IndexedSprite[] modIconSprites;
+	@ObfuscatedName("n")
 	@Export("persist")
 	public boolean persist;
 
@@ -30,54 +41,43 @@ public class VarcInt extends DualNode {
 		this.persist = false;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(Lky;I)V",
-		garbageValue = "-1564347413"
+		signature = "(Lkc;I)V",
+		garbageValue = "-542237401"
 	)
-	void method4314(Buffer var1) {
+	void method4549(Buffer var1) {
 		while (true) {
 			int var2 = var1.readUnsignedByte();
 			if (var2 == 0) {
 				return;
 			}
 
-			this.method4315(var1, var2);
+			this.method4550(var1, var2);
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(Lky;II)V",
-		garbageValue = "-1760139411"
+		signature = "(Lkc;II)V",
+		garbageValue = "-1028868558"
 	)
-	void method4315(Buffer var1, int var2) {
+	void method4550(Buffer var1, int var2) {
 		if (var2 == 2) {
 			this.persist = true;
 		}
 
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("gc")
 	@ObfuscatedSignature(
-		signature = "(II)Lis;",
-		garbageValue = "-1763982471"
+		signature = "(I)V",
+		garbageValue = "-1686094781"
 	)
-	@Export("getParamDefinition")
-	public static ParamDefinition getParamDefinition(int var0) {
-		ParamDefinition var1 = (ParamDefinition)ParamDefinition.ParamDefinition_cached.get((long)var0);
-		if (var1 != null) {
-			return var1;
-		} else {
-			byte[] var2 = class339.ParamDefinition_archive.takeFile(11, var0);
-			var1 = new ParamDefinition();
-			if (var2 != null) {
-				var1.decode(new Buffer(var2));
-			}
-
-			var1.postDecode();
-			ParamDefinition.ParamDefinition_cached.put(var1, (long)var0);
-			return var1;
+	static void method4548() {
+		if (Client.combatTargetPlayerIndex >= 0 && Client.players[Client.combatTargetPlayerIndex] != null) {
+			Player.addPlayerToScene(Client.players[Client.combatTargetPlayerIndex], false);
 		}
+
 	}
 }

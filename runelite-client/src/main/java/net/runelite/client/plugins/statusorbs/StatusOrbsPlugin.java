@@ -43,7 +43,6 @@ import net.runelite.api.SpriteID;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
@@ -52,7 +51,8 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -80,6 +80,7 @@ public class StatusOrbsPlugin extends Plugin
 
 	private static final int SPEC_REGEN_TICKS = 50;
 	private static final int NORMAL_HP_REGEN_TICKS = 100;
+	private static final int TWISTED_LEAGUE_ENDLESS_ENDURANCE_RELIC = 2;
 
 	@Inject
 	private Client client;
@@ -98,9 +99,6 @@ public class StatusOrbsPlugin extends Plugin
 
 	@Inject
 	private Notifier notifier;
-
-	@Inject
-	private EventBus eventBus;
 
 	@Getter
 	private double hitpointsPercentage;
@@ -153,7 +151,6 @@ public class StatusOrbsPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
-		addSubscriptions();
 
 		overlayManager.add(overlay);
 		if (this.dynamicHpHeart && client.getGameState().equals(GameState.LOGGED_IN))
@@ -165,8 +162,6 @@ public class StatusOrbsPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
-
 		overlayManager.remove(overlay);
 		localPlayerRunningToDestination = false;
 		prevLocalPlayerLocation = null;
@@ -177,14 +172,7 @@ public class StatusOrbsPlugin extends Plugin
 		}
 	}
 
-	private void addSubscriptions()
-	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
-		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
-		eventBus.subscribe(GameTick.class, this, this::onGameTick);
-	}
-
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("statusorbs"))
@@ -212,6 +200,7 @@ public class StatusOrbsPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onVarbitChanged(VarbitChanged e)
 	{
 		if (this.dynamicHpHeart)
@@ -227,6 +216,7 @@ public class StatusOrbsPlugin extends Plugin
 		wasRapidHeal = isRapidHeal;
 	}
 
+	@Subscribe
 	private void onGameStateChanged(GameStateChanged ev)
 	{
 		if (ev.getGameState() == GameState.HOPPING || ev.getGameState() == GameState.LOGIN_SCREEN)
@@ -237,6 +227,7 @@ public class StatusOrbsPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onGameTick(GameTick event)
 	{
 		if (client.getVar(VarPlayer.SPECIAL_ATTACK_PERCENT) == 1000)
@@ -256,6 +247,12 @@ public class StatusOrbsPlugin extends Plugin
 		{
 			ticksPerHPRegen /= 2;
 			hpPerMs *= 2;
+		}
+
+		if (client.getVar(Varbits.TWISTED_LEAGUE_RELIC_1) == TWISTED_LEAGUE_ENDLESS_ENDURANCE_RELIC)
+		{
+			ticksPerHPRegen /= 4;
+			hpPerMs *= 4;
 		}
 
 		ticksSinceHPRegen = (ticksSinceHPRegen + 1) % ticksPerHPRegen;

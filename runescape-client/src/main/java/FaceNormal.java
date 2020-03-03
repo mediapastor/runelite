@@ -4,27 +4,24 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ei")
+@ObfuscatedName("eq")
 @Implements("FaceNormal")
 public class FaceNormal {
-	@ObfuscatedName("x")
-	@Export("ByteArrayPool_arrays")
-	public static byte[][][] ByteArrayPool_arrays;
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = 672881507
+		intValue = -749416207
 	)
 	@Export("x")
 	int x;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = -1754026933
+		intValue = 1897816947
 	)
 	@Export("y")
 	int y;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -2141931209
+		intValue = 1642061929
 	)
 	@Export("z")
 	int z;
@@ -32,75 +29,66 @@ public class FaceNormal {
 	FaceNormal() {
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("ao")
 	@ObfuscatedSignature(
-		signature = "(CB)Z",
-		garbageValue = "-36"
+		signature = "(II)V",
+		garbageValue = "-973017204"
 	)
-	static final boolean method3222(char var0) {
-		return var0 == 160 || var0 == ' ' || var0 == '_' || var0 == '-';
-	}
+	@Export("runWidgetOnLoadListener")
+	static void runWidgetOnLoadListener(int var0) {
+		if (var0 != -1) {
+			if (TextureProvider.loadInterface(var0)) {
+				Widget[] var1 = Widget.Widget_interfaceComponents[var0];
 
-	@ObfuscatedName("j")
-	@ObfuscatedSignature(
-		signature = "(Ljava/lang/CharSequence;B)Ljava/lang/String;",
-		garbageValue = "1"
-	)
-	@Export("base37Decode")
-	public static String base37Decode(CharSequence var0) {
-		long var3 = 0L;
-		int var5 = var0.length();
+				for (int var2 = 0; var2 < var1.length; ++var2) {
+					Widget var3 = var1[var2];
+					if (var3.onLoad != null) {
+						ScriptEvent var4 = new ScriptEvent();
+						var4.widget = var3;
+						var4.args = var3.onLoad;
+						class4.runScript(var4, 5000000);
+					}
+				}
 
-		for (int var6 = 0; var6 < var5; ++var6) {
-			var3 *= 37L;
-			char var7 = var0.charAt(var6);
-			if (var7 >= 'A' && var7 <= 'Z') {
-				var3 += (long)(var7 + 1 - 65);
-			} else if (var7 >= 'a' && var7 <= 'z') {
-				var3 += (long)(var7 + 1 - 97);
-			} else if (var7 >= '0' && var7 <= '9') {
-				var3 += (long)(var7 + 27 - 48);
-			}
-
-			if (var3 >= 177917621779460413L) {
-				break;
 			}
 		}
-
-		while (0L == var3 % 37L && var3 != 0L) {
-			var3 /= 37L;
-		}
-
-		String var8 = class266.base37DecodeLong(var3);
-		if (var8 == null) {
-			var8 = "";
-		}
-
-		return var8;
 	}
 
-	@ObfuscatedName("x")
+	@ObfuscatedName("hl")
 	@ObfuscatedSignature(
-		signature = "(IB)I",
-		garbageValue = "105"
+		signature = "(Lbn;I)V",
+		garbageValue = "-935329851"
 	)
-	@Export("Messages_getNextChatID")
-	static int Messages_getNextChatID(int var0) {
-		Message var1 = (Message)Messages.Messages_hashTable.get((long)var0);
-		if (var1 == null) {
-			return -1;
-		} else {
-			return var1.previousDual == Messages.Messages_queue.sentinel ? -1 : ((Message)var1.previousDual).count;
+	static final void method3396(PendingSpawn var0) {
+		long var1 = 0L;
+		int var3 = -1;
+		int var4 = 0;
+		int var5 = 0;
+		if (var0.type == 0) {
+			var1 = WorldMapArea.scene.getBoundaryObjectTag(var0.plane, var0.x, var0.y);
 		}
-	}
 
-	@ObfuscatedName("kb")
-	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "1280047556"
-	)
-	static final void method3221() {
-		Client.field817 = Client.cycleCntr;
-		class13.ClanChat_inClanChat = true;
+		if (var0.type == 1) {
+			var1 = WorldMapArea.scene.getWallDecorationTag(var0.plane, var0.x, var0.y);
+		}
+
+		if (var0.type == 2) {
+			var1 = WorldMapArea.scene.getGameObjectTag(var0.plane, var0.x, var0.y);
+		}
+
+		if (var0.type == 3) {
+			var1 = WorldMapArea.scene.getFloorDecorationTag(var0.plane, var0.x, var0.y);
+		}
+
+		if (var1 != 0L) {
+			int var6 = WorldMapArea.scene.getObjectFlags(var0.plane, var0.x, var0.y, var1);
+			var3 = UserComparator8.Entity_unpackID(var1);
+			var4 = var6 & 31;
+			var5 = var6 >> 6 & 3;
+		}
+
+		var0.objectId = var3;
+		var0.field914 = var4;
+		var0.field913 = var5;
 	}
 }

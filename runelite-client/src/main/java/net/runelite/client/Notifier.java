@@ -192,9 +192,9 @@ public class Notifier
 			case SOLID_UNTIL_CANCELLED:
 			case FLASH_UNTIL_CANCELLED:
 				// Any interaction with the client since the notification started will cancel it after the minimum duration
-				if (client.getMouseIdleTicks() < MINIMUM_FLASH_DURATION_TICKS
+				if ((client.getMouseIdleTicks() < MINIMUM_FLASH_DURATION_TICKS
 					|| client.getKeyboardIdleTicks() < MINIMUM_FLASH_DURATION_TICKS
-					|| client.getMouseLastPressedMillis() > mouseLastPressedMillis)
+					|| client.getMouseLastPressedMillis() > mouseLastPressedMillis) && clientUI.isFocused())
 				{
 					flashStart = null;
 				}
@@ -325,7 +325,7 @@ public class Notifier
 	{
 		if (OSType.getOSType() == OSType.Linux && !Files.exists(notifyIconPath))
 		{
-			try (InputStream stream = Notifier.class.getResourceAsStream("/runeliteplus.png"))
+			try (InputStream stream = Notifier.class.getResourceAsStream("/openosrs.png"))
 			{
 				Files.copy(stream, notifyIconPath);
 			}

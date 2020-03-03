@@ -7,40 +7,34 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("bx")
+@ObfuscatedName("bw")
 @Implements("ClientPreferences")
 public class ClientPreferences {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = -1051861033
+		intValue = 1383703517
 	)
 	@Export("ClientPreferences_optionCount")
 	static int ClientPreferences_optionCount;
-	@ObfuscatedName("gb")
-	@ObfuscatedSignature(
-		signature = "[Llq;"
-	)
-	@Export("scrollBarSprites")
-	static IndexedSprite[] scrollBarSprites;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("roofsHidden")
 	boolean roofsHidden;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("titleMusicDisabled")
 	boolean titleMusicDisabled;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = -1686961453
+		intValue = 1268365417
 	)
 	@Export("windowMode")
 	int windowMode;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("rememberedUsername")
 	String rememberedUsername;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@Export("hideUsername")
 	boolean hideUsername;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@Export("parameters")
 	LinkedHashMap parameters;
 
@@ -53,11 +47,11 @@ public class ClientPreferences {
 		this.rememberedUsername = null;
 		this.hideUsername = false;
 		this.parameters = new LinkedHashMap();
-		this.method1763(true);
+		this.method1957(true);
 	}
 
 	@ObfuscatedSignature(
-		signature = "(Lky;)V"
+		signature = "(Lkc;)V"
 	)
 	ClientPreferences(Buffer var1) {
 		this.windowMode = 1;
@@ -97,26 +91,26 @@ public class ClientPreferences {
 					this.hideUsername = var1.readBoolean();
 				}
 			} else {
-				this.method1763(true);
+				this.method1957(true);
 			}
 		} else {
-			this.method1763(true);
+			this.method1957(true);
 		}
 
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
 		signature = "(ZI)V",
-		garbageValue = "912146837"
+		garbageValue = "271600309"
 	)
-	void method1763(boolean var1) {
+	void method1957(boolean var1) {
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(I)Lky;",
-		garbageValue = "1073230660"
+		signature = "(I)Lkc;",
+		garbageValue = "1659906273"
 	)
 	@Export("toBuffer")
 	Buffer toBuffer() {
@@ -137,5 +131,15 @@ public class ClientPreferences {
 		var1.writeStringCp1252NullTerminated(this.rememberedUsername != null ? this.rememberedUsername : "");
 		var1.writeBoolean(this.hideUsername);
 		return var1;
+	}
+
+	@ObfuscatedName("n")
+	@ObfuscatedSignature(
+		signature = "(Ljava/lang/CharSequence;I)I",
+		garbageValue = "1282610090"
+	)
+	@Export("parseInt")
+	public static int parseInt(CharSequence var0) {
+		return class192.parseIntCustomRadix(var0, 10, true);
 	}
 }

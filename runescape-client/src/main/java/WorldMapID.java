@@ -4,40 +4,45 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("aj")
+@ObfuscatedName("ag")
 @Implements("WorldMapID")
 public class WorldMapID {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Laj;"
+		signature = "Lag;"
 	)
-	static final WorldMapID field260;
-	@ObfuscatedName("j")
+	static final WorldMapID field259;
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Laj;"
+		signature = "Lag;"
 	)
 	static final WorldMapID field257;
-	@ObfuscatedName("aw")
+	@ObfuscatedName("i")
+	@ObfuscatedGetter(
+		intValue = 1391599195
+	)
+	static int field260;
+	@ObfuscatedName("at")
 	@Export("client")
 	@ObfuscatedSignature(
 		signature = "Lclient;"
 	)
 	static Client client;
-	@ObfuscatedName("di")
+	@ObfuscatedName("dk")
 	@ObfuscatedSignature(
-		signature = "Lid;"
+		signature = "Lij;"
 	)
-	@Export("archive13")
-	static Archive archive13;
-	@ObfuscatedName("i")
+	@Export("archive10")
+	static Archive archive10;
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -2063866403
+		intValue = -679981673
 	)
 	@Export("value")
 	final int value;
 
 	static {
-		field260 = new WorldMapID(0);
+		field259 = new WorldMapID(0);
 		field257 = new WorldMapID(1);
 	}
 
@@ -45,55 +50,14 @@ public class WorldMapID {
 		this.value = var1;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("fg")
 	@ObfuscatedSignature(
-		signature = "(Lhz;IIB)[Lls;",
-		garbageValue = "32"
+		signature = "(Lij;Ljava/lang/String;I)V",
+		garbageValue = "1051917503"
 	)
-	@Export("SpriteBuffer_getSpriteArray")
-	public static Sprite[] SpriteBuffer_getSpriteArray(AbstractArchive var0, int var1, int var2) {
-		return !World.SpriteBuffer_bufferFile(var0, var1, var2) ? null : GameShell.method897();
-	}
-
-	@ObfuscatedName("ic")
-	@ObfuscatedSignature(
-		signature = "(S)V",
-		garbageValue = "-6260"
-	)
-	@Export("sortMenuEntries")
-	static final void sortMenuEntries() {
-		boolean var0 = false;
-
-		while (!var0) {
-			var0 = true;
-
-			for (int var1 = 0; var1 < Client.menuOptionsCount - 1; ++var1) {
-				if (Client.menuOpcodes[var1] < 1000 && Client.menuOpcodes[var1 + 1] > 1000) {
-					String var2 = Client.menuTargets[var1];
-					Client.menuTargets[var1] = Client.menuTargets[var1 + 1];
-					Client.menuTargets[var1 + 1] = var2;
-					String var3 = Client.menuActions[var1];
-					Client.menuActions[var1] = Client.menuActions[var1 + 1];
-					Client.menuActions[var1 + 1] = var3;
-					int var4 = Client.menuOpcodes[var1];
-					Client.menuOpcodes[var1] = Client.menuOpcodes[var1 + 1];
-					Client.menuOpcodes[var1 + 1] = var4;
-					var4 = Client.menuArguments1[var1];
-					Client.menuArguments1[var1] = Client.menuArguments1[var1 + 1];
-					Client.menuArguments1[var1 + 1] = var4;
-					var4 = Client.menuArguments2[var1];
-					Client.menuArguments2[var1] = Client.menuArguments2[var1 + 1];
-					Client.menuArguments2[var1 + 1] = var4;
-					var4 = Client.menuIdentifiers[var1];
-					Client.menuIdentifiers[var1] = Client.menuIdentifiers[var1 + 1];
-					Client.menuIdentifiers[var1 + 1] = var4;
-					boolean var5 = Client.menuShiftClick[var1];
-					Client.menuShiftClick[var1] = Client.menuShiftClick[var1 + 1];
-					Client.menuShiftClick[var1 + 1] = var5;
-					var0 = false;
-				}
-			}
-		}
-
+	static void method610(Archive var0, String var1) {
+		ArchiveLoader var2 = new ArchiveLoader(var0, var1);
+		Client.archiveLoaders.add(var2);
+		Client.field903 += var2.groupCount;
 	}
 }

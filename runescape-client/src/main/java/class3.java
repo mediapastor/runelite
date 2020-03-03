@@ -1,190 +1,160 @@
-import java.io.DataInputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("k")
+@ObfuscatedName("q")
 public class class3 implements Enumerated {
-	@ObfuscatedName("qt")
-	@ObfuscatedGetter(
-		intValue = 112869376
-	)
-	static int field24;
-	@ObfuscatedName("s")
+	@ObfuscatedName("pc")
 	@ObfuscatedSignature(
-		signature = "Lk;"
+		signature = "Lkt;"
 	)
-	static final class3 field19;
-	@ObfuscatedName("j")
+	@Export("privateChatMode")
+	static PrivateChatMode privateChatMode;
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Lk;"
+		signature = "Lq;"
 	)
-	static final class3 field14;
-	@ObfuscatedName("i")
-	@ObfuscatedSignature(
-		signature = "Lk;"
-	)
-	static final class3 field15;
-	@ObfuscatedName("f")
-	@Export("Tiles_saturation")
-	static int[] Tiles_saturation;
-	@ObfuscatedName("ay")
-	@Export("hasFocus")
-	protected static boolean hasFocus;
-	@ObfuscatedName("k")
-	@ObfuscatedGetter(
-		intValue = 244177539
-	)
-	final int field16;
-	@ObfuscatedName("u")
-	@ObfuscatedGetter(
-		intValue = 950508435
-	)
-	public final int field18;
-	@ObfuscatedName("n")
-	public final Class field29;
+	public static final class3 field18;
 	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Ls;"
+		signature = "Lq;"
 	)
-	public final class0 field13;
+	public static final class3 field17;
+	@ObfuscatedName("n")
+	@ObfuscatedSignature(
+		signature = "Lq;"
+	)
+	public static final class3 field13;
+	@ObfuscatedName("cl")
+	@ObfuscatedSignature(
+		signature = "Lbe;"
+	)
+	@Export("mouseRecorder")
+	static MouseRecorder mouseRecorder;
+	@ObfuscatedName("q")
+	@ObfuscatedGetter(
+		intValue = 1740494527
+	)
+	final int field12;
+	@ObfuscatedName("v")
+	@ObfuscatedGetter(
+		intValue = 1144447827
+	)
+	public final int field14;
+	@ObfuscatedName("l")
+	final Class field16;
+	@ObfuscatedName("c")
+	@ObfuscatedSignature(
+		signature = "La;"
+	)
+	final class0 field11;
 
 	static {
-		field19 = new class3(2, 0, Integer.class, new class1());
-		field14 = new class3(0, 1, Long.class, new class2());
-		field15 = new class3(1, 2, String.class, new class4());
+		field18 = new class3(0, 0, Integer.class, new class1());
+		field17 = new class3(1, 1, Long.class, new class2());
+		field13 = new class3(2, 2, String.class, new class4());
 	}
 
 	@ObfuscatedSignature(
-		signature = "(IILjava/lang/Class;Ls;)V"
+		signature = "(IILjava/lang/Class;La;)V"
 	)
 	class3(int var1, int var2, Class var3, class0 var4) {
-		this.field16 = var1;
-		this.field18 = var2;
-		this.field29 = var3;
-		this.field13 = var4;
+		this.field12 = var1;
+		this.field14 = var2;
+		this.field16 = var3;
+		this.field11 = var4;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "(B)I",
-		garbageValue = "-32"
+		signature = "(I)I",
+		garbageValue = "-1993081102"
 	)
 	@Export("rsOrdinal")
 	public int rsOrdinal() {
-		return this.field18;
+		return this.field14;
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("v")
 	@ObfuscatedSignature(
-		signature = "(Lky;I)Ljava/lang/Object;",
-		garbageValue = "982910801"
+		signature = "(Lkc;I)Ljava/lang/Object;",
+		garbageValue = "2039832756"
 	)
-	public Object method43(Buffer var1) {
-		return this.field13.vmethod70(var1);
+	public Object method55(Buffer var1) {
+		return this.field11.vmethod74(var1);
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;Ljava/lang/Throwable;I)V",
-		garbageValue = "1743466142"
+		signature = "(Ljava/lang/Class;I)Lq;",
+		garbageValue = "-1626082833"
 	)
-	@Export("RunException_sendStackTrace")
-	public static void RunException_sendStackTrace(String var0, Throwable var1) {
-		if (var1 != null) {
-			var1.printStackTrace();
-		} else {
-			try {
-				String var2 = "";
-				if (var1 != null) {
-					var2 = WallDecoration.shortenStackTrace(var1);
-				}
+	public static class3 method51(Class var0) {
+		class3[] var1 = new class3[]{field13, field18, field17};
+		class3[] var2 = var1;
 
-				if (var0 != null) {
-					if (var1 != null) {
-						var2 = var2 + " | ";
-					}
-
-					var2 = var2 + var0;
-				}
-
-				System.out.println("Error: " + var2);
-				var2 = var2.replace(':', '.');
-				var2 = var2.replace('@', '_');
-				var2 = var2.replace('&', '_');
-				var2 = var2.replace('#', '_');
-				if (RunException.RunException_applet == null) {
-					return;
-				}
-
-				URL var3 = new URL(RunException.RunException_applet.getCodeBase(), "clienterror.ws?c=" + class208.RunException_revision + "&u=" + RunException.localPlayerName + "&v1=" + TaskHandler.javaVendor + "&v2=" + TaskHandler.javaVersion + "&ct=" + GZipDecompressor.field4007 + "&e=" + var2);
-				DataInputStream var4 = new DataInputStream(var3.openStream());
-				var4.read();
-				var4.close();
-			} catch (Exception var5) {
-			}
-
-		}
-	}
-
-	@ObfuscatedName("s")
-	@ObfuscatedSignature(
-		signature = "(B)[Lk;",
-		garbageValue = "-69"
-	)
-	public static class3[] method44() {
-		return new class3[]{field15, field19, field14};
-	}
-
-	@ObfuscatedName("j")
-	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;I)Z",
-		garbageValue = "-1165508811"
-	)
-	@Export("isValidURL")
-	static boolean isValidURL(String var0) {
-		if (var0 == null) {
-			return false;
-		} else {
-			try {
-				new URL(var0);
-				return true;
-			} catch (MalformedURLException var2) {
-				return false;
+		for (int var3 = 0; var3 < var2.length; ++var3) {
+			class3 var4 = var2[var3];
+			if (var4.field16 == var0) {
+				return var4;
 			}
 		}
+
+		return null;
 	}
 
-	@ObfuscatedName("x")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "68"
+		signature = "(III)I",
+		garbageValue = "-1591617746"
 	)
-	static final void method53() {
-		Object var10000 = null;
-		String var0 = "Your friend list is full. Max of 200 for free users, and 400 for members";
-		DirectByteArrayCopier.addGameMessage(30, "", var0);
+	static int method68(int var0, int var1) {
+		ItemContainer var2 = (ItemContainer)ItemContainer.itemContainers.get((long)var0);
+		if (var2 == null) {
+			return -1;
+		} else {
+			return var1 >= 0 && var1 < var2.ids.length ? var2.ids[var1] : -1;
+		}
 	}
 
-	@ObfuscatedName("kz")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "-1569353890"
+		signature = "(Ljava/lang/Object;Lkc;I)V",
+		garbageValue = "240271857"
 	)
-	@Export("FriendSystem_invalidateFriends")
-	static final void FriendSystem_invalidateFriends() {
-		for (int var0 = 0; var0 < Players.Players_count; ++var0) {
-			Player var1 = Client.players[Players.Players_indices[var0]];
-			var1.clearIsFriend();
+	public static void method52(Object var0, Buffer var1) {
+		class0 var2 = method59(var0.getClass());
+		var2.vmethod89(var0, var1);
+	}
+
+	@ObfuscatedName("n")
+	@ObfuscatedSignature(
+		signature = "(Ljava/lang/Class;I)La;",
+		garbageValue = "1094436481"
+	)
+	static class0 method59(Class var0) {
+		class3 var1 = method51(var0);
+		if (var1 == null) {
+			throw new IllegalArgumentException();
+		} else {
+			return var1.field11;
+		}
+	}
+
+	@ObfuscatedName("ao")
+	@ObfuscatedSignature(
+		signature = "([BIIS)I",
+		garbageValue = "31533"
+	)
+	public static int method50(byte[] var0, int var1, int var2) {
+		int var3 = -1;
+
+		for (int var4 = var1; var4 < var2; ++var4) {
+			var3 = var3 >>> 8 ^ Buffer.crc32Table[(var3 ^ var0[var4]) & 255];
 		}
 
-		LoginScreenAnimation.method1758();
-		if (Client.clanChat != null) {
-			Client.clanChat.clearFriends();
-		}
-
+		var3 = ~var3;
+		return var3;
 	}
 }

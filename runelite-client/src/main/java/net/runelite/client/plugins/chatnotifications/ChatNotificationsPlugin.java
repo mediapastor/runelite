@@ -28,7 +28,6 @@ package net.runelite.client.plugins.chatnotifications;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.inject.Provides;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,17 +40,17 @@ import javax.inject.Singleton;
 import net.runelite.api.Client;
 import net.runelite.api.MessageNode;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.util.Text;
 import net.runelite.client.Notifier;
 import net.runelite.client.RuneLiteProperties;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.api.util.Text;
 
 @PluginDescriptor(
 	name = "Chat Notifications",
@@ -73,9 +72,6 @@ public class ChatNotificationsPlugin extends Plugin
 
 	@Inject
 	private Notifier notifier;
-
-	@Inject
-	private EventBus eventBus;
 
 	//Custom Highlights
 	private Pattern usernameMatcher = null;
@@ -103,7 +99,6 @@ public class ChatNotificationsPlugin extends Plugin
 	public void startUp()
 	{
 		updateConfig();
-		addSubscriptions();
 
 		updateHighlights();
 	}
@@ -111,18 +106,10 @@ public class ChatNotificationsPlugin extends Plugin
 	@Override
 	public void shutDown()
 	{
-		eventBus.unregister(this);
-
 		this.privateMessageHashes.clear();
 	}
 
-	private void addSubscriptions()
-	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
-		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
-	}
-
+	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		switch (event.getGameState())
@@ -134,6 +121,7 @@ public class ChatNotificationsPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("chatnotification"))
@@ -160,6 +148,7 @@ public class ChatNotificationsPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	void onChatMessage(ChatMessage chatMessage)
 	{
 		MessageNode messageNode = chatMessage.getMessageNode();

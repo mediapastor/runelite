@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, https://runelitepl.us
+ * Copyright (c) 2019, https://openosrs.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,22 @@
  */
 package net.runelite.rs.api;
 
+import net.runelite.mapping.Import;
+
 public interface RSMenuAction
 {
+	@Import("action")
+	void setOption(String yes);
+
+	@Import("opcode")
+	void setOpcode(int yes);
+
+	@Import("identifier")
+	void setIdentifier(int yes);
+
+	@Import("param0")
+	void setParam0(int yes);
+
+	@Import("param1")
+	void setParam1(int yes);
 }

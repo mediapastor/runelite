@@ -1,49 +1,22 @@
 import net.runelite.mapping.Export;
-import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("bj")
+@ObfuscatedName("br")
 public class class60 {
-	@ObfuscatedName("ng")
-	@ObfuscatedGetter(
-		intValue = -2116581745
-	)
-	@Export("widgetDragDuration")
-	static int widgetDragDuration;
-	@ObfuscatedName("bj")
+	@ObfuscatedName("bl")
 	@ObfuscatedSignature(
-		signature = "Lgk;"
+		signature = "Lln;"
 	)
-	@Export("clientLanguage")
-	static Language clientLanguage;
+	@Export("loginType")
+	static LoginType loginType;
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(IB)[B",
-		garbageValue = "73"
+		signature = "(B)[Lhp;",
+		garbageValue = "66"
 	)
-	@Export("ByteArrayPool_getArray")
-	public static synchronized byte[] ByteArrayPool_getArray(int var0) {
-		return ByteArrayPool.ByteArrayPool_getArrayBool(var0, false);
-	}
-
-	@ObfuscatedName("u")
-	@ObfuscatedSignature(
-		signature = "(I)V",
-		garbageValue = "2044529336"
-	)
-	public static void method1122() {
-		synchronized(ArchiveDiskActionHandler.ArchiveDiskActionHandler_lock) {
-			if (ArchiveDiskActionHandler.field3124 != 0) {
-				ArchiveDiskActionHandler.field3124 = 1;
-
-				try {
-					ArchiveDiskActionHandler.ArchiveDiskActionHandler_lock.wait();
-				} catch (InterruptedException var3) {
-				}
-			}
-
-		}
+	public static StudioGame[] method1260() {
+		return new StudioGame[]{StudioGame.game5, StudioGame.runescape, StudioGame.game3, StudioGame.game4, StudioGame.oldscape, StudioGame.stellardawn};
 	}
 }

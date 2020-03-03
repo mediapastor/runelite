@@ -4,242 +4,145 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("gd")
+@ObfuscatedName("gq")
 @Implements("MusicPatchNode")
 public class MusicPatchNode extends Node {
-	@ObfuscatedName("s")
+	@ObfuscatedName("kl")
 	@ObfuscatedGetter(
-		intValue = -1897745195
+		intValue = -1634536661
 	)
-	int field2437;
-	@ObfuscatedName("j")
+	@Export("menuX")
+	static int menuX;
+	@ObfuscatedName("a")
+	@ObfuscatedGetter(
+		intValue = 830928495
+	)
+	int field2425;
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lgg;"
+		signature = "Lgz;"
 	)
 	@Export("patch")
 	MusicPatch patch;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lco;"
+		signature = "Lca;"
 	)
 	@Export("rawSound")
 	RawSound rawSound;
-	@ObfuscatedName("k")
-	@ObfuscatedSignature(
-		signature = "Lgf;"
-	)
-	MusicPatchNode2 field2422;
-	@ObfuscatedName("u")
-	@ObfuscatedGetter(
-		intValue = 1864243687
-	)
-	int field2423;
-	@ObfuscatedName("n")
-	@ObfuscatedGetter(
-		intValue = -1872653771
-	)
-	int field2424;
-	@ObfuscatedName("t")
-	@ObfuscatedGetter(
-		intValue = 1424781673
-	)
-	int field2425;
 	@ObfuscatedName("q")
-	@ObfuscatedGetter(
-		intValue = 923985799
+	@ObfuscatedSignature(
+		signature = "Lgp;"
 	)
-	int field2429;
-	@ObfuscatedName("x")
+	MusicPatchNode2 field2417;
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = -1213046501
+		intValue = -1191451859
 	)
-	int field2426;
-	@ObfuscatedName("d")
+	int field2422;
+	@ObfuscatedName("l")
 	@ObfuscatedGetter(
-		intValue = -322919449
+		intValue = 157095745
 	)
-	int field2428;
-	@ObfuscatedName("f")
-	@ObfuscatedGetter(
-		intValue = 1828519475
-	)
-	int field2440;
+	int field2419;
 	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		intValue = -1131883179
+		intValue = -1068242143
 	)
 	int field2430;
-	@ObfuscatedName("r")
+	@ObfuscatedName("o")
 	@ObfuscatedGetter(
-		intValue = -392347845
+		intValue = 747760665
 	)
-	int field2431;
-	@ObfuscatedName("y")
+	int field2421;
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = -610654257
+		intValue = 2032697643
 	)
-	int field2432;
+	int field2416;
+	@ObfuscatedName("d")
+	@ObfuscatedGetter(
+		intValue = 910822609
+	)
+	int field2423;
+	@ObfuscatedName("m")
+	@ObfuscatedGetter(
+		intValue = -233419885
+	)
+	int field2424;
 	@ObfuscatedName("p")
 	@ObfuscatedGetter(
-		intValue = -1442847957
+		intValue = 1986379776
 	)
-	int field2433;
-	@ObfuscatedName("b")
+	int field2420;
+	@ObfuscatedName("h")
 	@ObfuscatedGetter(
-		intValue = 1807257146
+		intValue = -1890707239
 	)
-	int field2434;
-	@ObfuscatedName("g")
+	int field2431;
+	@ObfuscatedName("k")
 	@ObfuscatedGetter(
-		intValue = -1173270761
+		intValue = -1386699845
 	)
-	int field2435;
+	int field2427;
+	@ObfuscatedName("x")
+	@ObfuscatedGetter(
+		intValue = -1121905843
+	)
+	int field2428;
+	@ObfuscatedName("j")
+	@ObfuscatedGetter(
+		intValue = 40924709
+	)
+	int field2429;
+	@ObfuscatedName("r")
+	@ObfuscatedGetter(
+		intValue = -141158297
+	)
+	int field2426;
 	@ObfuscatedName("e")
 	@ObfuscatedGetter(
-		intValue = -549746549
+		intValue = -964518569
 	)
-	int field2436;
-	@ObfuscatedName("z")
+	int field2414;
+	@ObfuscatedName("s")
 	@ObfuscatedSignature(
-		signature = "Ldx;"
+		signature = "Lds;"
 	)
 	@Export("stream")
 	RawPcmStream stream;
-	@ObfuscatedName("a")
+	@ObfuscatedName("b")
 	@ObfuscatedGetter(
-		intValue = 1101531435
+		intValue = -312260617
 	)
-	int field2438;
-	@ObfuscatedName("l")
+	int field2433;
+	@ObfuscatedName("f")
 	@ObfuscatedGetter(
-		intValue = 994945393
+		intValue = -2047299569
 	)
-	int field2439;
+	int field2434;
 
 	MusicPatchNode() {
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "87"
+		signature = "(I)V",
+		garbageValue = "1779627042"
 	)
-	void method3767() {
+	void method3974() {
 		this.patch = null;
 		this.rawSound = null;
-		this.field2422 = null;
+		this.field2417 = null;
 		this.stream = null;
 	}
 
-	@ObfuscatedName("f")
+	@ObfuscatedName("o")
 	@ObfuscatedSignature(
-		signature = "(Lbw;I)V",
-		garbageValue = "-313141068"
+		signature = "(I)V",
+		garbageValue = "428887942"
 	)
-	static void method3772(GameShell var0) {
-		while (FontName.isKeyDown()) {
-			if (ReflectionCheck.field1307 == 13) {
-				class13.method163();
-				return;
-			}
-
-			if (ReflectionCheck.field1307 == 96) {
-				if (Login.worldSelectPage > 0 && AbstractWorldMapIcon.worldSelectLeftSprite != null) {
-					--Login.worldSelectPage;
-				}
-			} else if (ReflectionCheck.field1307 == 97 && Login.worldSelectPage < Login.worldSelectPagesCount && ClanChat.worldSelectRightSprite != null) {
-				++Login.worldSelectPage;
-			}
-		}
-
-		if (MouseHandler.MouseHandler_lastButton == 1 || !FriendSystem.mouseCam && MouseHandler.MouseHandler_lastButton == 4) {
-			int var1 = Login.xPadding + 280;
-			if (MouseHandler.MouseHandler_lastPressedX >= var1 && MouseHandler.MouseHandler_lastPressedX <= var1 + 14 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(0, 0);
-				return;
-			}
-
-			if (MouseHandler.MouseHandler_lastPressedX >= var1 + 15 && MouseHandler.MouseHandler_lastPressedX <= var1 + 80 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(0, 1);
-				return;
-			}
-
-			int var2 = Login.xPadding + 390;
-			if (MouseHandler.MouseHandler_lastPressedX >= var2 && MouseHandler.MouseHandler_lastPressedX <= var2 + 14 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(1, 0);
-				return;
-			}
-
-			if (MouseHandler.MouseHandler_lastPressedX >= var2 + 15 && MouseHandler.MouseHandler_lastPressedX <= var2 + 80 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(1, 1);
-				return;
-			}
-
-			int var3 = Login.xPadding + 500;
-			if (MouseHandler.MouseHandler_lastPressedX >= var3 && MouseHandler.MouseHandler_lastPressedX <= var3 + 14 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(2, 0);
-				return;
-			}
-
-			if (MouseHandler.MouseHandler_lastPressedX >= var3 + 15 && MouseHandler.MouseHandler_lastPressedX <= var3 + 80 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(2, 1);
-				return;
-			}
-
-			int var4 = Login.xPadding + 610;
-			if (MouseHandler.MouseHandler_lastPressedX >= var4 && MouseHandler.MouseHandler_lastPressedX <= var4 + 14 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(3, 0);
-				return;
-			}
-
-			if (MouseHandler.MouseHandler_lastPressedX >= var4 + 15 && MouseHandler.MouseHandler_lastPressedX <= var4 + 80 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedY <= 18) {
-				class65.changeWorldSelectSorting(3, 1);
-				return;
-			}
-
-			if (MouseHandler.MouseHandler_lastPressedX >= Login.xPadding + 708 && MouseHandler.MouseHandler_lastPressedY >= 4 && MouseHandler.MouseHandler_lastPressedX <= Login.xPadding + 708 + 50 && MouseHandler.MouseHandler_lastPressedY <= 20) {
-				class13.method163();
-				return;
-			}
-
-			if (Login.hoveredWorldIndex != -1) {
-				World var5 = ChatChannel.World_worlds[Login.hoveredWorldIndex];
-				class65.changeWorld(var5);
-				class13.method163();
-				return;
-			}
-
-			if (Login.worldSelectPage > 0 && AbstractWorldMapIcon.worldSelectLeftSprite != null && MouseHandler.MouseHandler_lastPressedX >= 0 && MouseHandler.MouseHandler_lastPressedX <= AbstractWorldMapIcon.worldSelectLeftSprite.subWidth && MouseHandler.MouseHandler_lastPressedY >= class30.canvasHeight / 2 - 50 && MouseHandler.MouseHandler_lastPressedY <= class30.canvasHeight / 2 + 50) {
-				--Login.worldSelectPage;
-			}
-
-			if (Login.worldSelectPage < Login.worldSelectPagesCount && ClanChat.worldSelectRightSprite != null && MouseHandler.MouseHandler_lastPressedX >= KitDefinition.canvasWidth - ClanChat.worldSelectRightSprite.subWidth - 5 && MouseHandler.MouseHandler_lastPressedX <= KitDefinition.canvasWidth && MouseHandler.MouseHandler_lastPressedY >= class30.canvasHeight / 2 - 50 && MouseHandler.MouseHandler_lastPressedY <= class30.canvasHeight / 2 + 50) {
-				++Login.worldSelectPage;
-			}
-		}
-
-	}
-
-	@ObfuscatedName("gp")
-	@ObfuscatedSignature(
-		signature = "(IIIII)V",
-		garbageValue = "-1852337060"
-	)
-	static final void method3771(int var0, int var1, int var2, int var3) {
-		Client.field737 = 0;
-		int var4 = PacketWriter.baseX * 64 + (WorldMapIcon_1.localPlayer.x >> 7);
-		int var5 = RouteStrategy.baseY * 64 + (WorldMapIcon_1.localPlayer.y >> 7);
-		if (var4 >= 3053 && var4 <= 3156 && var5 >= 3056 && var5 <= 3136) {
-			Client.field737 = 1;
-		}
-
-		if (var4 >= 3072 && var4 <= 3118 && var5 >= 9492 && var5 <= 9535) {
-			Client.field737 = 1;
-		}
-
-		if (Client.field737 == 1 && var4 >= 3139 && var4 <= 3199 && var5 >= 3008 && var5 <= 3062) {
-			Client.field737 = 0;
-		}
-
+	public static void method3973() {
+		WorldMapElement.WorldMapElement_cachedSprites.clear();
 	}
 }

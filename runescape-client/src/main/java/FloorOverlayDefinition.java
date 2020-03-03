@@ -4,75 +4,75 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("iv")
+@ObfuscatedName("is")
 @Implements("FloorOverlayDefinition")
 public class FloorOverlayDefinition extends DualNode {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "Lhq;"
 	)
 	@Export("FloorOverlayDefinition_archive")
-	public static AbstractArchive FloorOverlayDefinition_archive;
-	@ObfuscatedName("j")
+	static AbstractArchive FloorOverlayDefinition_archive;
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lep;"
+		signature = "Leb;"
 	)
 	@Export("FloorOverlayDefinition_cached")
 	public static EvictingDualNodeHashTable FloorOverlayDefinition_cached;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = 1186285675
+		intValue = 174203121
 	)
 	@Export("primaryRgb")
 	public int primaryRgb;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = 1987325665
+		intValue = 1513667197
 	)
 	@Export("texture")
 	public int texture;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("hideUnderlay")
 	public boolean hideUnderlay;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@ObfuscatedGetter(
-		intValue = -375374105
+		intValue = -173396079
 	)
 	@Export("secondaryRgb")
 	public int secondaryRgb;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@ObfuscatedGetter(
-		intValue = 1926193945
+		intValue = -538711707
 	)
 	@Export("hue")
 	public int hue;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@ObfuscatedGetter(
-		intValue = -1588177313
+		intValue = 343032535
 	)
 	@Export("saturation")
 	public int saturation;
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@ObfuscatedGetter(
-		intValue = -1646509357
+		intValue = -459750833
 	)
 	@Export("lightness")
 	public int lightness;
 	@ObfuscatedName("d")
 	@ObfuscatedGetter(
-		intValue = -1281479925
+		intValue = 675536463
 	)
 	@Export("secondaryHue")
 	public int secondaryHue;
-	@ObfuscatedName("f")
+	@ObfuscatedName("m")
 	@ObfuscatedGetter(
-		intValue = 1612990267
+		intValue = -1939857721
 	)
 	@Export("secondarySaturation")
 	public int secondarySaturation;
-	@ObfuscatedName("c")
+	@ObfuscatedName("p")
 	@ObfuscatedGetter(
-		intValue = -520563245
+		intValue = 773106025
 	)
 	@Export("secondaryLightness")
 	public int secondaryLightness;
@@ -81,20 +81,20 @@ public class FloorOverlayDefinition extends DualNode {
 		FloorOverlayDefinition_cached = new EvictingDualNodeHashTable(64);
 	}
 
-	public FloorOverlayDefinition() {
+	FloorOverlayDefinition() {
 		this.primaryRgb = 0;
 		this.texture = -1;
 		this.hideUnderlay = true;
 		this.secondaryRgb = -1;
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "-32"
+		signature = "(S)V",
+		garbageValue = "-4204"
 	)
 	@Export("postDecode")
-	public void postDecode() {
+	void postDecode() {
 		if (this.secondaryRgb != -1) {
 			this.setHsl(this.secondaryRgb);
 			this.secondaryHue = this.hue;
@@ -105,13 +105,13 @@ public class FloorOverlayDefinition extends DualNode {
 		this.setHsl(this.primaryRgb);
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "(Lky;II)V",
-		garbageValue = "-1938903864"
+		signature = "(Lkc;IB)V",
+		garbageValue = "-1"
 	)
 	@Export("decode")
-	public void decode(Buffer var1, int var2) {
+	void decode(Buffer var1, int var2) {
 		while (true) {
 			int var3 = var1.readUnsignedByte();
 			if (var3 == 0) {
@@ -122,10 +122,10 @@ public class FloorOverlayDefinition extends DualNode {
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("v")
 	@ObfuscatedSignature(
-		signature = "(Lky;III)V",
-		garbageValue = "-1583990473"
+		signature = "(Lkc;III)V",
+		garbageValue = "1158781542"
 	)
 	@Export("decodeNext")
 	void decodeNext(Buffer var1, int var2, int var3) {
@@ -142,10 +142,10 @@ public class FloorOverlayDefinition extends DualNode {
 
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("l")
 	@ObfuscatedSignature(
-		signature = "(II)V",
-		garbageValue = "923759114"
+		signature = "(IB)V",
+		garbageValue = "109"
 	)
 	@Export("setHsl")
 	void setHsl(int var1) {
@@ -172,10 +172,10 @@ public class FloorOverlayDefinition extends DualNode {
 
 		double var12 = 0.0D;
 		double var14 = 0.0D;
-		double var16 = (var10 + var8) / 2.0D;
+		double var16 = (var8 + var10) / 2.0D;
 		if (var10 != var8) {
 			if (var16 < 0.5D) {
-				var14 = (var10 - var8) / (var10 + var8);
+				var14 = (var10 - var8) / (var8 + var10);
 			}
 
 			if (var16 >= 0.5D) {
@@ -184,17 +184,17 @@ public class FloorOverlayDefinition extends DualNode {
 
 			if (var10 == var2) {
 				var12 = (var4 - var6) / (var10 - var8);
-			} else if (var4 == var10) {
+			} else if (var10 == var4) {
 				var12 = (var6 - var2) / (var10 - var8) + 2.0D;
-			} else if (var6 == var10) {
-				var12 = (var2 - var4) / (var10 - var8) + 4.0D;
+			} else if (var10 == var6) {
+				var12 = 4.0D + (var2 - var4) / (var10 - var8);
 			}
 		}
 
 		var12 /= 6.0D;
 		this.hue = (int)(256.0D * var12);
-		this.saturation = (int)(var14 * 256.0D);
-		this.lightness = (int)(var16 * 256.0D);
+		this.saturation = (int)(256.0D * var14);
+		this.lightness = (int)(256.0D * var16);
 		if (this.saturation < 0) {
 			this.saturation = 0;
 		} else if (this.saturation > 255) {

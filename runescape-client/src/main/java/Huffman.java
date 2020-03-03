@@ -1,26 +1,24 @@
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
+import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("hr")
+@ObfuscatedName("hx")
 @Implements("Huffman")
 public class Huffman {
-	@ObfuscatedName("d")
-	@ObfuscatedSignature(
-		signature = "Lhz;"
+	@ObfuscatedName("as")
+	@ObfuscatedGetter(
+		intValue = 821038913
 	)
-	@Export("Widget_modelsArchive")
-	static AbstractArchive Widget_modelsArchive;
-	@ObfuscatedName("r")
-	static boolean field2486;
-	@ObfuscatedName("s")
+	static int field2491;
+	@ObfuscatedName("a")
 	@Export("masks")
 	int[] masks;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@Export("bits")
 	byte[] bits;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("keys")
 	int[] keys;
 
@@ -49,7 +47,7 @@ public class Huffman {
 
 					for (var10 = var6 - 1; var10 >= 1; --var10) {
 						var11 = var3[var10];
-						if (var8 != var11) {
+						if (var11 != var8) {
 							break;
 						}
 
@@ -107,10 +105,10 @@ public class Huffman {
 
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
 		signature = "([BII[BIB)I",
-		garbageValue = "75"
+		garbageValue = "14"
 	)
 	@Export("compress")
 	int compress(byte[] var1, int var2, int var3, byte[] var4, int var5) {
@@ -128,7 +126,7 @@ public class Huffman {
 			int var11 = var7 >> 3;
 			int var12 = var7 & 7;
 			var6 &= -var12 >> 31;
-			int var13 = (var12 + var10 - 1 >> 3) + var11;
+			int var13 = (var10 + var12 - 1 >> 3) + var11;
 			var12 += 24;
 			var4[var11] = (byte)(var6 |= var9 >>> var12);
 			if (var11 < var13) {
@@ -158,10 +156,10 @@ public class Huffman {
 		return (var7 + 7 >> 3) - var5;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "([BI[BIII)I",
-		garbageValue = "-1981194731"
+		signature = "([BI[BIIB)I",
+		garbageValue = "-1"
 	)
 	@Export("decompress")
 	int decompress(byte[] var1, int var2, byte[] var3, int var4, int var5) {
@@ -302,33 +300,25 @@ public class Huffman {
 		}
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(II)Z",
-		garbageValue = "762083438"
+		signature = "([I[II)V",
+		garbageValue = "1107408934"
 	)
-	public static boolean method3901(int var0) {
-		return (var0 >> 30 & 1) != 0;
-	}
+	public static void method4104(int[] var0, int[] var1) {
+		if (var0 != null && var1 != null) {
+			ByteArrayPool.ByteArrayPool_alternativeSizes = var0;
+			class222.ByteArrayPool_altSizeArrayCounts = new int[var0.length];
+			HorizontalAlignment.ByteArrayPool_arrays = new byte[var0.length][][];
 
-	@ObfuscatedName("r")
-	@ObfuscatedSignature(
-		signature = "(Ljava/lang/CharSequence;B)Ljava/lang/String;",
-		garbageValue = "24"
-	)
-	public static String method3903(CharSequence var0) {
-		return FontName.method5230('*', var0.length());
-	}
+			for (int var2 = 0; var2 < ByteArrayPool.ByteArrayPool_alternativeSizes.length; ++var2) {
+				HorizontalAlignment.ByteArrayPool_arrays[var2] = new byte[var1[var2]][];
+			}
 
-	@ObfuscatedName("y")
-	@ObfuscatedSignature(
-		signature = "(Ljava/lang/String;I)V",
-		garbageValue = "191831617"
-	)
-	static final void method3902(String var0) {
-		PacketBufferNode var1 = MenuAction.getPacketBufferNode(ClientPacket.field2275, Client.packetWriter.isaacCipher);
-		var1.packetBuffer.writeByte(Buddy.stringCp1252NullTerminatedByteSize(var0));
-		var1.packetBuffer.writeStringCp1252NullTerminated(var0);
-		Client.packetWriter.addNode(var1);
+		} else {
+			ByteArrayPool.ByteArrayPool_alternativeSizes = null;
+			class222.ByteArrayPool_altSizeArrayCounts = null;
+			HorizontalAlignment.ByteArrayPool_arrays = null;
+		}
 	}
 }

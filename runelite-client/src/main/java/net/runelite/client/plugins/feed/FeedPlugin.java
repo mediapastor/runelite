@@ -35,9 +35,9 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.events.ConfigChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.task.Schedule;
@@ -67,12 +67,11 @@ public class FeedPlugin extends Plugin
 	private ScheduledExecutorService executorService;
 
 	@Inject
-	private EventBus eventBus;
+	private FeedClient feedClient;
 
 	private FeedPanel feedPanel;
 	private NavigationButton navButton;
 
-	private final FeedClient feedClient = new FeedClient();
 	private final Supplier<FeedResult> feedSupplier = Suppliers.memoizeWithExpiration(() ->
 	{
 		try
@@ -89,8 +88,6 @@ public class FeedPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-
 		feedPanel = new FeedPanel(config, feedSupplier);
 
 		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "icon.png");
@@ -109,7 +106,6 @@ public class FeedPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
 		clientToolbar.removeNavigation(navButton);
 	}
 
@@ -118,6 +114,7 @@ public class FeedPlugin extends Plugin
 		feedPanel.rebuildFeed();
 	}
 
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("feed"))

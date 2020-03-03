@@ -1,36 +1,46 @@
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
+import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ce")
+@ObfuscatedName("cx")
 @Implements("HealthBar")
 public class HealthBar extends Node {
-	@ObfuscatedName("i")
+	@ObfuscatedName("v")
+	@Export("SpriteBuffer_yOffsets")
+	public static int[] SpriteBuffer_yOffsets;
+	@ObfuscatedName("fj")
+	@ObfuscatedGetter(
+		intValue = 1157381415
+	)
+	@Export("baseY")
+	static int baseY;
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lig;"
+		signature = "Lil;"
 	)
 	@Export("definition")
 	HealthBarDefinition definition;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "Ljp;"
+		signature = "Ljm;"
 	)
 	@Export("updates")
 	IterableNodeDeque updates;
 
 	@ObfuscatedSignature(
-		signature = "(Lig;)V"
+		signature = "(Lil;)V"
 	)
 	HealthBar(HealthBarDefinition var1) {
 		this.updates = new IterableNodeDeque();
 		this.definition = var1;
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
 		signature = "(IIIII)V",
-		garbageValue = "1581438808"
+		garbageValue = "703172784"
 	)
 	@Export("put")
 	void put(int var1, int var2, int var3, int var4) {
@@ -63,10 +73,10 @@ public class HealthBar extends Node {
 		}
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "(IB)Lbb;",
-		garbageValue = "-77"
+		signature = "(II)Lbo;",
+		garbageValue = "1147155972"
 	)
 	@Export("get")
 	HealthBarUpdate get(int var1) {
@@ -88,13 +98,33 @@ public class HealthBar extends Node {
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
 		signature = "(B)Z",
-		garbageValue = "88"
+		garbageValue = "-47"
 	)
 	@Export("isEmpty")
 	boolean isEmpty() {
-		return this.updates.method4729();
+		return this.updates.method5004();
+	}
+
+	@ObfuscatedName("ap")
+	@ObfuscatedSignature(
+		signature = "(I)V",
+		garbageValue = "2136910933"
+	)
+	protected static final void method2161() {
+		GameShell.clock.mark();
+
+		int var0;
+		for (var0 = 0; var0 < 32; ++var0) {
+			GameShell.graphicsTickTimes[var0] = 0L;
+		}
+
+		for (var0 = 0; var0 < 32; ++var0) {
+			GameShell.clientTickTimes[var0] = 0L;
+		}
+
+		ArchiveLoader.gameCyclesToDo = 0;
 	}
 }

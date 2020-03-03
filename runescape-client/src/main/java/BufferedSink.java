@@ -6,40 +6,40 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ki")
+@ObfuscatedName("kn")
 @Implements("BufferedSink")
 public class BufferedSink implements Runnable {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("thread")
 	Thread thread;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@Export("outputStream")
 	OutputStream outputStream;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedGetter(
-		intValue = -2122061045
+		intValue = 1704761219
 	)
 	@Export("capacity")
 	int capacity;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("buffer")
 	byte[] buffer;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = -786239105
+		intValue = -1398859285
 	)
 	@Export("position")
 	int position;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@ObfuscatedGetter(
-		intValue = -225046667
+		intValue = 1220399631
 	)
 	@Export("limit")
 	int limit;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@Export("exception")
 	IOException exception;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@Export("closed")
 	boolean closed;
 
@@ -54,10 +54,10 @@ public class BufferedSink implements Runnable {
 		this.thread.start();
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "(B)Z",
-		garbageValue = "-52"
+		signature = "(I)Z",
+		garbageValue = "-1040331430"
 	)
 	@Export("isClosed")
 	boolean isClosed() {
@@ -79,10 +79,10 @@ public class BufferedSink implements Runnable {
 		}
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "([BIIB)V",
-		garbageValue = "22"
+		signature = "([BIII)V",
+		garbageValue = "-2046611751"
 	)
 	@Export("write")
 	void write(byte[] var1, int var2, int var3) throws IOException {
@@ -119,10 +119,10 @@ public class BufferedSink implements Runnable {
 		}
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(B)V",
-		garbageValue = "4"
+		signature = "(I)V",
+		garbageValue = "96034687"
 	)
 	@Export("close")
 	void close() {

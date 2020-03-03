@@ -32,12 +32,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.Getter;
-import lombok.Setter;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Constants;
@@ -75,9 +74,6 @@ import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 @Singleton
 class DevToolsOverlay extends Overlay
 {
-	private static final int ITEM_EMPTY = 6512;
-	private static final int ITEM_FILLED = 20594;
-
 	private static final Font FONT = FontManager.getRunescapeFont().deriveFont(Font.BOLD, 16);
 	private static final Color RED = new Color(221, 44, 0);
 	private static final Color GREEN = new Color(0, 200, 83);
@@ -95,13 +91,6 @@ class DevToolsOverlay extends Overlay
 	private final Client client;
 	private final DevToolsPlugin plugin;
 	private final TooltipManager toolTipManager;
-
-	@Setter
-	@Getter
-	private Widget widget;
-
-	@Setter
-	private int itemIndex = -1;
 
 	@Inject
 	private DevToolsOverlay(Client client, DevToolsPlugin plugin, TooltipManager toolTipManager)
@@ -153,8 +142,6 @@ class DevToolsOverlay extends Overlay
 		{
 			renderCursorTooltip(graphics);
 		}
-
-		renderWidgets(graphics);
 
 		return null;
 	}
@@ -326,10 +313,10 @@ class DevToolsOverlay extends Overlay
 
 					// Draw a polygon around the convex hull
 					// of the model vertices
-					Polygon p = gameObject.getConvexHull();
+					Shape p = gameObject.getConvexHull();
 					if (p != null)
 					{
-						graphics.drawPolygon(p);
+						graphics.draw(p);
 					}
 					// This is incredibly taxing to run, only uncomment if you know what you're doing.
 					/*renderGameObjectWireframe(graphics, gameObject, Color.CYAN);*/
@@ -372,16 +359,16 @@ class DevToolsOverlay extends Overlay
 				OverlayUtil.renderTileOverlay(graphics, decorObject, "ID: " + decorObject.getId(), DEEP_PURPLE);
 			}
 
-			Polygon p = decorObject.getConvexHull();
+			Shape p = decorObject.getConvexHull();
 			if (p != null)
 			{
-				graphics.drawPolygon(p);
+				graphics.draw(p);
 			}
 
 			p = decorObject.getConvexHull2();
 			if (p != null)
 			{
-				graphics.drawPolygon(p);
+				graphics.draw(p);
 			}
 		}
 	}
@@ -486,87 +473,6 @@ class DevToolsOverlay extends Overlay
 			{
 				OverlayUtil.renderTextLocation(graphics, textLocation, infoString, Color.WHITE);
 			}
-		}
-	}
-
-	private void renderWidgets(Graphics2D graphics)
-	{
-		if (widget == null || widget.isHidden())
-		{
-			return;
-		}
-
-		Rectangle childBounds = widget.getBounds();
-		graphics.setColor(CYAN);
-		graphics.draw(childBounds);
-
-		if (itemIndex == -1)
-		{
-			return;
-		}
-
-		if (widget.getItemId() != ITEM_EMPTY
-			&& widget.getItemId() != ITEM_FILLED)
-		{
-			Rectangle componentBounds = widget.getBounds();
-
-			graphics.setColor(ORANGE);
-			graphics.draw(componentBounds);
-
-			renderWidgetText(graphics, componentBounds, widget.getItemId(), YELLOW);
-		}
-
-		WidgetItem widgetItem = widget.getWidgetItem(itemIndex);
-		if (widgetItem == null
-			|| widgetItem.getId() < 0
-			|| widgetItem.getId() == ITEM_EMPTY
-			|| widgetItem.getId() == ITEM_FILLED)
-		{
-			return;
-		}
-
-		Rectangle itemBounds = widgetItem.getCanvasBounds();
-
-		graphics.setColor(ORANGE);
-		graphics.draw(itemBounds);
-
-		renderWidgetText(graphics, itemBounds, widgetItem.getId(), YELLOW);
-	}
-
-	private void renderWidgetText(Graphics2D graphics, Rectangle bounds, int itemId, Color color)
-	{
-		if (itemId == -1)
-		{
-			return;
-		}
-
-		String text = itemId + "";
-		FontMetrics fm = graphics.getFontMetrics();
-		Rectangle2D textBounds = fm.getStringBounds(text, graphics);
-
-		int textX = (int) (bounds.getX() + (bounds.getWidth() / 2) - (textBounds.getWidth() / 2));
-		int textY = (int) (bounds.getY() + (bounds.getHeight() / 2) + (textBounds.getHeight() / 2));
-
-		graphics.setColor(Color.BLACK);
-		graphics.drawString(text, textX + 1, textY + 1);
-		graphics.setColor(color);
-		graphics.drawString(text, textX, textY);
-	}
-
-	private void renderGameObjectWireframe(Graphics2D graphics, GameObject gameObject, Color color)
-	{
-		Polygon[] polys = gameObject.getPolygons();
-
-		if (polys == null)
-		{
-			return;
-		}
-
-		graphics.setColor(color);
-
-		for (Polygon p : polys)
-		{
-			graphics.drawPolygon(p);
 		}
 	}
 

@@ -2,38 +2,38 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 
-@ObfuscatedName("dr")
+@ObfuscatedName("db")
 @Implements("VorbisFloor")
 public class VorbisFloor {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	static final int[] field1372;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@Export("VorbisFloor_decibelStatics")
 	static final float[] VorbisFloor_decibelStatics;
 	@ObfuscatedName("d")
-	static int[] field1368;
-	@ObfuscatedName("f")
+	static int[] field1377;
+	@ObfuscatedName("m")
 	static int[] field1376;
-	@ObfuscatedName("c")
-	static boolean[] field1378;
-	@ObfuscatedName("i")
-	int[] field1367;
-	@ObfuscatedName("k")
+	@ObfuscatedName("p")
+	static boolean[] field1379;
+	@ObfuscatedName("n")
+	int[] field1370;
+	@ObfuscatedName("q")
 	@Export("multiplier")
 	int multiplier;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("partitionClassList")
 	int[] partitionClassList;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("classDimensions")
 	int[] classDimensions;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@Export("classSubClasses")
 	int[] classSubClasses;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@Export("classMasterbooks")
 	int[] classMasterbooks;
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@Export("subclassBooks")
 	int[][] subclassBooks;
 
@@ -92,30 +92,30 @@ public class VorbisFloor {
 				var5 += this.classDimensions[this.partitionClassList[var9]];
 			}
 
-			this.field1367 = new int[var5];
-			this.field1367[0] = 0;
-			this.field1367[1] = 1 << var4;
+			this.field1370 = new int[var5];
+			this.field1370[0] = 0;
+			this.field1370[1] = 1 << var4;
 			var5 = 2;
 
 			for (var9 = 0; var9 < var2; ++var9) {
 				var7 = this.partitionClassList[var9];
 
 				for (int var8 = 0; var8 < this.classDimensions[var7]; ++var8) {
-					this.field1367[var5++] = VorbisSample.readBits(var4);
+					this.field1370[var5++] = VorbisSample.readBits(var4);
 				}
 			}
 
-			if (field1368 == null || field1368.length < var5) {
-				field1368 = new int[var5];
+			if (field1377 == null || field1377.length < var5) {
+				field1377 = new int[var5];
 				field1376 = new int[var5];
-				field1378 = new boolean[var5];
+				field1379 = new boolean[var5];
 			}
 
 		}
 	}
 
-	@ObfuscatedName("i")
-	int method2315(int var1, int var2, int var3, int var4, int var5) {
+	@ObfuscatedName("n")
+	int method2568(int var1, int var2, int var3, int var4, int var5) {
 		int var6 = var4 - var2;
 		int var7 = var3 - var1;
 		int var8 = var6 < 0 ? -var6 : var6;
@@ -124,8 +124,8 @@ public class VorbisFloor {
 		return var6 < 0 ? var2 - var10 : var10 + var2;
 	}
 
-	@ObfuscatedName("k")
-	void method2317(int var1, int var2, int var3, int var4, float[] var5, int var6) {
+	@ObfuscatedName("q")
+	void method2561(int var1, int var2, int var3, int var4, float[] var5, int var6) {
 		int var7 = var4 - var2;
 		int var8 = var3 - var1;
 		int var9 = var7 < 0 ? -var7 : var7;
@@ -153,52 +153,52 @@ public class VorbisFloor {
 
 	}
 
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("VarbisFloor_sort")
 	void VarbisFloor_sort(int var1, int var2) {
 		if (var1 < var2) {
 			int var3 = var1;
-			int var4 = field1368[var1];
+			int var4 = field1377[var1];
 			int var5 = field1376[var1];
-			boolean var6 = field1378[var1];
+			boolean var6 = field1379[var1];
 
 			for (int var7 = var1 + 1; var7 <= var2; ++var7) {
-				int var8 = field1368[var7];
+				int var8 = field1377[var7];
 				if (var8 < var4) {
-					field1368[var3] = var8;
+					field1377[var3] = var8;
 					field1376[var3] = field1376[var7];
-					field1378[var3] = field1378[var7];
+					field1379[var3] = field1379[var7];
 					++var3;
-					field1368[var7] = field1368[var3];
+					field1377[var7] = field1377[var3];
 					field1376[var7] = field1376[var3];
-					field1378[var7] = field1378[var3];
+					field1379[var7] = field1379[var3];
 				}
 			}
 
-			field1368[var3] = var4;
+			field1377[var3] = var4;
 			field1376[var3] = var5;
-			field1378[var3] = var6;
+			field1379[var3] = var6;
 			this.VarbisFloor_sort(var1, var3 - 1);
 			this.VarbisFloor_sort(var3 + 1, var2);
 		}
 	}
 
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("readSubmapFloor")
 	boolean readSubmapFloor() {
 		boolean var1 = VorbisSample.readBit() != 0;
 		if (!var1) {
 			return false;
 		} else {
-			int var2 = this.field1367.length;
+			int var2 = this.field1370.length;
 
 			int var3;
 			for (var3 = 0; var3 < var2; ++var3) {
-				field1368[var3] = this.field1367[var3];
+				field1377[var3] = this.field1370[var3];
 			}
 
 			var3 = field1372[this.multiplier - 1];
-			int var4 = class160.iLog(var3 - 1);
+			int var4 = Tiles.iLog(var3 - 1);
 			field1376[0] = VorbisSample.readBits(var4);
 			field1376[1] = VorbisSample.readBits(var4);
 			int var5 = 2;
@@ -210,13 +210,13 @@ public class VorbisFloor {
 				int var10 = (1 << var9) - 1;
 				int var11 = 0;
 				if (var9 > 0) {
-					var11 = VorbisSample.VorbisSample_codebooks[this.classMasterbooks[var7]].method2254();
+					var11 = VorbisSample.VorbisSample_codebooks[this.classMasterbooks[var7]].method2487();
 				}
 
 				for (int var12 = 0; var12 < var8; ++var12) {
 					int var13 = this.subclassBooks[var7][var11 & var10];
 					var11 >>>= var9;
-					field1376[var5++] = var13 >= 0 ? VorbisSample.VorbisSample_codebooks[var13].method2254() : 0;
+					field1376[var5++] = var13 >= 0 ? VorbisSample.VorbisSample_codebooks[var13].method2487() : 0;
 				}
 			}
 
@@ -224,12 +224,12 @@ public class VorbisFloor {
 		}
 	}
 
-	@ObfuscatedName("t")
-	void method2321(float[] var1, int var2) {
-		int var3 = this.field1367.length;
+	@ObfuscatedName("c")
+	void method2564(float[] var1, int var2) {
+		int var3 = this.field1370.length;
 		int var4 = field1372[this.multiplier - 1];
-		boolean[] var5 = field1378;
-		field1378[1] = true;
+		boolean[] var5 = field1379;
+		field1379[1] = true;
 		var5[0] = true;
 
 		int var6;
@@ -238,24 +238,24 @@ public class VorbisFloor {
 		int var9;
 		int var10;
 		for (var6 = 2; var6 < var3; ++var6) {
-			var7 = method2336(field1368, var6);
-			var8 = method2316(field1368, var6);
-			var9 = this.method2315(field1368[var7], field1376[var7], field1368[var8], field1376[var8], field1368[var6]);
+			var7 = method2559(field1377, var6);
+			var8 = method2575(field1377, var6);
+			var9 = this.method2568(field1377[var7], field1376[var7], field1377[var8], field1376[var8], field1377[var6]);
 			var10 = field1376[var6];
 			int var11 = var4 - var9;
 			int var13 = (var11 < var9 ? var11 : var9) << 1;
 			if (var10 != 0) {
-				boolean[] var14 = field1378;
-				field1378[var8] = true;
+				boolean[] var14 = field1379;
+				field1379[var8] = true;
 				var14[var7] = true;
-				field1378[var6] = true;
+				field1379[var6] = true;
 				if (var10 >= var13) {
 					field1376[var6] = var11 > var9 ? var9 + (var10 - var9) : var11 + (var9 - var10) - 1;
 				} else {
 					field1376[var6] = (var10 & 1) != 0 ? var9 - (var10 + 1) / 2 : var10 / 2 + var9;
 				}
 			} else {
-				field1378[var6] = false;
+				field1379[var6] = false;
 				field1376[var6] = var9;
 			}
 		}
@@ -265,10 +265,10 @@ public class VorbisFloor {
 		var7 = field1376[0] * this.multiplier;
 
 		for (var8 = 1; var8 < var3; ++var8) {
-			if (field1378[var8]) {
-				var9 = field1368[var8];
+			if (field1379[var8]) {
+				var9 = field1377[var8];
 				var10 = field1376[var8] * this.multiplier;
-				this.method2317(var6, var7, var9, var10, var1, var2);
+				this.method2561(var6, var7, var9, var10, var1, var2);
 				if (var9 >= var2) {
 					return;
 				}
@@ -286,8 +286,8 @@ public class VorbisFloor {
 
 	}
 
-	@ObfuscatedName("s")
-	static int method2336(int[] var0, int var1) {
+	@ObfuscatedName("a")
+	static int method2559(int[] var0, int var1) {
 		int var2 = var0[var1];
 		int var3 = -1;
 		int var4 = Integer.MIN_VALUE;
@@ -303,8 +303,8 @@ public class VorbisFloor {
 		return var3;
 	}
 
-	@ObfuscatedName("j")
-	static int method2316(int[] var0, int var1) {
+	@ObfuscatedName("t")
+	static int method2575(int[] var0, int var1) {
 		int var2 = var0[var1];
 		int var3 = -1;
 		int var4 = Integer.MAX_VALUE;

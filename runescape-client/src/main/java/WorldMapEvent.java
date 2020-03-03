@@ -4,30 +4,30 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ag")
+@ObfuscatedName("au")
 @Implements("WorldMapEvent")
 public class WorldMapEvent {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = 79767661
+		intValue = 945320021
 	)
 	@Export("mapElement")
 	public int mapElement;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lhd;"
+		signature = "Lhf;"
 	)
 	@Export("coord1")
 	public Coord coord1;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Lhd;"
+		signature = "Lhf;"
 	)
 	@Export("coord2")
 	public Coord coord2;
 
 	@ObfuscatedSignature(
-		signature = "(ILhd;Lhd;)V"
+		signature = "(ILhf;Lhf;)V"
 	)
 	public WorldMapEvent(int var1, Coord var2, Coord var3) {
 		this.mapElement = var1;
@@ -35,8 +35,17 @@ public class WorldMapEvent {
 		this.coord2 = var3;
 	}
 
-	@ObfuscatedName("s")
-	static boolean method730(long var0) {
-		return class40.method729(var0) == 2;
+	@ObfuscatedName("ga")
+	@ObfuscatedSignature(
+		signature = "(IIB)V",
+		garbageValue = "87"
+	)
+	@Export("playSoundJingle")
+	static void playSoundJingle(int var0, int var1) {
+		if (Client.musicVolume != 0 && var0 != -1) {
+			MusicPatchNode2.playMusicTrack(Decimator.archive11, var0, 0, Client.musicVolume, false);
+			Client.field855 = true;
+		}
+
 	}
 }

@@ -1,13 +1,11 @@
-import net.runelite.mapping.Export;
+import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
-import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("md")
+@ObfuscatedName("mx")
 public class class339 {
-	@ObfuscatedName("s")
-	@ObfuscatedSignature(
-		signature = "Lhz;"
+	@ObfuscatedName("be")
+	@ObfuscatedGetter(
+		intValue = 566181067
 	)
-	@Export("ParamDefinition_archive")
-	public static AbstractArchive ParamDefinition_archive;
+	static int field4041;
 }

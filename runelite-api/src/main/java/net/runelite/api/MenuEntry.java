@@ -24,18 +24,15 @@
  */
 package net.runelite.api;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import net.runelite.api.util.Text;
 
 /**
  * A menu entry in a right-click menu.
  */
 @Data
 @NoArgsConstructor
-public class MenuEntry
+public class MenuEntry implements Cloneable
 {
 	/**
 	 * The option text added to the menu (ie. "Walk here", "Use").
@@ -47,7 +44,6 @@ public class MenuEntry
 	 * If the option does not apply to any target, this field
 	 * will be set to empty string.
 	 */
-	@Setter(AccessLevel.NONE)
 	private String target;
 	/**
 	 * An identifier value for the target of the action.
@@ -83,27 +79,26 @@ public class MenuEntry
 		this.param0 = param0;
 		this.param1 = param1;
 		this.forceLeftClick = forceLeftClick;
-		this.standardizedTarget = Text.standardize(target, true);
 	}
 
-	public static MenuEntry copy(MenuEntry src)
+	@Override
+	public MenuEntry clone()
 	{
-		return new MenuEntry(
-			src.getOption(),
-			src.getTarget(),
-			src.getIdentifier(),
-			src.getOpcode(),
-			src.getParam0(),
-			src.getParam1(),
-			src.isForceLeftClick()
-		);
+		try
+		{
+			return (MenuEntry) super.clone();
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new RuntimeException(ex);
+		}
 	}
 
-	public void setTarget(String target)
+	/**
+	 * Get opcode, but as it's enum counterpart
+	 */
+	public MenuOpcode getMenuOpcode()
 	{
-		this.target = target;
-		this.standardizedTarget = Text.standardize(target, true);
+		return MenuOpcode.of(getOpcode());
 	}
-
-	private String standardizedTarget;
 }

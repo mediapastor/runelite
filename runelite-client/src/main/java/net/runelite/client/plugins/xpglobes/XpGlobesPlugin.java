@@ -35,14 +35,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
-import net.runelite.api.Client;
 import net.runelite.api.Experience;
 import net.runelite.api.Skill;
-import net.runelite.api.events.ConfigChanged;
-import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.StatChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -68,9 +67,6 @@ public class XpGlobesPlugin extends Plugin
 	private final List<XpGlobe> xpGlobes = new ArrayList<>();
 
 	@Inject
-	private Client client;
-
-	@Inject
 	private XpGlobesConfig config;
 
 	@Inject
@@ -79,14 +75,17 @@ public class XpGlobesPlugin extends Plugin
 	@Inject
 	private XpGlobesOverlay overlay;
 
-	@Inject
-	private EventBus eventBus;
-
 	@Getter(AccessLevel.PACKAGE)
 	private boolean enableTooltips;
 	private boolean hideMaxed;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean enableTimeToLevel;
+	@Getter(AccessLevel.PACKAGE)
+	private boolean showXpHour;
+	@Getter(AccessLevel.PACKAGE)
+	private boolean showActionsLeft;
+	@Getter(AccessLevel.PACKAGE)
+	private boolean showXpLeft;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean enableCustomArcColor;
 	@Getter(AccessLevel.PACKAGE)
@@ -111,7 +110,6 @@ public class XpGlobesPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		updateConfig();
-		addSubscriptions();
 
 		overlayManager.add(overlay);
 	}
@@ -119,23 +117,15 @@ public class XpGlobesPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
-
 		overlayManager.remove(overlay);
 	}
 
-	private void addSubscriptions()
+	@Subscribe
+	private void onStatChanged(StatChanged statChanged)
 	{
-		eventBus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventBus.subscribe(ExperienceChanged.class, this, this::onExperienceChanged);
-		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
-	}
-
-	private void onExperienceChanged(ExperienceChanged event)
-	{
-		Skill skill = event.getSkill();
-		int currentXp = client.getSkillExperience(skill);
-		int currentLevel = Experience.getLevelForXp(currentXp);
+		Skill skill = statChanged.getSkill();
+		int currentXp = statChanged.getXp();
+		int currentLevel = statChanged.getLevel();
 		int skillIdx = skill.ordinal();
 		XpGlobe cachedGlobe = globeCache[skillIdx];
 
@@ -210,6 +200,7 @@ public class XpGlobesPlugin extends Plugin
 		globeCache = new XpGlobe[Skill.values().length - 1];
 	}
 
+	@Subscribe
 	private void onGameStateChanged(GameStateChanged event)
 	{
 		switch (event.getGameState())
@@ -221,6 +212,7 @@ public class XpGlobesPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals("xpglobes"))
@@ -243,6 +235,9 @@ public class XpGlobesPlugin extends Plugin
 		this.progressArcStrokeWidth = config.progressArcStrokeWidth();
 		this.xpOrbSize = config.xpOrbSize();
 		this.xpOrbDuration = config.xpOrbDuration();
+		this.showXpLeft = config.showXpLeft();
+		this.showActionsLeft = config.showActionsLeft();
+		this.showXpHour = config.showXpHour();
 
 	}
 }

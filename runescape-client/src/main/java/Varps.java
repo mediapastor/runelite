@@ -1,25 +1,19 @@
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
-import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 
-@ObfuscatedName("hi")
+@ObfuscatedName("hj")
 @Implements("Varps")
 public class Varps {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("Varps_masks")
 	static int[] Varps_masks;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@Export("Varps_temp")
 	public static int[] Varps_temp;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("Varps_main")
 	public static int[] Varps_main;
-	@ObfuscatedName("gc")
-	@ObfuscatedGetter(
-		intValue = 1888640319
-	)
-	static int field2507;
 
 	static {
 		Varps_masks = new int[32];

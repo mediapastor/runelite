@@ -6,13 +6,16 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.sentry.Sentry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.events.Event;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import net.runelite.client.RuneLiteProperties;
+import net.runelite.client.config.OpenOSRSConfig;
 
 @Slf4j
 @Singleton
@@ -22,8 +25,11 @@ public class EventBus implements EventBusInterface
 	private Map<Class<?>, Relay<Object>> subjectList = new HashMap<>();
 	private Map<Object, CompositeDisposable> subscriptionsMap = new HashMap<>();
 
+	@Inject
+	private OpenOSRSConfig openOSRSConfig;
+
 	@NonNull
-	private <T> Relay<Object> getSubject(Class<T> eventClass)
+	private <T extends Event> Relay<Object> getSubject(Class<T> eventClass)
 	{
 		return subjectList.computeIfAbsent(eventClass, k -> PublishRelay.create().toSerialized());
 	}
@@ -43,7 +49,7 @@ public class EventBus implements EventBusInterface
 
 	@Override
 	// Subscribe on lifecycle (for example from plugin startUp -> shutdown)
-	public <T> void subscribe(Class<T> eventClass, @NonNull Object lifecycle, @NonNull Consumer<T> action)
+	public <T extends Event> void subscribe(Class<T> eventClass, @NonNull Object lifecycle, @NonNull Consumer<T> action)
 	{
 		if (subscriptionList.containsKey(lifecycle) && eventClass.equals(subscriptionList.get(lifecycle)))
 		{
@@ -55,8 +61,39 @@ public class EventBus implements EventBusInterface
 			.cast(eventClass) // Cast it for easier usage
 			.subscribe(action, error ->
 			{
-				log.error("Error in eventbus: {}", error.getMessage());
-				log.error(ExceptionUtils.getStackTrace(error));
+				log.error("Exception in eventbus", error);
+
+				if (RuneLiteProperties.getLauncherVersion() != null && openOSRSConfig.shareLogs())
+				{
+					Sentry.capture(error);
+				}
+			});
+
+		getCompositeDisposable(lifecycle).add(disposable);
+		subscriptionList.put(lifecycle, eventClass);
+	}
+
+	@Override
+	public <T extends Event> void subscribe(Class<T> eventClass, @NonNull Object lifecycle, @NonNull Consumer<T> action, int takeUntil)
+	{
+		if (subscriptionList.containsKey(lifecycle) && eventClass.equals(subscriptionList.get(lifecycle)))
+		{
+			return;
+		}
+
+		Disposable disposable = getSubject(eventClass)
+			.filter(Objects::nonNull) // Filter out null objects, better safe than sorry
+			.cast(eventClass) // Cast it for easier usage
+			.take(takeUntil)
+			.doFinally(() -> unregister(lifecycle))
+			.subscribe(action, error ->
+			{
+				log.error("Exception in eventbus", error);
+
+				if (RuneLiteProperties.getLauncherVersion() != null && openOSRSConfig.shareLogs())
+				{
+					Sentry.capture(error);
+				}
 			});
 
 		getCompositeDisposable(lifecycle).add(disposable);
@@ -76,7 +113,7 @@ public class EventBus implements EventBusInterface
 	}
 
 	@Override
-	public <T> void post(Class<T> eventClass, @NonNull Event event)
+	public <T extends Event> void post(Class<? extends T> eventClass, @NonNull T event)
 	{
 		getSubject(eventClass).accept(event);
 	}

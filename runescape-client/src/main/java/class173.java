@@ -1,4 +1,3 @@
-import java.net.URL;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
@@ -6,33 +5,25 @@ import net.runelite.mapping.ObfuscatedSignature;
 
 @ObfuscatedName("fx")
 public class class173 {
-	@ObfuscatedName("i")
-	@Export("directions")
-	public static int[][] directions;
-	@ObfuscatedName("k")
-	@Export("distances")
-	public static int[][] distances;
-	@ObfuscatedName("u")
-	@ObfuscatedGetter(
-		intValue = -1891183659
-	)
-	public static int field2073;
 	@ObfuscatedName("n")
-	@ObfuscatedGetter(
-		intValue = 783444493
-	)
-	public static int field2070;
+	@Export("directions")
+	static int[][] directions;
 	@ObfuscatedName("q")
-	@Export("bufferX")
-	public static int[] bufferX;
-	@ObfuscatedName("x")
-	@Export("bufferY")
-	public static int[] bufferY;
-	@ObfuscatedName("ah")
+	@Export("distances")
+	static int[][] distances;
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = -1559987227
+		intValue = 1388693747
 	)
-	static int field2079;
+	static int field2070;
+	@ObfuscatedName("o")
+	@Export("bufferX")
+	static int[] bufferX;
+	@ObfuscatedName("i")
+	@Export("bufferY")
+	static int[] bufferY;
+	@ObfuscatedName("ed")
+	static int[] field2074;
 
 	static {
 		directions = new int[128][128];
@@ -41,56 +32,21 @@ public class class173 {
 		bufferY = new int[4096];
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(I)Z",
-		garbageValue = "-146894719"
+		signature = "(CI)C",
+		garbageValue = "-1784750626"
 	)
-	@Export("loadWorlds")
-	static boolean loadWorlds() {
-		try {
-			if (IgnoreList.World_request == null) {
-				IgnoreList.World_request = ScriptEvent.urlRequester.request(new URL(class1.field6));
-			} else if (IgnoreList.World_request.isDone()) {
-				byte[] var0 = IgnoreList.World_request.getResponse();
-				Buffer var1 = new Buffer(var0);
-				var1.readInt();
-				World.World_count = var1.readUnsignedShort();
-				ChatChannel.World_worlds = new World[World.World_count];
-
-				World var3;
-				for (int var2 = 0; var2 < World.World_count; var3.index = var2++) {
-					var3 = ChatChannel.World_worlds[var2] = new World();
-					var3.id = var1.readUnsignedShort();
-					var3.properties = var1.readInt();
-					var3.host = var1.readStringCp1252NullTerminated();
-					var3.activity = var1.readStringCp1252NullTerminated();
-					var3.location = var1.readUnsignedByte();
-					var3.population = var1.readShort();
-				}
-
-				Tile.sortWorlds(ChatChannel.World_worlds, 0, ChatChannel.World_worlds.length - 1, World.World_sortOption1, World.World_sortOption2);
-				IgnoreList.World_request = null;
-				return true;
-			}
-		} catch (Exception var4) {
-			var4.printStackTrace();
-			IgnoreList.World_request = null;
-		}
-
-		return false;
+	static char method3720(char var0) {
+		return var0 != 181 && var0 != 402 ? Character.toTitleCase(var0) : var0;
 	}
 
-	@ObfuscatedName("kw")
+	@ObfuscatedName("jr")
 	@ObfuscatedSignature(
-		signature = "(Lhp;I)Ljava/lang/String;",
-		garbageValue = "1595503156"
+		signature = "(IB)Ljava/lang/String;",
+		garbageValue = "0"
 	)
-	static String method3529(Widget var0) {
-		if (WorldMapRegion.method530(ParamDefinition.getWidgetClickMask(var0)) == 0) {
-			return null;
-		} else {
-			return var0.spellActionName != null && var0.spellActionName.trim().length() != 0 ? var0.spellActionName : null;
-		}
+	static final String method3728(int var0) {
+		return var0 < 999999999 ? Integer.toString(var0) : "*";
 	}
 }

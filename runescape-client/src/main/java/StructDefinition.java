@@ -3,24 +3,30 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("ix")
+@ObfuscatedName("id")
 @Implements("StructDefinition")
 public class StructDefinition extends DualNode {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Lhz;"
+		signature = "Lhq;"
 	)
 	@Export("StructDefinition_archive")
 	public static AbstractArchive StructDefinition_archive;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Lep;"
+		signature = "Leb;"
 	)
 	@Export("StructDefinition_cached")
 	public static EvictingDualNodeHashTable StructDefinition_cached;
-	@ObfuscatedName("i")
+	@ObfuscatedName("d")
 	@ObfuscatedSignature(
-		signature = "Lln;"
+		signature = "Lhq;"
+	)
+	@Export("Widget_modelsArchive")
+	static AbstractArchive Widget_modelsArchive;
+	@ObfuscatedName("n")
+	@ObfuscatedSignature(
+		signature = "Llr;"
 	)
 	@Export("params")
 	IterableNodeHashTable params;
@@ -32,19 +38,19 @@ public class StructDefinition extends DualNode {
 	StructDefinition() {
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
 		signature = "(I)V",
-		garbageValue = "658327081"
+		garbageValue = "1931013228"
 	)
 	@Export("postDecode")
 	void postDecode() {
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "(Lky;I)V",
-		garbageValue = "1747756287"
+		signature = "(Lkc;I)V",
+		garbageValue = "-2132322358"
 	)
 	@Export("decode")
 	void decode(Buffer var1) {
@@ -58,150 +64,49 @@ public class StructDefinition extends DualNode {
 		}
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "(Lky;II)V",
-		garbageValue = "120190923"
+		signature = "(Lkc;II)V",
+		garbageValue = "2038227165"
 	)
 	@Export("decodeNext")
 	void decodeNext(Buffer var1, int var2) {
 		if (var2 == 249) {
-			this.params = DynamicObject.readStringIntParameters(var1, this.params);
+			this.params = UserComparator10.readStringIntParameters(var1, this.params);
 		}
 
 	}
 
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedSignature(
 		signature = "(III)I",
-		garbageValue = "1830789518"
+		garbageValue = "65535"
 	)
 	@Export("getIntParam")
 	public int getIntParam(int var1, int var2) {
+		return FriendsList.method5306(this.params, var1, var2);
+	}
+
+	@ObfuscatedName("l")
+	@ObfuscatedSignature(
+		signature = "(ILjava/lang/String;I)Ljava/lang/String;",
+		garbageValue = "1822507613"
+	)
+	@Export("getStringParam")
+	public String getStringParam(int var1, String var2) {
 		IterableNodeHashTable var4 = this.params;
-		int var3;
+		String var3;
 		if (var4 == null) {
 			var3 = var2;
 		} else {
-			IntegerNode var5 = (IntegerNode)var4.get((long)var1);
+			ObjectNode var5 = (ObjectNode)var4.get((long)var1);
 			if (var5 == null) {
 				var3 = var2;
 			} else {
-				var3 = var5.integer;
+				var3 = (String)var5.obj;
 			}
 		}
 
 		return var3;
-	}
-
-	@ObfuscatedName("n")
-	@ObfuscatedSignature(
-		signature = "(ILjava/lang/String;B)Ljava/lang/String;",
-		garbageValue = "50"
-	)
-	@Export("getStringParam")
-	public String getStringParam(int var1, String var2) {
-		return class227.method4041(this.params, var1, var2);
-	}
-
-	@ObfuscatedName("s")
-	@ObfuscatedSignature(
-		signature = "(II)Lio;",
-		garbageValue = "-431406721"
-	)
-	@Export("HitSplatDefinition_get")
-	public static HitSplatDefinition HitSplatDefinition_get(int var0) {
-		HitSplatDefinition var1 = (HitSplatDefinition)HitSplatDefinition.HitSplatDefinition_cached.get((long)var0);
-		if (var1 != null) {
-			return var1;
-		} else {
-			byte[] var2 = HitSplatDefinition.HitSplatDefinition_archive.takeFile(32, var0);
-			var1 = new HitSplatDefinition();
-			if (var2 != null) {
-				var1.decode(new Buffer(var2));
-			}
-
-			HitSplatDefinition.HitSplatDefinition_cached.put(var1, (long)var0);
-			return var1;
-		}
-	}
-
-	@ObfuscatedName("i")
-	@ObfuscatedSignature(
-		signature = "(CI)C",
-		garbageValue = "-2066919022"
-	)
-	static char method4449(char var0) {
-		switch(var0) {
-		case ' ':
-		case '-':
-		case '_':
-		case ' ':
-			return '_';
-		case '#':
-		case '[':
-		case ']':
-			return var0;
-		case 'À':
-		case 'Á':
-		case 'Â':
-		case 'Ã':
-		case 'Ä':
-		case 'à':
-		case 'á':
-		case 'â':
-		case 'ã':
-		case 'ä':
-			return 'a';
-		case 'Ç':
-		case 'ç':
-			return 'c';
-		case 'È':
-		case 'É':
-		case 'Ê':
-		case 'Ë':
-		case 'è':
-		case 'é':
-		case 'ê':
-		case 'ë':
-			return 'e';
-		case 'Í':
-		case 'Î':
-		case 'Ï':
-		case 'í':
-		case 'î':
-		case 'ï':
-			return 'i';
-		case 'Ñ':
-		case 'ñ':
-			return 'n';
-		case 'Ò':
-		case 'Ó':
-		case 'Ô':
-		case 'Õ':
-		case 'Ö':
-		case 'ò':
-		case 'ó':
-		case 'ô':
-		case 'õ':
-		case 'ö':
-			return 'o';
-		case 'Ù':
-		case 'Ú':
-		case 'Û':
-		case 'Ü':
-		case 'ù':
-		case 'ú':
-		case 'û':
-		case 'ü':
-			return 'u';
-		case 'ß':
-			return 'b';
-		case 'ÿ':
-		case 'Ÿ':
-			return 'y';
-		default:
-			return Character.toLowerCase(var0);
-		}
 	}
 }

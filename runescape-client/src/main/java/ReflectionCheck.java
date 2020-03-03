@@ -6,87 +6,72 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("cv")
+@ObfuscatedName("ck")
 @Implements("ReflectionCheck")
 public class ReflectionCheck extends Node {
-	@ObfuscatedName("cm")
-	@ObfuscatedGetter(
-		intValue = -391486769
+	@ObfuscatedName("h")
+	@ObfuscatedSignature(
+		signature = "Lhi;"
 	)
-	public static int field1307;
-	@ObfuscatedName("s")
+	static Widget field1310;
+	@ObfuscatedName("dc")
+	@ObfuscatedSignature(
+		signature = "Lij;"
+	)
+	@Export("archive19")
+	static Archive archive19;
+	@ObfuscatedName("a")
 	@ObfuscatedGetter(
-		intValue = 1136310453
+		intValue = 1464057187
 	)
 	@Export("id")
 	int id;
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedGetter(
-		intValue = 563211099
+		intValue = -828282983
 	)
 	@Export("size")
 	int size;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("operations")
 	int[] operations;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("creationErrors")
 	int[] creationErrors;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("fields")
 	Field[] fields;
-	@ObfuscatedName("n")
+	@ObfuscatedName("l")
 	@Export("intReplaceValues")
 	int[] intReplaceValues;
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@Export("methods")
 	Method[] methods;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@Export("arguments")
 	byte[][][] arguments;
 
 	ReflectionCheck() {
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "(IIIB)I",
-		garbageValue = "4"
+		signature = "(B)V",
+		garbageValue = "-2"
 	)
-	public static int method2213(int var0, int var1, int var2) {
-		var2 &= 3;
-		if (var2 == 0) {
-			return var0;
-		} else if (var2 == 1) {
-			return var1;
-		} else {
-			return var2 == 2 ? 7 - var0 : 7 - var1;
-		}
+	public static void method2438() {
+		class197.midiPcmStream.clear();
+		class197.field2377 = 1;
+		class247.musicTrackArchive = null;
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("jv")
 	@ObfuscatedSignature(
-		signature = "(III)I",
-		garbageValue = "-125143607"
+		signature = "(ZI)V",
+		garbageValue = "-1720039753"
 	)
-	public static int method2212(int var0, int var1) {
-		return (var0 << 8) + var1;
-	}
-
-	@ObfuscatedName("t")
-	@ObfuscatedSignature(
-		signature = "(Ljava/lang/CharSequence;I)I",
-		garbageValue = "482373296"
-	)
-	@Export("hashString")
-	public static int hashString(CharSequence var0) {
-		int var1 = var0.length();
-		int var2 = 0;
-
-		for (int var3 = 0; var3 < var1; ++var3) {
-			var2 = (var2 << 5) - var2 + class14.charToByteCp1252(var0.charAt(var3));
-		}
-
-		return var2;
+	@Export("setTapToDrop")
+	static void setTapToDrop(boolean var0) {
+		Client.tapToDrop = var0;
 	}
 }

@@ -56,22 +56,22 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.BufferProvider;
 import net.runelite.api.Client;
 import net.runelite.api.Constants;
+import net.runelite.api.Entity;
 import net.runelite.api.GameState;
 import net.runelite.api.Model;
 import net.runelite.api.NodeCache;
 import net.runelite.api.Perspective;
-import net.runelite.api.Entity;
 import net.runelite.api.Scene;
-import net.runelite.api.TileModel;
-import net.runelite.api.TilePaint;
 import net.runelite.api.Texture;
 import net.runelite.api.TextureProvider;
-import net.runelite.api.events.ConfigChanged;
+import net.runelite.api.TileModel;
+import net.runelite.api.TilePaint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginInstantiationException;
@@ -120,9 +120,6 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 
 	@Inject
 	private PluginManager pluginManager;
-
-	@Inject
-	private EventBus eventbus;
 
 	private Canvas canvas;
 	private JAWTWindow jawtWindow;
@@ -243,6 +240,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 	private int fogCircularity;
 	private int fogDensity;
 
+	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("gpu"))
@@ -266,7 +264,6 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 	protected void startUp() throws Exception
 	{
 		updateConfig();
-		addSubscriptions();
 
 		clientThread.invoke(() ->
 		{
@@ -290,11 +287,6 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 				modelBufferUnordered = new GpuIntBuffer();
 				modelBufferSmall = new GpuIntBuffer();
 				modelBuffer = new GpuIntBuffer();
-
-				if (log.isDebugEnabled())
-				{
-					System.setProperty("jogl.debug", "true");
-				}
 
 				GLProfile.initSingleton();
 
@@ -379,8 +371,6 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 	@Override
 	protected void shutDown()
 	{
-		eventbus.unregister(this);
-
 		clientThread.invoke(() ->
 		{
 			client.setGpu(false);
@@ -450,13 +440,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 		});
 	}
 
-	private void addSubscriptions()
-	{
-		eventbus.subscribe(ConfigChanged.class, this, this::onConfigChanged);
-		eventbus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
-	}
-
-	@Provides
+@Provides
 	GpuPluginConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(GpuPluginConfig.class);
@@ -616,7 +600,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 		gl.glBindVertexArray(vaoUiHandle);
 
 		FloatBuffer vboUiBuf = GpuFloatBuffer.allocateDirect(5 * 4);
-		vboUiBuf.put(new float[]{
+		vboUiBuf.put(new float[] {
 			// positions     // texture coords
 			1f, 1f, 0.0f, 1.0f, 0f, // top right
 			1f, -1f, 0.0f, 1.0f, 1f, // bottom right
@@ -743,7 +727,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 
 		gl.glUseProgram(glProgram);
 
-		float[] matrix = new float[]{
+		float[] matrix = new float[] {
 			2 / (right - left), 0, 0, 0,
 			0, 2 / (top - bottom), 0, 0,
 			0, 0, -2 / (far - near), 0,
@@ -768,8 +752,8 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 	}
 
 	public void drawScenePaint(int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z,
-							TilePaint paint, int tileZ, int tileX, int tileY,
-							int zoom, int centerX, int centerY)
+		TilePaint paint, int tileZ, int tileX, int tileY,
+		int zoom, int centerX, int centerY)
 	{
 		if (paint.getBufferLen() > 0)
 		{
@@ -794,8 +778,8 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 	}
 
 	public void drawSceneModel(int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z,
-							TileModel model, int tileZ, int tileX, int tileY,
-							int zoom, int centerX, int centerY)
+		TileModel model, int tileZ, int tileX, int tileY,
+		int zoom, int centerX, int centerY)
 	{
 		if (model.getBufferLen() > 0)
 		{
@@ -1194,7 +1178,14 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 		// Texture on UI
 		drawUi(canvasHeight, canvasWidth);
 
-		glDrawable.swapBuffers();
+		try
+		{
+			glDrawable.swapBuffers();
+		}
+		catch (GLException ignored)
+		{
+			// Ignore
+		}
 
 		drawManager.processDrawComplete(this::screenshot);
 	}
@@ -1315,6 +1306,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 		textureManager.animate(texture, diff);
 	}
 
+	@Subscribe
 	private void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
 		if (gameStateChanged.getGameState() != GameState.LOGGED_IN)

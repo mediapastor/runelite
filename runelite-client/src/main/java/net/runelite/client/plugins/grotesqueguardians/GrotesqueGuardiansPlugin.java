@@ -24,26 +24,25 @@
  */
 package net.runelite.client.plugins.grotesqueguardians;
 
+import java.util.ArrayList;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import net.runelite.client.eventbus.EventBus;
+import net.runelite.api.Client;
+import net.runelite.api.NPC;
+import static net.runelite.api.NpcID.DUSK_7888;
+import net.runelite.api.events.GameTick;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
-import java.util.ArrayList;
-import net.runelite.api.events.GameTick;
-import net.runelite.api.NPC;
-import javax.annotation.Nullable;
-import net.runelite.api.Client;
-
-import static net.runelite.api.NpcID.DUSK_7888;
 
 
 @PluginDescriptor(
 	name = "Grotesque Guardians",
 	description = "Show various helpful utitiles during the Grotesque Gaurdians (Gargoyles) fight",
-	tags = { "bosses", "combat", "gargs", "overlay", "grotesque", "pve", "pvm" },
+	tags = {"bosses", "combat", "gargs", "overlay", "grotesque", "pve", "pvm"},
 	type = PluginType.PVM,
 	enabledByDefault = false
 )
@@ -57,8 +56,6 @@ public class GrotesqueGuardiansPlugin extends Plugin
 	private OverlayManager overlayManager;
 	@Inject
 	private GrotesqueGuardiansPrayerOverlay prayerOverlay;
-	@Inject
-	private EventBus eventBus;
 	@Nullable
 	private DuskAttack prayAgainst;
 	@Nullable
@@ -78,7 +75,6 @@ public class GrotesqueGuardiansPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		eventBus.subscribe(GameTick.class, this, this::onGameTick);
 
 		overlayManager.add(overlay);
 		overlayManager.add(prayerOverlay);
@@ -89,14 +85,13 @@ public class GrotesqueGuardiansPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		eventBus.unregister(this);
-
 		overlayManager.remove(overlay);
 		overlayManager.remove(prayerOverlay);
 		dusk = null;
 		prayAgainst = null;
 	}
 
+	@Subscribe
 	private void onGameTick(final GameTick event)
 	{
 		final ArrayList<Integer> regions = new ArrayList<>();
@@ -129,14 +124,14 @@ public class GrotesqueGuardiansPlugin extends Plugin
 					}
 				}
 				else
-					{
+				{
 					prayAgainst = null;
 				}
 				needingToRun = dusk.getAnimation() == 7802;
 			}
 		}
 		else
-			{
+		{
 			inGargs = false;
 			prayAgainst = null;
 			dusk = null;

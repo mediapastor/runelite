@@ -3,115 +3,115 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("cs")
+@ObfuscatedName("cf")
 @Implements("VorbisSample")
 public class VorbisSample extends Node {
-	@ObfuscatedName("t")
+	@ObfuscatedName("c")
 	@Export("VorbisSample_bytes")
 	static byte[] VorbisSample_bytes;
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@Export("VorbisSample_byteOffset")
 	static int VorbisSample_byteOffset;
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@Export("VorbisSample_bitOffset")
 	static int VorbisSample_bitOffset;
 	@ObfuscatedName("d")
 	@Export("VorbisSample_blockSize0")
 	static int VorbisSample_blockSize0;
-	@ObfuscatedName("f")
+	@ObfuscatedName("m")
 	@Export("VorbisSample_blockSize1")
 	static int VorbisSample_blockSize1;
-	@ObfuscatedName("c")
+	@ObfuscatedName("p")
 	@ObfuscatedSignature(
-		signature = "[Lcx;"
+		signature = "[Lch;"
 	)
 	@Export("VorbisSample_codebooks")
 	static VorbisCodebook[] VorbisSample_codebooks;
-	@ObfuscatedName("r")
+	@ObfuscatedName("h")
 	@ObfuscatedSignature(
-		signature = "[Ldr;"
+		signature = "[Ldb;"
 	)
 	@Export("VorbisSample_floors")
 	static VorbisFloor[] VorbisSample_floors;
-	@ObfuscatedName("y")
+	@ObfuscatedName("k")
 	@ObfuscatedSignature(
-		signature = "[Ldc;"
+		signature = "[Ldr;"
 	)
 	@Export("VorbisSample_residues")
 	static VorbisResidue[] VorbisSample_residues;
-	@ObfuscatedName("p")
+	@ObfuscatedName("x")
 	@ObfuscatedSignature(
-		signature = "[Ldw;"
+		signature = "[Ldf;"
 	)
 	@Export("VorbisSample_mappings")
 	static VorbisMapping[] VorbisSample_mappings;
-	@ObfuscatedName("b")
+	@ObfuscatedName("j")
 	@Export("VorbisSample_blockFlags")
 	static boolean[] VorbisSample_blockFlags;
-	@ObfuscatedName("g")
+	@ObfuscatedName("r")
 	@Export("VorbisSample_mapping")
 	static int[] VorbisSample_mapping;
 	@ObfuscatedName("e")
-	static boolean field1345;
-	@ObfuscatedName("h")
-	static float[] field1329;
-	@ObfuscatedName("v")
-	static float[] field1330;
-	@ObfuscatedName("m")
-	static float[] field1343;
-	@ObfuscatedName("o")
+	static boolean field1348;
+	@ObfuscatedName("g")
+	static float[] field1349;
+	@ObfuscatedName("w")
+	static float[] field1345;
+	@ObfuscatedName("u")
 	static float[] field1353;
-	@ObfuscatedName("av")
+	@ObfuscatedName("y")
 	static float[] field1354;
-	@ObfuscatedName("am")
+	@ObfuscatedName("aa")
 	static float[] field1355;
-	@ObfuscatedName("ai")
-	static float[] field1356;
-	@ObfuscatedName("af")
-	static int[] field1357;
-	@ObfuscatedName("az")
-	static int[] field1341;
-	@ObfuscatedName("s")
-	byte[][] field1348;
-	@ObfuscatedName("j")
+	@ObfuscatedName("aw")
+	static float[] field1346;
+	@ObfuscatedName("ar")
+	static float[] field1357;
+	@ObfuscatedName("aq")
+	static int[] field1337;
+	@ObfuscatedName("ad")
+	static int[] field1359;
+	@ObfuscatedName("a")
+	byte[][] field1350;
+	@ObfuscatedName("t")
 	@Export("sampleRate")
 	int sampleRate;
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("sampleCount")
 	int sampleCount;
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("start")
 	int start;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("end")
 	int end;
-	@ObfuscatedName("n")
-	boolean field1342;
-	@ObfuscatedName("z")
-	float[] field1346;
-	@ObfuscatedName("a")
-	int field1347;
-	@ObfuscatedName("w")
-	int field1335;
 	@ObfuscatedName("l")
-	boolean field1349;
-	@ObfuscatedName("aj")
+	boolean field1334;
+	@ObfuscatedName("s")
+	float[] field1347;
+	@ObfuscatedName("b")
+	int field1344;
+	@ObfuscatedName("z")
+	int field1362;
+	@ObfuscatedName("f")
+	boolean field1352;
+	@ObfuscatedName("ag")
 	@Export("samples")
 	byte[] samples;
-	@ObfuscatedName("an")
+	@ObfuscatedName("ak")
+	int field1329;
+	@ObfuscatedName("av")
 	int field1360;
-	@ObfuscatedName("at")
-	int field1361;
 
 	static {
-		field1345 = false;
+		field1348 = false;
 	}
 
 	VorbisSample(byte[] var1) {
 		this.read(var1);
 	}
 
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@Export("read")
 	void read(byte[] var1) {
 		Buffer var2 = new Buffer(var1);
@@ -121,11 +121,11 @@ public class VorbisSample extends Node {
 		this.end = var2.readInt();
 		if (this.end < 0) {
 			this.end = ~this.end;
-			this.field1342 = true;
+			this.field1334 = true;
 		}
 
 		int var3 = var2.readInt();
-		this.field1348 = new byte[var3][];
+		this.field1350 = new byte[var3][];
 
 		for (int var4 = 0; var4 < var3; ++var4) {
 			int var5 = 0;
@@ -138,16 +138,16 @@ public class VorbisSample extends Node {
 
 			byte[] var7 = new byte[var5];
 			var2.readBytes(var7, 0, var5);
-			this.field1348[var4] = var7;
+			this.field1350[var4] = var7;
 		}
 
 	}
 
-	@ObfuscatedName("t")
-	float[] method2282(int var1) {
-		VorbisSample_setData(this.field1348[var1], 0);
+	@ObfuscatedName("c")
+	float[] method2521(int var1) {
+		VorbisSample_setData(this.field1350[var1], 0);
 		readBit();
-		int var2 = readBits(class160.iLog(VorbisSample_mapping.length - 1));
+		int var2 = readBits(Tiles.iLog(VorbisSample_mapping.length - 1));
 		boolean var3 = VorbisSample_blockFlags[var2];
 		int var4 = var3 ? VorbisSample_blockSize1 : VorbisSample_blockSize0;
 		boolean var5 = false;
@@ -192,27 +192,27 @@ public class VorbisSample extends Node {
 
 		for (var17 = 0; var17 < var14.submaps; ++var17) {
 			VorbisResidue var18 = VorbisSample_residues[var14.submapResidue[var17]];
-			float[] var19 = field1329;
-			var18.method2444(var19, var4 >> 1, var45);
+			float[] var19 = field1349;
+			var18.method2682(var19, var4 >> 1, var45);
 		}
 
 		int var40;
 		if (!var15) {
 			var17 = var14.mappingMux;
 			var40 = var14.submapFloor[var17];
-			VorbisSample_floors[var40].method2321(field1329, var4 >> 1);
+			VorbisSample_floors[var40].method2564(field1349, var4 >> 1);
 		}
 
 		int var42;
 		if (var15) {
 			for (var17 = var4 >> 1; var17 < var4; ++var17) {
-				field1329[var17] = 0.0F;
+				field1349[var17] = 0.0F;
 			}
 		} else {
 			var17 = var4 >> 1;
 			var40 = var4 >> 2;
 			var42 = var4 >> 3;
-			float[] var43 = field1329;
+			float[] var43 = field1349;
 
 			int var21;
 			for (var21 = 0; var21 < var17; ++var21) {
@@ -223,10 +223,10 @@ public class VorbisSample extends Node {
 				var43[var21] = -var43[var4 - var21 - 1];
 			}
 
-			float[] var44 = var3 ? field1354 : field1330;
-			float[] var22 = var3 ? field1355 : field1343;
-			float[] var23 = var3 ? field1356 : field1353;
-			int[] var24 = var3 ? field1341 : field1357;
+			float[] var44 = var3 ? field1355 : field1345;
+			float[] var22 = var3 ? field1346 : field1353;
+			float[] var23 = var3 ? field1357 : field1354;
+			int[] var24 = var3 ? field1359 : field1337;
 
 			int var25;
 			float var26;
@@ -257,7 +257,7 @@ public class VorbisSample extends Node {
 				var43[var25 * 4 + 1] = (var27 - var29) * var30 + (var26 - var28) * var31;
 			}
 
-			var25 = class160.iLog(var4 - 1);
+			var25 = Tiles.iLog(var4 - 1);
 
 			int var47;
 			int var48;
@@ -357,49 +357,49 @@ public class VorbisSample extends Node {
 			float[] var10000;
 			for (var47 = var8; var47 < var9; ++var47) {
 				var27 = (float)Math.sin(((double)(var47 - var8) + 0.5D) / (double)var10 * 0.5D * 3.141592653589793D);
-				var10000 = field1329;
+				var10000 = field1349;
 				var10000[var47] *= (float)Math.sin(1.5707963267948966D * (double)var27 * (double)var27);
 			}
 
 			for (var47 = var11; var47 < var12; ++var47) {
 				var27 = (float)Math.sin(((double)(var47 - var11) + 0.5D) / (double)var13 * 0.5D * 3.141592653589793D + 1.5707963267948966D);
-				var10000 = field1329;
+				var10000 = field1349;
 				var10000[var47] *= (float)Math.sin(1.5707963267948966D * (double)var27 * (double)var27);
 			}
 		}
 
 		float[] var41 = null;
-		if (this.field1347 > 0) {
-			var40 = var4 + this.field1347 >> 2;
+		if (this.field1344 > 0) {
+			var40 = var4 + this.field1344 >> 2;
 			var41 = new float[var40];
 			int var20;
-			if (!this.field1349) {
-				for (var42 = 0; var42 < this.field1335; ++var42) {
-					var20 = var42 + (this.field1347 >> 1);
-					var41[var42] += this.field1346[var20];
+			if (!this.field1352) {
+				for (var42 = 0; var42 < this.field1362; ++var42) {
+					var20 = var42 + (this.field1344 >> 1);
+					var41[var42] += this.field1347[var20];
 				}
 			}
 
 			if (!var15) {
 				for (var42 = var8; var42 < var4 >> 1; ++var42) {
 					var20 = var41.length - (var4 >> 1) + var42;
-					var41[var20] += field1329[var42];
+					var41[var20] += field1349[var42];
 				}
 			}
 		}
 
-		float[] var46 = this.field1346;
-		this.field1346 = field1329;
-		field1329 = var46;
-		this.field1347 = var4;
-		this.field1335 = var12 - (var4 >> 1);
-		this.field1349 = var15;
+		float[] var46 = this.field1347;
+		this.field1347 = field1349;
+		field1349 = var46;
+		this.field1344 = var4;
+		this.field1362 = var12 - (var4 >> 1);
+		this.field1352 = var15;
 		return var41;
 	}
 
 	@ObfuscatedName("d")
 	@ObfuscatedSignature(
-		signature = "([I)Lco;"
+		signature = "([I)Lca;"
 	)
 	@Export("toRawSound")
 	RawSound toRawSound(int[] var1) {
@@ -407,21 +407,21 @@ public class VorbisSample extends Node {
 			return null;
 		} else {
 			if (this.samples == null) {
-				this.field1347 = 0;
-				this.field1346 = new float[VorbisSample_blockSize1];
+				this.field1344 = 0;
+				this.field1347 = new float[VorbisSample_blockSize1];
 				this.samples = new byte[this.sampleCount];
+				this.field1329 = 0;
 				this.field1360 = 0;
-				this.field1361 = 0;
 			}
 
-			for (; this.field1361 < this.field1348.length; ++this.field1361) {
+			for (; this.field1360 < this.field1350.length; ++this.field1360) {
 				if (var1 != null && var1[0] <= 0) {
 					return null;
 				}
 
-				float[] var2 = this.method2282(this.field1361);
+				float[] var2 = this.method2521(this.field1360);
 				if (var2 != null) {
-					int var3 = this.field1360;
+					int var3 = this.field1329;
 					int var4 = var2.length;
 					if (var4 > this.sampleCount - var3) {
 						var4 = this.sampleCount - var3;
@@ -437,21 +437,21 @@ public class VorbisSample extends Node {
 					}
 
 					if (var1 != null) {
-						var1[0] -= var3 - this.field1360;
+						var1[0] -= var3 - this.field1329;
 					}
 
-					this.field1360 = var3;
+					this.field1329 = var3;
 				}
 			}
 
-			this.field1346 = null;
+			this.field1347 = null;
 			byte[] var7 = this.samples;
 			this.samples = null;
-			return new RawSound(this.sampleRate, var7, this.start, this.end, this.field1342);
+			return new RawSound(this.sampleRate, var7, this.start, this.end, this.field1334);
 		}
 	}
 
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@Export("float32Unpack")
 	static float float32Unpack(int var0) {
 		int var1 = var0 & 2097151;
@@ -464,7 +464,7 @@ public class VorbisSample extends Node {
 		return (float)((double)var1 * Math.pow(2.0D, (double)(var3 - 788)));
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@Export("VorbisSample_setData")
 	static void VorbisSample_setData(byte[] var0, int var1) {
 		VorbisSample_bytes = var0;
@@ -472,7 +472,7 @@ public class VorbisSample extends Node {
 		VorbisSample_bitOffset = 0;
 	}
 
-	@ObfuscatedName("i")
+	@ObfuscatedName("n")
 	@Export("readBit")
 	static int readBit() {
 		int var0 = VorbisSample_bytes[VorbisSample_byteOffset] >> VorbisSample_bitOffset & 1;
@@ -482,7 +482,7 @@ public class VorbisSample extends Node {
 		return var0;
 	}
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@Export("readBits")
 	static int readBits(int var0) {
 		int var1 = 0;
@@ -507,12 +507,12 @@ public class VorbisSample extends Node {
 		return var1;
 	}
 
-	@ObfuscatedName("n")
-	static void method2294(byte[] var0) {
+	@ObfuscatedName("l")
+	static void method2520(byte[] var0) {
 		VorbisSample_setData(var0, 0);
 		VorbisSample_blockSize0 = 1 << readBits(4);
 		VorbisSample_blockSize1 = 1 << readBits(4);
-		field1329 = new float[VorbisSample_blockSize1];
+		field1349 = new float[VorbisSample_blockSize1];
 
 		int var1;
 		int var2;
@@ -546,22 +546,22 @@ public class VorbisSample extends Node {
 			}
 
 			int[] var14 = new int[var5];
-			int var10 = class160.iLog(var5 - 1);
+			int var10 = Tiles.iLog(var5 - 1);
 
 			for (int var11 = 0; var11 < var5; ++var11) {
-				var14[var11] = WorldMapSection0.method215(var11, var10);
+				var14[var11] = UserComparator3.method3565(var11, var10);
 			}
 
 			if (var1 != 0) {
-				field1354 = var6;
-				field1355 = var12;
-				field1356 = var13;
-				field1341 = var14;
+				field1355 = var6;
+				field1346 = var12;
+				field1357 = var13;
+				field1359 = var14;
 			} else {
-				field1330 = var6;
-				field1343 = var12;
-				field1353 = var13;
-				field1357 = var14;
+				field1345 = var6;
+				field1353 = var12;
+				field1354 = var13;
+				field1337 = var14;
 			}
 		}
 
@@ -612,31 +612,31 @@ public class VorbisSample extends Node {
 
 	}
 
-	@ObfuscatedName("q")
+	@ObfuscatedName("o")
 	@ObfuscatedSignature(
-		signature = "(Lhz;)Z"
+		signature = "(Lhq;)Z"
 	)
-	static boolean method2289(AbstractArchive var0) {
-		if (!field1345) {
+	static boolean method2523(AbstractArchive var0) {
+		if (!field1348) {
 			byte[] var1 = var0.takeFile(0, 0);
 			if (var1 == null) {
 				return false;
 			}
 
-			method2294(var1);
-			field1345 = true;
+			method2520(var1);
+			field1348 = true;
 		}
 
 		return true;
 	}
 
-	@ObfuscatedName("x")
+	@ObfuscatedName("i")
 	@ObfuscatedSignature(
-		signature = "(Lhz;II)Lcs;"
+		signature = "(Lhq;II)Lcf;"
 	)
 	@Export("readMusicSample")
 	static VorbisSample readMusicSample(AbstractArchive var0, int var1, int var2) {
-		if (!method2289(var0)) {
+		if (!method2523(var0)) {
 			var0.tryLoadFile(var1, var2);
 			return null;
 		} else {

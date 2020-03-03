@@ -4,35 +4,35 @@ import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-@ObfuscatedName("lb")
+@ObfuscatedName("lt")
 @Implements("FillMode")
 public enum FillMode implements Enumerated {
-	@ObfuscatedName("s")
+	@ObfuscatedName("a")
 	@ObfuscatedSignature(
-		signature = "Llb;"
+		signature = "Llt;"
 	)
 	@Export("SOLID")
 	SOLID(0, 0),
-	@ObfuscatedName("j")
+	@ObfuscatedName("t")
 	@ObfuscatedSignature(
-		signature = "Llb;"
+		signature = "Llt;"
 	)
-	field3858(1, 1),
-	@ObfuscatedName("i")
+	field3847(1, 1),
+	@ObfuscatedName("n")
 	@ObfuscatedSignature(
-		signature = "Llb;"
+		signature = "Llt;"
 	)
-	field3860(2, 2);
+	field3849(2, 2);
 
-	@ObfuscatedName("k")
+	@ObfuscatedName("q")
 	@ObfuscatedGetter(
-		intValue = -375665689
+		intValue = -626837763
 	)
 	@Export("value")
 	public final int value;
-	@ObfuscatedName("u")
+	@ObfuscatedName("v")
 	@ObfuscatedGetter(
-		intValue = -839626013
+		intValue = -1570105459
 	)
 	@Export("id")
 	final int id;
@@ -42,10 +42,10 @@ public enum FillMode implements Enumerated {
 		this.id = var4;
 	}
 
-	@ObfuscatedName("j")
+	@ObfuscatedName("q")
 	@ObfuscatedSignature(
-		signature = "(B)I",
-		garbageValue = "-32"
+		signature = "(I)I",
+		garbageValue = "-1993081102"
 	)
 	@Export("rsOrdinal")
 	public int rsOrdinal() {
