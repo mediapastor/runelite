@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2019 Owain van Brakel <https://github.com/Owain94>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,46 +23,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.runelite.asm.visitors;
+description = "Cache Updater"
 
-import net.runelite.asm.Field;
-import net.runelite.asm.Type;
-import net.runelite.asm.attributes.annotation.Annotation;
-import net.runelite.asm.attributes.annotation.Element;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Opcodes;
+dependencies {
+    annotationProcessor(Libraries.lombok)
 
-public class FieldAnnotationVisitor extends AnnotationVisitor
-{
-	private final Field field;
-	private final Type type;
-	private final Annotation annotation;
-	
-	public FieldAnnotationVisitor(Field field, Type type)
-	{
-		super(Opcodes.ASM5);
-		
-		this.field = field;
-		this.type = type;
-		
-		annotation = new Annotation(field.getAnnotations());
-		annotation.setType(type);
-	}
-	
-	@Override
-	public void visit(String name, Object value)
-	{
-		Element element = new Element(annotation);
-		
-		element.setName(name);
-		element.setValue(value);
-		
-		annotation.addElement(element);
-	}
+    compileOnly(Libraries.lombok)
 
-	@Override
-	public void visitEnd()
-	{
-		field.getAnnotations().addAnnotation(annotation);
-	}
+    implementation(Libraries.minio)
+    implementation(Libraries.mysqlConnectorJava)
+    implementation(Libraries.springbootDevtools)
+    implementation(Libraries.springbootStarter)
+    implementation(Libraries.springbootStarterJdbc)
+    implementation(Libraries.sql2o)
+    implementation(project(":cache-client"))
 }

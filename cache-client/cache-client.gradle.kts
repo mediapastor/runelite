@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2019 Owain van Brakel <https://github.com/Owain94>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,46 +23,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.runelite.asm.visitors;
+description = "Cache Client"
 
-import net.runelite.asm.Method;
-import net.runelite.asm.Type;
-import net.runelite.asm.attributes.annotation.Annotation;
-import net.runelite.asm.attributes.annotation.Element;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Opcodes;
+dependencies {
+    api(project(":cache"))
+    api(project(":protocol"))
 
-public class MethodAnnotationVisitor extends AnnotationVisitor
-{
-	private final Method method;
-	private final Type type;
-	private final Annotation annotation;
-	
-	public MethodAnnotationVisitor(Method method, Type type)
-	{
-		super(Opcodes.ASM5);
-		
-		this.method = method;
-		this.type = type;
-		
-		annotation = new Annotation(method.getAnnotations());
-		annotation.setType(type);
-	}
-	
-	@Override
-	public void visit(String name, Object value)
-	{
-		Element element = new Element(annotation);
-		
-		element.setName(name);
-		element.setValue(value);
-		
-		annotation.addElement(element);
-	}
-	
-	@Override
-	public void visitEnd()
-	{
-		method.getAnnotations().addAnnotation(annotation);
-	}
+    implementation(Libraries.guava)
+    implementation(Libraries.nettyAll)
+    implementation(Libraries.slf4jApi)
+
+    testImplementation(Libraries.junit)
+    testImplementation(Libraries.slf4jSimple)
+    testImplementation(project(path = ":cache", configuration = "testArchives"))
+}
+
+tasks {
+    register<JavaExec>("download") {
+        dependsOn(":cache-client:build")
+
+        classpath = project.sourceSets.main.get().runtimeClasspath
+        main = "net.runelite.cache.client.CacheClient"
+        args(listOf(ProjectVersions.rsversion))
+    }
 }
